@@ -5,8 +5,7 @@ RUN mkdir /app
 WORKDIR /app
 
 # Required for building the api and web distributions
-ENV NODE_ENV production
-# KTE changed the above from development to production on 11/11/2023
+ENV NODE_ENV development
 
 FROM base as dependencies
 
@@ -25,7 +24,6 @@ COPY graphql.config.js .
 
 FROM dependencies as web_build
 
-COPY api api
 COPY web web
 RUN yarn rw build web
 
