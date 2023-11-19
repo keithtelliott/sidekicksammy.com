@@ -9,6 +9,8 @@ import Routes from 'src/Routes'
 
 import './index.css'
 
+import { TenantProvider } from 'src/helpers/TenantContext'
+
 const extendedTheme = extendTheme(theme)
 
 const App = () => (
@@ -17,7 +19,9 @@ const App = () => (
       <ColorModeScript />
       <ChakraProvider theme={extendedTheme}>
         <RedwoodApolloProvider>
-          <Routes />
+          <TenantProvider>
+            <Routes />
+          </TenantProvider>
         </RedwoodApolloProvider>
       </ChakraProvider>
     </RedwoodProvider>
