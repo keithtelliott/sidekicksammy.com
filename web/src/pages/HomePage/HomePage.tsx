@@ -3,6 +3,7 @@ import { Box,Icon,
 import CallToActionWithAnnotation from 'src/components/CallToActionWithAnnotation/CallToActionWithAnnotation'
 import SplitWithImage from 'src/components/SplitWithImage/SplitWithImage'
 import { IoAnalyticsSharp, IoLogoBitcoin, IoSearchSharp } from 'react-icons/io5'
+import CreateContact from 'src/components/CreateContact/CreateContact'
 
 const HomePage = () => {
   return (
@@ -41,7 +42,7 @@ const HomePage = () => {
       <SplitWithImage
         tagline='Services'
         heading='For Services Companies: Elevate Your Client Interactions'
-        subheading='We built Sidekick Sammy to...'
+        subheading={'We built Sidekick Sammy to'}
         imageUrl='https://www.sidekicksammy.com/hubfs/Screenshot%202023-10-28%20012250-gf.png'
         direction='rtl'
         items={[
@@ -62,6 +63,7 @@ const HomePage = () => {
           }
         ]}
       />
+      <CreateContact />
     </Box>
   )
 }
