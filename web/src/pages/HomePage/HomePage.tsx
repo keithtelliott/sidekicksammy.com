@@ -1,29 +1,33 @@
-import { Box,Icon,
-  useColorModeValue, } from '@chakra-ui/react'
-import CallToActionWithAnnotation from 'src/components/CallToActionWithAnnotation/CallToActionWithAnnotation'
-import SplitWithImage from 'src/components/SplitWithImage/SplitWithImage'
+import { Box, Icon, useColorModeValue } from '@chakra-ui/react'
 import { IoAnalyticsSharp, IoLogoBitcoin, IoSearchSharp } from 'react-icons/io5'
+
+import CallToActionWithAnnotation from 'src/components/CallToActionWithAnnotation/CallToActionWithAnnotation'
 import CreateContact from 'src/components/CreateContact/CreateContact'
+import SplitWithImage from 'src/components/SplitWithImage/SplitWithImage'
 
 const HomePage = () => {
   return (
     <Box>
       <CallToActionWithAnnotation
-        heading={'Boost Your Website\'s Superpowers with Sidekick Sammy'}
-        subheading={'Add an interactive, topic specific bot to your website.'}
+        heading={"Boost Your Website's Superpowers with Sidekick Sammy"}
+        subheading={
+          'Add an interactive, topic specific AI chatbot to your website.'
+        }
         buttonLabel={'Get Started'}
         annotation={'No credit card required.'}
         alternateCTA={false}
         alternateCTAButtonLabel={'Learn More'}
       />
       <SplitWithImage
-        tagline='Products'
-        heading='For Product Companies: Amplify Your user Experience'
-        subheading='We built Sidekick Sammy to...'
-        imageUrl='https://www.sidekicksammy.com/hubfs/Untitled%20design%20(13).png'
+        tagline="Products"
+        heading="For Product Companies: Amplify Your user Experience"
+        subheading="We built Sidekick Sammy to..."
+        imageUrl="https://www.sidekicksammy.com/hubfs/Untitled%20design%20(13).png"
         items={[
           {
-            icon: <Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />,
+            icon: (
+              <Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />
+            ),
             iconBg: useColorModeValue('yellow.100', 'yellow.900'),
             text: 'Answer technical questions',
           },
@@ -36,18 +40,20 @@ const HomePage = () => {
             icon: <Icon as={IoSearchSharp} color={'purple.500'} w={5} h={5} />,
             iconBg: useColorModeValue('purple.100', 'purple.900'),
             text: 'Immediately answer questions about your product',
-          }
+          },
         ]}
       />
       <SplitWithImage
-        tagline='Services'
-        heading='For Services Companies: Elevate Your Client Interactions'
+        tagline="Services"
+        heading="For Services Companies: Elevate Your Client Interactions"
         subheading={'We built Sidekick Sammy to'}
-        imageUrl='https://www.sidekicksammy.com/hubfs/Screenshot%202023-10-28%20012250-gf.png'
-        direction='rtl'
+        imageUrl="https://www.sidekicksammy.com/hubfs/Screenshot%202023-10-28%20012250-gf.png"
+        direction="rtl"
         items={[
           {
-            icon: <Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />,
+            icon: (
+              <Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />
+            ),
             iconBg: useColorModeValue('yellow.100', 'yellow.900'),
             text: 'Answer questions about your services',
           },
@@ -60,7 +66,7 @@ const HomePage = () => {
             icon: <Icon as={IoSearchSharp} color={'purple.500'} w={5} h={5} />,
             iconBg: useColorModeValue('purple.100', 'purple.900'),
             text: 'Immediately answer questions about your services',
-          }
+          },
         ]}
       />
       <CreateContact />
