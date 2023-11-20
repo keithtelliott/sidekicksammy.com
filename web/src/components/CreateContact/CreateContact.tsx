@@ -1,4 +1,6 @@
-import { Form, Label, TextField, Submit } from '@redwoodjs/forms'
+import { useState } from 'react'
+
+import { CheckIcon } from '@chakra-ui/icons'
 import {
   Box,
   Flex,
@@ -11,8 +13,8 @@ import {
   useColorModeValue,
   createIcon,
 } from '@chakra-ui/react'
-import { CheckIcon } from '@chakra-ui/icons'
-import { useState } from 'react'
+
+import { Form, Label, TextField, Submit } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 const CREATE_CONTACT = gql`
   mutation CreateContactMutation($input: CreateHubspotContactInput!) {
@@ -38,7 +40,9 @@ const CreateContact = () => {
       })
   }
 
-  const [state, setState] = useState<'initial' | 'submitting' | 'success'>('initial')
+  const [state, setState] = useState<'initial' | 'submitting' | 'success'>(
+    'initial'
+  )
   return (
     <Box>
       <Flex
@@ -46,7 +50,8 @@ const CreateContact = () => {
         align={'center'}
         justify={'center'}
         py={12}
-        bg={useColorModeValue('gray.50', 'gray.800')}>
+        bg={useColorModeValue('gray.50', 'gray.800')}
+      >
         <Stack
           boxShadow={'2xl'}
           bg={useColorModeValue('white', 'gray.700')}
@@ -55,38 +60,47 @@ const CreateContact = () => {
           spacing={8}
           align={'center'}
           display={state === 'success' ? 'none' : 'block'}
-          >
+        >
           {/*<Icon as={NotificationIcon} w={24} h={24} />*/}
           <Stack align={'center'} spacing={2}>
             <Heading
               textTransform={'uppercase'}
               fontSize={'3xl'}
-              color={useColorModeValue('gray.800', 'gray.200')}>
+              color={useColorModeValue('gray.800', 'gray.200')}
+            >
               Get Started
             </Heading>
             <Text fontSize={'lg'} color={'gray.500'}>
               Your goals await. Sign up now.
             </Text>
           </Stack>
-          <Stack gap={1} spacing={4} direction={{ base: 'column', md: 'row' }} w={'full'}>
+          <Stack
+            gap={1}
+            spacing={4}
+            direction={{ base: 'column', md: 'row' }}
+            w={'full'}
+          >
             <Form onSubmit={onSubmit} config={{ mode: 'onBlur' }}>
-
-              <Label name="email" errorClassName="error" hidden>{'Email'}</Label>
+              <Label name="email" errorClassName="error" hidden>
+                {'Email'}
+              </Label>
               <Input
                 as={TextField}
                 name="email"
                 validation={{ required: true }}
                 errorClassName="error"
-                placeholder='john@example.com'
+                placeholder="john@example.com"
                 mb={1}
               />
-              <Label name="website" errorClassName="error" hidden >{'Website'}</Label>
+              <Label name="website" errorClassName="error" hidden>
+                {'Website'}
+              </Label>
               <Input
                 as={TextField}
                 name="website"
                 validation={{ required: true }}
                 errorClassName="error"
-                placeholder='https://johnsawesomesite.com'
+                placeholder="https://johnsawesomesite.com"
                 mb={1}
               />
               <Button
@@ -97,23 +111,22 @@ const CreateContact = () => {
               >
                 {state === 'success' ? <CheckIcon /> : 'Submit'}
               </Button>
-              {state}
             </Form>
-
           </Stack>
         </Stack>
-        <Box display={state === 'success' ? 'block' : 'none' }>
-                {/**thanks */}
-                <Heading
-                  textTransform={'uppercase'}
-                  fontSize={'3xl'}
-                  color={useColorModeValue('gray.800', 'gray.200')}>
-                  Thanks!
-                </Heading>
-                <Text fontSize={'lg'} color={'gray.500'}>
-                  We'll be in touch soon.
-                </Text>
-              </Box>
+        <Box display={state === 'success' ? 'block' : 'none'}>
+          {/**thanks */}
+          <Heading
+            textTransform={'uppercase'}
+            fontSize={'3xl'}
+            color={useColorModeValue('gray.800', 'gray.200')}
+          >
+            Thanks!
+          </Heading>
+          <Text fontSize={'lg'} color={'gray.500'}>
+            We'll be in touch soon.
+          </Text>
+        </Box>
       </Flex>
     </Box>
   )
