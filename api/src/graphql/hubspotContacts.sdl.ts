@@ -35,6 +35,8 @@ export const schema = gql`
     lifecyclestage: String
     website: String!
     archived: Boolean
+    outcomes: String
+    personality: String
   }
   type HubspotError {
     message: String!

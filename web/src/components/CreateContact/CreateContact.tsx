@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { CheckIcon } from '@chakra-ui/icons'
 import {
@@ -14,7 +14,7 @@ import {
   createIcon,
 } from '@chakra-ui/react'
 
-import { Form, Label, TextField, Submit } from '@redwoodjs/forms'
+import { Form, Label, TextField, Submit, FieldError, set } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 const CREATE_CONTACT = gql`
   mutation CreateContactMutation($input: CreateHubspotContactInput!) {
@@ -40,9 +40,69 @@ const CreateContact = () => {
       })
   }
 
-  const [state, setState] = useState<'initial' | 'submitting' | 'success'>(
+  const [state, setState] = useState<'initial' | 'ready' | 'submitting' | 'success'>(
     'initial'
   )
+  const [url, setUrl] = useState('')
+  const [sitemap, setSiteMap] = useState('')
+  const [message, setMessage] = useState('')
+  const [siteMapPages, setSiteMapPages] = useState(0)
+  const [email, setEmail] = useState('')
+  const [outcomes, setOutcomes] = useState('')
+  const [personality, setPersonality] = useState('')
+  const personalities = [
+    'Friendly',
+    'Professional',
+    'Humorous',
+    'Sarcastic',
+    'Snarky',
+    'Helpful',
+    'Informative',
+    'Educational',
+    'Authoritative',
+    'Conversational',
+    'Casual',
+    'Formal',
+    'Technical',
+    'Silly',
+    'Playful',
+    'Clever',
+  ]
+
+  // when url changes, look for a sitemap.xml
+  useEffect(() => {
+    setState('initial')
+    if (url === '') {
+      return
+    }
+    let personalitiesLength = personalities.length
+    let personality = personalities[Math.floor(Math.random() * personalitiesLength)]
+    setPersonality(personality)
+    let localMessage = ''
+    // we're going to fetch ./.redwood/function/getPages?website=https://www.sidekicksammy.com
+    fetch(`/.redwood/functions/getPages?website=${url}`)
+      .then((response) => {
+        localMessage += `Response: ${response.status} ${response.statusText}`
+        if (response.status === 200) {
+          localMessage += ` - Success!`
+          return response.json()
+        }
+        return null
+      })
+      .then((data) => {
+        if (data) {
+          setSiteMap(JSON.stringify(data))
+          setSiteMapPages(data.data.pagesCount)
+          if (data.data.pagesCount > 0) {
+            setState('ready')
+          }
+          if (data.data.outcome) {
+            setOutcomes(data.data.outcome)
+          }
+        }
+        setMessage(localMessage)
+      })
+  }, [url])
   return (
     <Box>
       <Flex
@@ -80,37 +140,95 @@ const CreateContact = () => {
             direction={{ base: 'column', md: 'row' }}
             w={'full'}
           >
-            <Form onSubmit={onSubmit} config={{ mode: 'onBlur' }}>
-              <Label name="email" errorClassName="error" hidden>
-                {'Email'}
-              </Label>
-              <Input
-                as={TextField}
-                name="email"
-                validation={{ required: true }}
-                errorClassName="error"
-                placeholder="john@example.com"
+            <Form
+              onSubmit={onSubmit}
+              config={{ mode: 'onBlur' }}
+            >
+              <Box
+
+                color={useColorModeValue('gray.800', 'gray.200')}
+                w={'full'}
                 mb={1}
-              />
-              <Label name="website" errorClassName="error" hidden>
-                {'Website'}
-              </Label>
-              <Input
-                as={TextField}
-                name="website"
-                validation={{ required: true }}
-                errorClassName="error"
-                placeholder="https://johnsawesomesite.com"
-                mb={1}
-              />
-              <Button
-                colorScheme={state === 'success' ? 'green' : 'blue'}
-                isLoading={state === 'submitting'}
-                w="100%"
-                type={state === 'success' ? 'button' : 'submit'}
               >
-                {state === 'success' ? <CheckIcon /> : 'Submit'}
-              </Button>
+                <Label name="website">{'Website'}</Label>
+                <Input
+                  bgColor={useColorModeValue('gray.50', 'gray.800')}
+                  as={TextField}
+                  color={useColorModeValue('gray.800', 'gray.200')}
+                  name="website"
+                  validation={{ required: true }}
+                  placeholder="example.com"
+                  mb={1}
+                  // when focus leaves
+                  onBlur={(event) => {
+                    setUrl(event.target.value)
+                  }}
+                />
+                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="website" className="error" pl={1} />
+                <Label name="email">{'Email'}</Label>
+                <Input
+                  bgColor={useColorModeValue('gray.50', 'gray.800')}
+                  color={useColorModeValue('gray.800', 'gray.200')}
+                  as={TextField}
+                  name="email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value)
+                  }}
+                  validation={{ required: true }}
+                  placeholder="john@example.com"
+                  mb={1}
+                />
+                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="email" className="error" pl={1} />
+
+                <Label name="personality">{'Personality'}</Label>
+                <Input
+                  bgColor={useColorModeValue('gray.50', 'gray.800')}
+                  color={useColorModeValue('gray.800', 'gray.200')}
+                  value={personality}
+                  onChange={(event) => {
+                    setPersonality(event.target.value)
+                  }}
+                  as={TextField}
+                  name="personality"
+                  validation={{ required: true }}
+                  placeholder="Personality"
+                  mb={1}
+                />
+
+                <Text as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="personality" className="error" pl={1} />
+                <Label name="outcomes">{'Outcomes'}</Label>
+                <Input
+                  bgColor={useColorModeValue('gray.50', 'gray.800')}
+                  color={useColorModeValue('gray.800', 'gray.200')}
+                  as={TextField}
+                  name="outcomes"
+                  value={outcomes}
+                  onChange={(event) => {
+                    setOutcomes(event.target.value)
+                  }}
+                  validation={{ required: true }}
+                  placeholder="Outcomes"
+                  mb={1}
+                />
+                <Button
+                  colorScheme={state === 'success' ? 'green' : 'blue'}
+                  isLoading={state === 'submitting'}
+                  w="100%"
+                  mb={1}
+                  type={state === 'success' ? 'button' : 'submit'}
+                  //disable until we have a website, email, personality, and outcomes
+                  // oh and state === 'ready'
+                  isDisabled={state !== 'ready' || url === '' || email === '' || personality === '' || outcomes === ''}
+                >
+                  {state !== 'ready' &&  ('Enter a website')}
+                  {state === 'success' && <CheckIcon />}
+                  {state === 'ready' && 'Submit'}
+                </Button>
+              </Box>
             </Form>
           </Stack>
         </Stack>
