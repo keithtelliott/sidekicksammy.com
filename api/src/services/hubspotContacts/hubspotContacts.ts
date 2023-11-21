@@ -3,7 +3,7 @@
 // this is only going to handle posts.
 import { Client } from "@hubspot/api-client";
 
-const hubspotClient = new Client({ "accessToken": process.env.HUBSPOT_API_KEY });
+const hubspotClient = new Client({ "accessToken": process.env.SIDEKICKSAMMY_HUBSPOT_API_KEY });
 
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
@@ -12,6 +12,9 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
     let data = {
       email: input.email,
       website: input.website,
+      sidekick_outcome: input.outcomes,
+      sidekick_personality: input.personality,
+      //sidekick_prompt: input.sidekick_prompt,
     }
     try {
       let contact = await hubspotClient.crm.contacts.basicApi.create({
@@ -29,6 +32,11 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
           email: input.email,
           website: input.website,
           lastmodifieddate: new Date().toISOString(),
+          sidekick_outcome: input.outcomes,
+          //sidekick_prompt: input.sidekick_prompt,
+          sidekick_personality: input.personality,
+          // we have some custom fields here
+          // Sidekick Outcome, Sidekick Personality, Sidekick Prompt
         }
         return errorObject
       }

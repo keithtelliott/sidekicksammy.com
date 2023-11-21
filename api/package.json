@@ -6,6 +6,7 @@
     "@hubspot/api-client": "^10.0.0",
     "@redwoodjs/api": "6.4.0",
     "@redwoodjs/graphql-server": "6.4.0",
+    "@xmldom/xmldom": "^0.8.10",
     "metascraper": "^5.38.0",
     "metascraper-description": "^5.38.0",
     "metascraper-title": "^5.38.0",

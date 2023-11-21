@@ -9,12 +9,12 @@ import {
   Text,
   Input,
   Button,
-  Icon,
   useColorModeValue,
-  createIcon,
+  keyframes,
+  SkeletonCircle,
 } from '@chakra-ui/react'
 
-import { Form, Label, TextField, Submit, FieldError, set } from '@redwoodjs/forms'
+import { Form, Label, TextField, Submit, FieldError, set, TextAreaField } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 const CREATE_CONTACT = gql`
   mutation CreateContactMutation($input: CreateHubspotContactInput!) {
@@ -40,7 +40,7 @@ const CreateContact = () => {
       })
   }
 
-  const [state, setState] = useState<'initial' | 'ready' | 'submitting' | 'success'>(
+  const [state, setState] = useState<'initial' | 'loading' | 'ready' | 'submitting' | 'success'>(
     'initial'
   )
   const [url, setUrl] = useState('')
@@ -49,60 +49,131 @@ const CreateContact = () => {
   const [siteMapPages, setSiteMapPages] = useState(0)
   const [email, setEmail] = useState('')
   const [outcomes, setOutcomes] = useState('')
+  const [buttonLabel, setButtonLabel] = useState('Submit')
   const [personality, setPersonality] = useState('')
   const personalities = [
-    'Friendly',
-    'Professional',
-    'Humorous',
-    'Sarcastic',
-    'Snarky',
-    'Helpful',
-    'Informative',
-    'Educational',
-    'Authoritative',
-    'Conversational',
-    'Casual',
-    'Formal',
-    'Technical',
-    'Silly',
-    'Playful',
-    'Clever',
+    // this should be  alist of 5 distinct personalities
+    'Be empathetic, optimistic yet realistic',
+    'Be formal, professional, and helpful',
+    'Be casual, friendly, and helpful',
+    'Be direct, professional, and helpful',
+    'Be technical, professional, and helpful',
+  ]
+  const cannedOutcomes = [
+    'Boost your site traffic by answering questions with links to your content.',
+    'Increase the number of pages a user visits by answering questions with links to your content.',
+    'Increase the number of leads your website generates by sending users to schedule a demo.',
+    'Increase your conversion rate by sending users to schedule a demo.',
+    'Increase your email subscribers by sending users to subscribe.',
+    'Decrease your bounce rate by answering questions with links to your content.',
+    'Increase your blog readership by sending users to your blog.',
   ]
 
-  // when url changes, look for a sitemap.xml
+  // based on what we get back we'll present ht euser differnt buttons;
+  // if the site has a sitemap and < 100 pages, we'll present a button to start
+  // if the site has a sitemap and > 100 pages, we'll present a button to schedule a meeting to figue out what pages to include
+  // if the site has no sitemap, we'll present a button to schedule a meeting to figue out what pages to include
+  // if the site is not responding, we'll present an error message and a button to schedule a meeting to figue out what pages to include
+  let getRandomPersonality = () => {
+    let personalitiesLength = personalities.length
+    let personality = personalities[Math.floor(Math.random() * personalitiesLength)]
+    setPersonality(personality)
+  }
+  let getRandomOutcome = () => {
+    let outcomesLength = cannedOutcomes.length
+    let outcome = cannedOutcomes[Math.floor(Math.random() * outcomesLength)]
+    setOutcomes(outcome)
+  }
+  let getWebsiteDetails = async (url) => {
+    // lets kill teh fetch after 5 seconds
+    //await fetch(`/.redwood/functions/getPages?website=${url}`)
+    let options = {
+      //method: 'GET',
+      //headers: {'Content-Type': 'application/json'},
+      //mode: 'cors',
+      //cache: 'default',
+      //redirect: 'follow',
+      //referrerPolicy: 'no-referrer',
+    }
+    await fetch(`/.redwood/functions/getPages?website=${url}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        let isError = typeof data.data === 'string'
+        if (isError) {
+          setMessage(data.data)
+          setState('initial')
+          setButtonLabel('Try again, reason: ' + data.data)
+          return
+        }
+        if (!isError) {
+          setSiteMap(JSON.stringify(data))
+          setSiteMapPages(data.data.pagesCount)
+          setButtonLabel('Found ' + data.data.pagesCount + ' pages. Submit to start.')
+          setState('ready')
+          return
+        }
+      })
+  }
   useEffect(() => {
+    // the form loads in an 'initial' state, but when the url
+    // is entered, we want to show the initial state
+
     setState('initial')
     if (url === '') {
       return
     }
-    let personalitiesLength = personalities.length
-    let personality = personalities[Math.floor(Math.random() * personalitiesLength)]
-    setPersonality(personality)
-    let localMessage = ''
-    // we're going to fetch ./.redwood/function/getPages?website=https://www.sidekicksammy.com
-    fetch(`/.redwood/functions/getPages?website=${url}`)
-      .then((response) => {
-        localMessage += `Response: ${response.status} ${response.statusText}`
-        if (response.status === 200) {
-          localMessage += ` - Success!`
-          return response.json()
-        }
-        return null
-      })
-      .then((data) => {
-        if (data) {
-          setSiteMap(JSON.stringify(data))
-          setSiteMapPages(data.data.pagesCount)
-          if (data.data.pagesCount > 0) {
-            setState('ready')
-          }
-          if (data.data.outcome) {
-            setOutcomes(data.data.outcome)
-          }
-        }
-        setMessage(localMessage)
-      })
+    // if there is a url, set the state to loading
+    setState('loading')
+    // then lets set the personality and outcomes
+    getRandomPersonality()
+    getRandomOutcome()
+    // then lets fetch the site, see if it's responding
+    setButtonLabel('Checking website...')
+    getWebsiteDetails(url)
   }, [url])
+  let AnimatedElipses = () => {
+    // using skeleton circle to animate
+    // https://chakra-ui.com/docs/feedback/skeleton
+    // lets show 3 circles,
+    // the will anmate up and down
+    // the 1st and 3rd will animate at same time
+    // the 2nd will animate 1/2 second later
+    let animation = keyframes`
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    `
+    let animation2 = keyframes`
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    `
+    let animation3 = keyframes`
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    `
+    let style = {
+      animation: `${animation} 1s linear infinite`,
+      animationDelay: '0s',
+    }
+    let style2 = {
+      animation: `${animation2} 1s linear infinite`,
+      animationDelay: '.5s',
+    }
+    let style3 = {
+      animation: `${animation3} 1s linear infinite`,
+      animationDelay: '1s',
+    }
+    return (
+      <Flex>
+        <SkeletonCircle size="10px" style={style} />
+        <SkeletonCircle size="10px" style={style2} />
+        <SkeletonCircle size="10px" style={style3} />
+      </Flex>
+    )
+  }
   return (
     <Box>
       <Flex
@@ -138,7 +209,7 @@ const CreateContact = () => {
             gap={1}
             spacing={4}
             direction={{ base: 'column', md: 'row' }}
-            w={'full'}
+            maxW={'md'}
           >
             <Form
               onSubmit={onSubmit}
@@ -151,12 +222,15 @@ const CreateContact = () => {
                 mb={1}
               >
                 <Label name="website">{'Website'}</Label>
+                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="website" className="error" pl={1} />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   as={TextField}
                   color={useColorModeValue('gray.800', 'gray.200')}
                   name="website"
-                  validation={{ required: true }}
+                  //regex is just word.word
+                  validation={{ required: true, pattern: { value: RegExp(/^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$/), message: 'Invalid website address' } }}
                   placeholder="example.com"
                   mb={1}
                   // when focus leaves
@@ -164,9 +238,9 @@ const CreateContact = () => {
                     setUrl(event.target.value)
                   }}
                 />
-                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="website" className="error" pl={1} />
                 <Label name="email">{'Email'}</Label>
+                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="email" className="error" pl={1} />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
@@ -176,13 +250,10 @@ const CreateContact = () => {
                   onChange={(event) => {
                     setEmail(event.target.value)
                   }}
-                  validation={{ required: true }}
+                  validation={{ required: true, pattern: { value: RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i), message: 'Invalid email address' } }}
                   placeholder="john@example.com"
                   mb={1}
                 />
-                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="email" className="error" pl={1} />
-
                 <Label name="personality">{'Personality'}</Label>
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
@@ -200,11 +271,15 @@ const CreateContact = () => {
 
                 <Text as={FieldError} color={useColorModeValue('red.500', 'red.300')}
                   name="personality" className="error" pl={1} />
-                <Label name="outcomes">{'Outcomes'}</Label>
+                <Label name="outcomes">{'Outcomes'} {state === 'loading' && <AnimatedElipses />}</Label>
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
-                  as={TextField}
+                  as={TextAreaField}
+                  // hide scrollbars
+                  overflow="hidden"
+                  // height should be 3 lines
+                  height={16}
                   name="outcomes"
                   value={outcomes}
                   onChange={(event) => {
@@ -213,6 +288,8 @@ const CreateContact = () => {
                   validation={{ required: true }}
                   placeholder="Outcomes"
                   mb={1}
+                  rounded={'md'}
+                  p={3}
                 />
                 <Button
                   colorScheme={state === 'success' ? 'green' : 'blue'}
@@ -220,14 +297,13 @@ const CreateContact = () => {
                   w="100%"
                   mb={1}
                   type={state === 'success' ? 'button' : 'submit'}
-                  //disable until we have a website, email, personality, and outcomes
-                  // oh and state === 'ready'
                   isDisabled={state !== 'ready' || url === '' || email === '' || personality === '' || outcomes === ''}
                 >
-                  {state !== 'ready' &&  ('Enter a website')}
+                  {buttonLabel}
                   {state === 'success' && <CheckIcon />}
-                  {state === 'ready' && 'Submit'}
                 </Button>
+
+                {message}
               </Box>
             </Form>
           </Stack>

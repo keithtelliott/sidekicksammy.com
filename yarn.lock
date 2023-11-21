@@ -9665,7 +9665,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmldom/xmldom@npm:^0.8.3":
+"@xmldom/xmldom@npm:^0.8.10, @xmldom/xmldom@npm:^0.8.3":
   version: 0.8.10
   resolution: "@xmldom/xmldom@npm:0.8.10"
   checksum: c7647c442502720182b0d65b17d45d2d95317c1c8c497626fe524bda79b4fb768a9aa4fae2da919f308e7abcff7d67c058b102a9d641097e9a57f0b80187851f
@@ -10127,6 +10127,7 @@ __metadata:
     "@hubspot/api-client": ^10.0.0
     "@redwoodjs/api": 6.4.0
     "@redwoodjs/graphql-server": 6.4.0
+    "@xmldom/xmldom": ^0.8.10
     metascraper: ^5.38.0
     metascraper-description: ^5.38.0
     metascraper-title: ^5.38.0
