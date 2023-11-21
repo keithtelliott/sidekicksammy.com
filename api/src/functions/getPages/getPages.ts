@@ -3,9 +3,6 @@ import fetch from 'cross-fetch'
 import Sitemapper from 'sitemapper'
 import robotsParser from 'robots-parser'
 import { logger } from 'src/lib/logger'
-import metascraper from 'metascraper'
-import metascraperDescription from 'metascraper-description'
-import metascraperTitle from 'metascraper-title'
 import { DOMParser } from '@xmldom/xmldom'
 /**
  * The handler function is your code that processes http request events.
@@ -120,88 +117,6 @@ let gettingSitemap = async (url: string) => {
     })
   })
   return pages
-}
-let askOpenAI = async (text: string) => {
-  let key = process.env.OPENAI_API_KEY
-  if (!key) return ''
-  // use fetch
-  // use chatgpt-3.5-turbo
-  let body = {
-    model: "gpt-3.5-turbo",
-    temperature: 0,
-    messages: [
-      { role: "system", content: "Identify the one single outcome this document is trying convey.  This should make a promise, have an actionword, and either directly stated 'you' or 'imply you' meaning, that you're talking to the person reading this outcome" },
-      { role: "user", content: `{ description: 'A site for my notes on ServiceNow', title: 'jace.pro' }` },
-      { role: "assistant", content: "Learn something new about ServiceNow" },
-      {
-        role: "user", content: `{
-        description: 'GlideFast Consulting is an Elite ServiceNow Partner who delivers expert solutions in implementing, integrating, and managing the ServiceNow platform.',
-        title: 'ServiceNow Elite Partner | GlideFast Consulting | United States'
-      }`},
-      { role: "assistant", content: "Work with the best ServiceNow partner" },
-      {
-        role: "user", content: `{
-        description: 'Cut costs and boost efficiency with Checklist Pro. Eliminate unnecessary customizations, enhance transparency, and improve end-user adoption. Free your customers from the cost of ServiceNow with our simple pricing. Try it now!',
-        title: 'Boost Efficiency, Cut Costs | Checklist Pro'
-      }`},
-      { role: "assistant", content: "Save yourself some serious ServiceNow money" },
-      {
-        role: "user", content: `{
-        description: 'A Dev/Sec/Ops and ServiceNow Blog',
-        title: 'A Dev/Sec/Ops and ServiceNow Blog'
-      }`},
-      { role: "assistant", content: "Discover new ways to use ServiceNow" },
-      { role: "user", content: `{ description: null, title: 'Skinny Raven Sports | Anchorage, Alaska' }` },
-      { role: "assistant", content: "Get your gear at Skinny Raven" },
-      { role: "user", content: text },
-    ]
-  }
-  const url = 'https://api.openai.com/v1/chat/completions';
-  const options = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
-    body: JSON.stringify(body)
-  }
-  let response = await fetch(url, options)
-    .then(async (res) => {
-      if (res.status === 200) {
-        let json = await res.json()
-        return json
-      }
-      return ''
-    })
-    .catch((err) => {
-      return ''
-    })
-  return response.choices[0].message
-}
-let guessOutcomes = async (url: string) => {
-  // we're going to make a openai call
-  // html to markdown converter for their homepage
-  let html = await fetch(url, {
-    method: 'GET',
-  })
-    .then(async (res) => {
-      if (res.status === 200) {
-        let html = await res.text()
-        return html
-      }
-      return ''
-    })
-    .catch((err) => {
-      return ''
-    })
-  if (html) {
-    const metadata = await metascraper([
-      metascraperDescription(),
-      metascraperTitle(),
-    ])({ html, url })
-    console.log(metadata)
-    //ask openai
-    let openaiResponse = await askOpenAI(JSON.stringify(metadata))
-    console.log(openaiResponse)
-    return openaiResponse.content
-  }
 }
 let success = (data: any) => {
   return {
