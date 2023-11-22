@@ -64,11 +64,9 @@ export const Success = ({
   getHubspotContact,
 }: CellSuccessProps<FindTenantQuery, FindTenantQueryVariables>) => {
   if (!getHubspotContact.sidekickTitle) return <Empty />
-  console.log(getHubspotContact.sidekickTitle)
   const { updateTenantData } = useTenant()
 
   try {
-    console.log(getHubspotContact)
     let parsedTenantColor = JSON.parse(getHubspotContact.sidekickColorScheme)
     let prettyColor = JSON.stringify(parsedTenantColor, null, 2)
     let mappedData = {
