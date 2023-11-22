@@ -2,7 +2,7 @@
 // instead it will use the hubspot api
 // this is only going to handle posts.
 import { Client } from "@hubspot/api-client";
-
+import { getContactBySidekickTitle, mapHubspotContactToContact } from 'src/lib/hubspot';
 const hubspotClient = new Client({ "accessToken": process.env.SIDEKICKSAMMY_HUBSPOT_API_KEY });
 
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
@@ -23,7 +23,7 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
       })
       console.log(contact)
 
-      return contact.properties
+      return contact.properties as { [key: string]: string };
     } catch (e) {
       console.log(e.body);
       if (e.body.status == 'error') {
@@ -38,8 +38,21 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
           // we have some custom fields here
           // Sidekick Outcome, Sidekick Personality, Sidekick Prompt
         }
-        return errorObject
+        return errorObject;
       }
     }
+  }
+
+
+
+export const getHubspotContact: QueryResolvers['getHubspotContact'] =
+  async ({ title }) => {
+    //console.log({'getHubspotContact': title})
+    let contact = await getContactBySidekickTitle({ title });
+    let mappedContact = mapHubspotContactToContact({ contact });
+    return mappedContact;
 
   }
+
+
+
