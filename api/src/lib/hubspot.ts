@@ -1,3 +1,4 @@
+import fetch from 'cross-fetch'
 export let getAllContact = async ({ after }: { after?: string }) => {
   let contacts: any[] = [];
   let limit = 100;
