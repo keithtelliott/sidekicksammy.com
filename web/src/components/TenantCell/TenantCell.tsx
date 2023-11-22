@@ -92,7 +92,7 @@ export const Success = ({
             {getHubspotContact.sidekickTitle}
           </Heading>
           <FixieIframe
-            src={`https://embed.fixie.ai/agents/${getHubspotContact.fixieCorpusId}?agentStartsConversation=1`}
+            src={`https://embed.fixie.ai/agents/${getHubspotContact.fixieCorpusId}?agentStartsConversation=1&chatTitle=${getHubspotContact.sidekickTitle}`}
             title={`${getHubspotContact.sidekickTitle}'s Fixie AI Agent`}
           />
         </Flex>
