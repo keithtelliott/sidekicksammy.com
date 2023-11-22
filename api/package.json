@@ -5,6 +5,9 @@
   "dependencies": {
     "@hubspot/api-client": "^10.0.0",
     "@redwoodjs/api": "6.4.0",
-    "@redwoodjs/graphql-server": "6.4.0"
+    "@redwoodjs/graphql-server": "6.4.0",
+    "@xmldom/xmldom": "^0.8.10",
+    "robots-parser": "^3.0.1",
+    "sitemapper": "^3.2.8"
   }
 }

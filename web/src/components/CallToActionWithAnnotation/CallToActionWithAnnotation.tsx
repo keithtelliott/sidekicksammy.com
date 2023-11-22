@@ -17,6 +17,7 @@ export default function CallToActionWithAnnotation({
   heading,
   subheading,
   buttonLabel,
+  buttonLink,
   annotation,
   alternateCTA,
   alternateCTAButtonLabel,
@@ -53,7 +54,11 @@ export default function CallToActionWithAnnotation({
               px={6}
               _hover={{
                 bg: 'green.500',
-              }}>
+              }}
+              onClick={() => {
+                window.location.href = buttonLink
+              }}
+              >
               {buttonLabel}
             </Button>
             {alternateCTA && (

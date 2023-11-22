@@ -10,7 +10,7 @@ const FixieIframe = ({ src, title }) => {
       height="500px"
       frameBorder="1"
       allowFullScreen
-      sandbox="allow-scripts allow-same-origin allow-popups"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
       backgroundColor={useColorModeValue('white', 'gray.800')}
     />
   )
