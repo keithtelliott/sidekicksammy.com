@@ -2,7 +2,11 @@
 // instead it will use the hubspot api
 // this is only going to handle posts.
 import { Client } from "@hubspot/api-client";
-import { getContactBySidekickTitle, mapHubspotContactToContact } from 'src/lib/hubspot';
+import {
+  getContactBySidekickTitle,
+  mapHubspotContactToContact,
+  getSocialProof,
+ } from 'src/lib/hubspot';
 const hubspotClient = new Client({ "accessToken": process.env.SIDEKICKSAMMY_HUBSPOT_API_KEY });
 
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
@@ -43,16 +47,16 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
     }
   }
 
-
-
 export const getHubspotContact: QueryResolvers['getHubspotContact'] =
   async ({ title }) => {
-    //console.log({'getHubspotContact': title})
     let contact = await getContactBySidekickTitle({ title });
-    let mappedContact = mapHubspotContactToContact({ contact });
+    console.log(contact);
+    let mappedContact = mapHubspotContactToContact({contact});
+    console.log(mappedContact);
     return mappedContact;
-
   }
 
-
-
+export const socialProof: QueryResolvers['getSocialProof'] =
+  async () => {
+    return getSocialProof();
+  }

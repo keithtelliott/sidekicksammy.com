@@ -27,7 +27,13 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
         </Text>
       </Flex>
       <Flex>
-        <Button onClick={toggleColorMode}>
+        <Button onClick={toggleColorMode}
+        // text should use the textColorScheme
+        color={useColorModeValue(
+          `${secondaryColor.light}`,
+          `${secondaryColor.dark}`
+        )}
+        >
           Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
         </Button>
       </Flex>
