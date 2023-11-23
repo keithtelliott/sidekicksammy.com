@@ -15244,9 +15244,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^9":
-  version: 9.1.7
-  resolution: "framer-motion@npm:9.1.7"
+"framer-motion@npm:^10.16.5":
+  version: 10.16.5
+  resolution: "framer-motion@npm:10.16.5"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -15256,7 +15256,12 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: 4a152079cfd50d6235713534972cb1ae2d1f4f420db638f79b822e3c01a262a7883d0d84f64ddc58ea369aa0b16336c2cf282349f829dc209bd0e5c6e33d171a
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 38a673cfd237806efd0a6308585e0f254238abf0d68cfb7bdeceddf14b8cb8825e3122c1df5c9d838a5886e6cefa81bc54983f961e76651797c60242c6f37035
   languageName: node
   linkType: hard
 
@@ -25182,7 +25187,7 @@ __metadata:
     "@redwoodjs/web": 6.4.0
     "@types/react": 18.2.14
     "@types/react-dom": 18.2.6
-    framer-motion: ^9
+    framer-motion: ^10.16.5
     prop-types: 15.8.1
     react: 18.2.0
     react-dom: 18.2.0

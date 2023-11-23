@@ -51,9 +51,16 @@ export const schema = gql`
     message: String!
     status: String!
   }
+  type SocialProof {
+    logo: String!
+    title: String!
+    link: String!
+  }
   type Query {
     getHubspotContact(title: String!): HubspotContact!
       @skipAuth
+    socialProof: [SocialProof] @skipAuth
+
   }
 
   type Mutation {
