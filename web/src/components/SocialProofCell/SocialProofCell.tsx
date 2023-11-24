@@ -3,7 +3,7 @@ import type {
   FindSocialProofQueryVariables,
 } from 'types/graphql'
 
-import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import { type CellSuccessProps, type CellFailureProps, MetaTags } from '@redwoodjs/web'
 import { Flex, Box, Image, Text, Link, shouldForwardProp, chakra, keyframes } from '@chakra-ui/react'
 import { isValidMotionProp, motion } from 'framer-motion'
 const ChakraBox = chakra(motion.div, {
@@ -32,37 +32,26 @@ export const Failure = ({
 export const Success = ({
   socialProof,
 }: CellSuccessProps<FindSocialProofQuery, FindSocialProofQueryVariables>) => {
-  //return <div>{JSON.stringify(socialProof)}</div>
-  //we ar returning a list of images that are clickable and
-  // rotate through the list left to right on an infinite loop
-  // using chakra-ui's image component
-  // each
   const animationKeyframes = keyframes`
-  /*0% { transform: scale(1) rotate(0); border-radius: 20%; }*/
-  /*25% { transform: scale(2) rotate(0); border-radius: 20%; }*/
-  /*50% { transform: scale(2) rotate(270deg); border-radius: 50%; }*/
-  /*75% { transform: scale(1) rotate(270deg); border-radius: 50%; }*/
-  /*100% { transform: scale(1) rotate(0); border-radius: 20%; }*/
-  /* lets do a marquee */
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
-
 `;
 
-const animation = `${animationKeyframes} 20s ease-in-out infinite`;
+const animation = `${animationKeyframes} 40s linear infinite`;
   return (
+    <Box>
     <Flex
       alignItems={'center'}
       overflow="hidden"
       bgColor={'gray.400'}
     >
       <ChakraBox
-        //display={'flex'}
         alignItems={'center'}
-        // give the marquee some space
-        //px={'2rem'}
-        // let the marquee scroll
         animation={animation}
+        // on mouse over, stop the animation
+        _hover={{
+          animationPlayState: 'paused',
+        }}
       >
           <Flex
           py={4}
@@ -83,6 +72,9 @@ const animation = `${animationKeyframes} 20s ease-in-out infinite`;
                 mr="2rem"
                 // color grey
                 filter="grayscale(100%)"
+                // show tooltip on hover
+                title={item.title}
+
               />
               <Text>{item.title}</Text>
               </Flex>
@@ -102,5 +94,6 @@ const animation = `${animationKeyframes} 20s ease-in-out infinite`;
 
       </Box>
     </Flex>
+    </Box>
   )
 }

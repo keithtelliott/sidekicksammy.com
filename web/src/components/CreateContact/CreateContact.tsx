@@ -255,6 +255,8 @@ const CreateContact = () => {
                   mb={1}
                 />
                 <Label name="personality">{'Personality'}</Label>
+                <Text as={FieldError} color={useColorModeValue('red.500', 'red.300')}
+                  name="personality" className="error" pl={1} />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
@@ -269,8 +271,6 @@ const CreateContact = () => {
                   mb={1}
                 />
 
-                <Text as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="personality" className="error" pl={1} />
                 <Label name="outcomes">{'Outcomes'} {state === 'loading' && <AnimatedElipses />}</Label>
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
