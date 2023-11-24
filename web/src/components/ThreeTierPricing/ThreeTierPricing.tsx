@@ -35,6 +35,30 @@ function PriceWrapper(props: Props) {
     </Box>
   )
 }
+function PriceSection({ price }) {
+  // price is an integer/float
+  let isFree = typeof price === "string" && price.toLowerCase() === "free"
+  if(isFree) return (
+    <HStack justifyContent="center">
+      <Text fontSize="5xl" fontWeight="600">
+        Free
+      </Text>
+    </HStack>
+  )
+  return (
+    <HStack justifyContent="center">
+      <Text fontSize="3xl" fontWeight="600">
+        $
+      </Text>
+      <Text fontSize="5xl" fontWeight="900">
+        {price}
+      </Text>
+      <Text fontSize="3xl" color="gray.500">
+        /month
+      </Text>
+    </HStack>
+  )
+}
 
 function Offering({ name, price, features, buttonLabel, buttonLink, mostPopular }) {
 
@@ -50,7 +74,7 @@ function Offering({ name, price, features, buttonLabel, buttonLink, mostPopular 
         >
           <Text
             textTransform="uppercase"
-            bg={useColorModeValue('red.300', 'red.700')}
+            bg={useColorModeValue('green.300', 'green.700')}
             px={3}
             py={1}
             color={useColorModeValue('gray.900', 'gray.300')}
@@ -64,17 +88,7 @@ function Offering({ name, price, features, buttonLabel, buttonLink, mostPopular 
           <Text fontWeight="500" fontSize="2xl">
             {name}
           </Text>
-          <HStack justifyContent="center">
-            <Text fontSize="3xl" fontWeight="600">
-              $
-            </Text>
-            <Text fontSize="5xl" fontWeight="900">
-              {price}
-            </Text>
-            <Text fontSize="3xl" color="gray.500">
-              /month
-            </Text>
-          </HStack>
+          <PriceSection price={price} />
         </Box>
         <VStack
           bg={useColorModeValue('gray.50', 'gray.700')}
@@ -91,7 +105,7 @@ function Offering({ name, price, features, buttonLabel, buttonLink, mostPopular 
           <Box w="80%" pt={7}>
             <Button
               w="full"
-              colorScheme="red"
+              colorScheme="green"
               variant={mostPopular ? 'solid' : 'outline'}
               as={Link}
               href={buttonLink}
@@ -153,7 +167,7 @@ export default function ThreeTierPricing({ heading, subheading, offerings }) {
     ]
   }
   return (
-    <Box py={12}>
+    <Box py={{ base: 1, lg: 12 }}>
       <Link id="pricing" />
       <VStack spacing={2} textAlign="center">
         <Heading as="h1" fontSize="4xl">
@@ -169,7 +183,7 @@ export default function ThreeTierPricing({ heading, subheading, offerings }) {
         textAlign="center"
         justify="center"
         spacing={{ base: 4, lg: 10 }}
-        py={10}>
+        py={{sm: 1, lg: 10}}>
 
         {offerings.map((offering) => (
           <Offering key={offering.name} {...offering} />
