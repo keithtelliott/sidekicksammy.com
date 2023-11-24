@@ -13,6 +13,7 @@ import {
   Stack,
   Collapse,
   Icon,
+  Image,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -54,13 +55,7 @@ export function WithSubnavigation() {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Logo
-          </Text>
-
+          <Image src="./logo.png" alt="Sidekick Sammy Logo" h={10} />
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
           </Flex>
@@ -71,7 +66,7 @@ export function WithSubnavigation() {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#pricing'}>
             Pricing
           </Button>
           <Button
@@ -81,7 +76,7 @@ export function WithSubnavigation() {
             fontWeight={600}
             color={'white'}
             bg={'pink.400'}
-            href={'#'}
+            href={'#get-started'}
             _hover={{
               bg: 'pink.300',
             }}>

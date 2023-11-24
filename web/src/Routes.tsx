@@ -9,13 +9,28 @@
 
 import { Set, Router, Route } from '@redwoodjs/router'
 import HomeLayout from './layouts/HomeLayout'
+import TenantLayout from './layouts/TenantLayout'
 
 const Routes = () => {
+  type TenantLayoutProps = {
+    tenantData: {
+      name: string
+      logo: string
+      colorScheme: string
+      // ... add other tenant-specific properties
+    }
+  }
+
   return (
     <Router>
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
         <Route notfound page={NotFoundPage} />
+      </Set>
+      <Set wrap={TenantLayout}>
+        <Route path="/tenant/{tenantName}" page={TenantPage} name="tenant" />
+        <Route path="/{title}" page={DemoPage} name="demo1" />
+        <Route path="/demo/{title}" page={DemoPage} name="demo2" />
       </Set>
     </Router>
   )
