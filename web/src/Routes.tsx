@@ -23,6 +23,7 @@ const Routes = () => {
 
   return (
     <Router>
+      <Route path="/mobile-test" page={MobileTestPage} name="mobileTest" />
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
         <Route notfound page={NotFoundPage} />
