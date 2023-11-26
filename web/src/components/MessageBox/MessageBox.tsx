@@ -11,8 +11,8 @@ export default function MessageBox(props: { output: string }) {
   return (
     <Box
       //display={output ? 'flex' : 'none'}
-      px="22px !important"
-      pl="22px !important"
+      //px="22px !important"
+      //pl="22px !important"
       color={textColor}
       // minH="450px"
       fontSize={{ base: 'sm', md: 'md' }}

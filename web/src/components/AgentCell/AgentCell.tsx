@@ -1,13 +1,12 @@
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
 
 import { type CellSuccessProps, type CellFailureProps, MetaTags } from '@redwoodjs/web'
-import { Button, Box, Code, Heading, useColorModeValue, Link, Input, Flex } from '@chakra-ui/react'
+import { Text, Button, Box, Code, Heading, useColorModeValue, Link, Input, Flex } from '@chakra-ui/react'
 import { routes } from '@redwoodjs/router'
 import { useTenant } from 'src/helpers/TenantContext'
 import { useFixie } from 'fixie/web'
 import { useEffect, useState } from 'react'
 import MessageBox from 'src/components/MessageBox/MessageBox'
-import RehypeMessageBox from '../RehypeMessageBox/RehypeMessageBox'
 export const QUERY = gql`
   query tenant($title: String!) {
     getHubspotContact(title: $title) {
@@ -81,30 +80,74 @@ export const Success = ({
       return 'Agent'
     }
   }
+  let AgentMessage = ({ text }) => {
+    return (
+      <Box
+        p={2}
+        m={2}
+        borderRadius={'10px'}
+        bg={useColorModeValue('blue.100', 'blue.800')}
+        color={useColorModeValue('blue.800', 'blue.100')}
+      >
+        <Text fontSize={'xs'} colorScheme={'grey'}>{role('assistant')}</Text>
+        <Box
+          w="0"
+          h="0"
+          bg={useColorModeValue('blue.100', 'blue.800')}
+          border={'10px solid transparent'}
+          transform=" translateX(-15px) rotate(45deg)"
+        />
+        <Box
+          ml={2}
+          >
+        <MessageBox
+          output={text} />
+        </Box>
+      </Box>
+
+    )
+  }
+  let UserMessage = ({ text }) => {
+    return (
+      <Box
+        p={2}
+        m={2}
+        borderRadius={'10px'}
+        bg={useColorModeValue('green.100', 'green.800')}
+        color={useColorModeValue('green.800', 'green.100')}
+      >
+        <Text fontSize={'xs'} colorScheme={'grey'}>{role('user')}</Text>
+        <Box
+          w="0"
+          h="0"
+          bg={useColorModeValue('green.100', 'green.800')}
+          border={'10px solid transparent'}
+          transform=" translateX(+15px) rotate(45deg)"
+          float={'right'}
+        />
+        <MessageBox output={text} />
+      </Box>
+    )
+  }
   return (
     <Box>
       <MetaTags
         title="Agent"
         description="Agent page"
       />
-      <Box border={'1px solid black'} p={4} m={4}>
-        <Box className="turn">
-          <Flex>
-            <Box minW={'100px'} as={'span'}>{role('assistant')}: </Box>
-            <MessageBox output={tenant.greeting} />
-          </Flex>
-        </Box>
+      <Box border={'1px solid black'} p={2} m={2}>
+        <AgentMessage text={tenant.greeting} />
         {conversation &&
           conversation.turns.map((turn, index) => (
             <Box key={index} className="turn">
               {turn.messages.map((message, index) =>
                 // i need the response to be a fixed left and right
-                message.kind === 'text' ? (
-                  <Flex key={`message-${index}`} gap={1}>
-                    <Box minW={'100px'} as={'span'}>{role(turn.role)}: </Box>
-                    <MessageBox output={message.content} />
-                  </Flex>
-                ) : null
+                message.kind === 'text' && (
+                  <Box key={index}>
+                    {turn.role !== 'user' && <AgentMessage text={message.content} />}
+                    {turn.role === 'user' && <UserMessage text={message.content} />}
+                  </Box>
+                )
               )}
             </Box>
           ))}
