@@ -1,4 +1,4 @@
-import { ControlledFloatingFixieEmbed } from 'fixie/web'
+import { ControlledFloatingFixieEmbed, InlineFixieEmbed } from 'fixie/web'
 
 const MobileTestPage = () => {
   const style = {
@@ -15,14 +15,21 @@ const MobileTestPage = () => {
 
   return (
     <>
-      <ControlledFloatingFixieEmbed
+      <InlineFixieEmbed
+        agentId="keithtelliott/skinnyraven"
+        agentSendsGreeting={true}
+        chatTitle="Your Skinny Raven AI Assistant"
+        debug={false}
+        style={style}
+      />
+      {/* <ControlledFloatingFixieEmbed
         visible={true}
         debug={false}
         agentId="keithtelliott/skinnyraven"
         agentSendsGreeting={true}
         chatTitle="Your Skinny Raven AI Assistant"
         style={style}
-      />
+      /> */}
     </>
   )
 }
