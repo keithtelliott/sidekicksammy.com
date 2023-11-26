@@ -4,6 +4,8 @@ import { useFixie } from 'fixie/web'
 
 import { MetaTags } from '@redwoodjs/web'
 
+import MessageBox from 'src/components/MessageBox/MessageBox'
+
 const MobileTestPage = () => {
   /**
    * Here's a simple example of how to use the hook. Once you're comfortable with it, there are many more inputs and
@@ -28,21 +30,14 @@ const MobileTestPage = () => {
   function handleSubmit(event) {
     event.preventDefault()
     sendMessage(input)
-    // setInput('')
+    setInput('')
   }
 
   console.log('conversation, line 33', conversation)
 
   return (
     <>
-      <MetaTags title="UseFixie" description="UseFixie page" />
-
       <h1>UseFixiePage</h1>
-      <p>
-        This page uses the <span className="code">useFixie</span> hook to access
-        a conversation with a Fixie Sidekick.
-      </p>
-
       <div>
         {conversation &&
           conversation.turns.map((turn, index) => (
@@ -51,7 +46,7 @@ const MobileTestPage = () => {
                 message.kind === 'text' ? (
                   <div key={`message-${index}`}>
                     <span>{turn.role}: </span>
-                    <span>{message.content}</span>
+                    <MessageBox output={message.content} />
                   </div>
                 ) : null
               )}
