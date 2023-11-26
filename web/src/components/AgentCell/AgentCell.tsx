@@ -145,30 +145,32 @@ export const Success = ({
         title="Agent"
         description="Agent page"
       />
-      <Box border={'1px solid black'} p={2} m={2}>
-        <AgentMessage text={tenant.greeting} />
-        {conversation &&
-          conversation.turns.map((turn, index) => (
-            <Box key={index} className="turn">
-              {turn.messages.map((message, index) =>
-                // i need the response to be a fixed left and right
-                message.kind === 'text' && (
-                  <Box key={index}>
-                    {turn.role !== 'user' && <AgentMessage text={message.content} />}
-                    {turn.role === 'user' && <UserMessage text={message.content} />}
-                  </Box>
-                )
-              )}
-            </Box>
-          ))}
-        <Box p={4}>
-          <form onSubmit={handleSubmit}>
-            <Flex gap={1}>
-              <Input as={'input'} value={input} onChange={(event) => setInput(event.target.value)} />
-              <Button as={'button'} type="submit" colorScheme={'green'}>Send</Button>
-            </Flex>
-          </form>
+      {/**convsation at the top, send at the bottom */}
+      <Box>
+        <Box border={'1px solid black'} p={2} m={2}>
+          <AgentMessage text={tenant.greeting} />
+          {conversation &&
+            conversation.turns.map((turn, turnIndex) => (
+              <Box key={`turn-${turnIndex}`} className="turn">
+                {turn.messages.map((message, messageIndex) =>
+                  message.kind === 'text' && (
+                    <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
+                      {turn.role !== 'user' && <AgentMessage text={message.content} />}
+                      {turn.role === 'user' && <UserMessage text={message.content} />}
+                    </Box>
+                  )
+                )}
+              </Box>
+            ))}
         </Box>
+        <Box p={4}>
+            <form onSubmit={handleSubmit}>
+              <Flex gap={1}>
+                <Input as={'input'} value={input} onChange={(event) => setInput(event.target.value)} />
+                <Button as={'button'} type="submit" colorScheme={'green'}>Send</Button>
+              </Flex>
+            </form>
+          </Box>
       </Box>
     </Box>
   )

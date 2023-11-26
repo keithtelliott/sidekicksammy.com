@@ -46,6 +46,7 @@ export default function MessageBox(props: { output: string }) {
             return (
               <a
                 {...props}
+                target='_blank'
                 style={{
                   color: 'blue',
                   textDecoration: 'underline',
