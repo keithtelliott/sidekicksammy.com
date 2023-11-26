@@ -1,7 +1,7 @@
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
 
 import { type CellSuccessProps, type CellFailureProps, MetaTags } from '@redwoodjs/web'
-import { Text, Button, Box, Code, Heading, useColorModeValue, Link, Input, Flex } from '@chakra-ui/react'
+import { Text, Button, Box, Code, Heading, useColorModeValue, Link, Input, Flex, Grid, GridItem } from '@chakra-ui/react'
 import { routes } from '@redwoodjs/router'
 import { useTenant } from 'src/helpers/TenantContext'
 import { useFixie } from 'fixie/web'
@@ -146,9 +146,36 @@ export const Success = ({
         description="Agent page"
       />
       {/**convsation at the top, send at the bottom */}
-      <Box>
-        <Box border={'1px solid black'} p={2} m={2}>
-          <AgentMessage text={tenant.greeting} />
+      {/**how can i do this with grid templates box */}
+      <Grid
+        templateAreas={[
+          `"greeting greeting"
+          "conversation conversation"
+          "input input"`]}
+        // there's only 3 rows, so we can just use the row gap
+        // greeting at the top, conversation in the middle, input at the bottom
+        // input should be fixed to the bottom
+
+        gap={4}
+        templateRows={'auto 1fr auto'}
+        templateColumns={'1fr 1fr'}
+        h={`calc(100vh - 200px)`}
+
+      >
+        <GridItem colSpan={2}>
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={tenant.greeting} />
+        </GridItem>
+        <GridItem colSpan={2}>
+
           {conversation &&
             conversation.turns.map((turn, turnIndex) => (
               <Box key={`turn-${turnIndex}`} className="turn">
@@ -162,8 +189,11 @@ export const Success = ({
                 )}
               </Box>
             ))}
-        </Box>
-        <Box p={4}>
+
+        </GridItem>
+        <GridItem colSpan={2}>
+          {/**this is being covered by the page footer... lets fix that */}
+        <Box p={4} bg={useColorModeValue('white', 'gray.800')} boxShadow={'md'} rounded={'lg'} >
             <form onSubmit={handleSubmit}>
               <Flex gap={1}>
                 <Input as={'input'} value={input} onChange={(event) => setInput(event.target.value)} />
@@ -171,7 +201,8 @@ export const Success = ({
               </Flex>
             </form>
           </Box>
-      </Box>
+        </GridItem>
+      </Grid>
     </Box>
   )
 }
