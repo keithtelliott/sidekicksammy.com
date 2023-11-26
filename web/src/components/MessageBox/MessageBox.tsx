@@ -1,9 +1,5 @@
 import { useColorModeValue, Box } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
-// lets add remark-gfm to the mix
-import gfm from 'remark-gfm'
-// lets hadd remark-html to the mix
-import remarkHtml from 'remark-html'
 export default function MessageBox(props: { output: string }) {
   const { output } = props
   const textColor = useColorModeValue('navy.700', 'white')
@@ -18,6 +14,7 @@ export default function MessageBox(props: { output: string }) {
       fontSize={{ base: 'sm', md: 'md' }}
       lineHeight={{ base: '24px', md: '26px' }}
       fontWeight="500"
+
     >
       <ReactMarkdown
         components={{
