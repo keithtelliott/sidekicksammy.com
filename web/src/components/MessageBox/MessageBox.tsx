@@ -20,7 +20,6 @@ export default function MessageBox(props: { output: string }) {
       fontWeight="500"
     >
       <ReactMarkdown
-        remarkPlugins={[gfm, remarkHtml]}
         components={{
           // lets handle a tags and Citation tags
           a: ({ node, ...props }) => {
