@@ -98,7 +98,6 @@ const CreateContact = () => {
     await fetch(`/.redwood/functions/getPages?website=${url}`, options)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         let isError = typeof data.data === 'string'
         if (isError) {
           setMessage(data.data)

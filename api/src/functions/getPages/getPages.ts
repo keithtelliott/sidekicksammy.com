@@ -30,7 +30,6 @@ let getIndexPageAndLinks = async (url: string) => {
     redirect: 'follow',
   })
     .then(async (res) => {
-      //console.log('res', res)
       if (res.status === 200) {
         let html = await res.text()
         return html
@@ -41,8 +40,6 @@ let getIndexPageAndLinks = async (url: string) => {
       return ''
     })
   if (html?.length > 0) {
-    // make a dom
-    console.log(html)
     try {
       let doc = new DOMParser({
         errorHandler: {
@@ -51,7 +48,6 @@ let getIndexPageAndLinks = async (url: string) => {
           fatalError: (e) => { },
         },
       }).parseFromString(html, 'text/html')
-      //console.log(doc)
       // get all the links
       let allLinks = doc.getElementsByTagName('a')
       console.log({ allLinksLength: allLinks.length })
@@ -159,10 +155,8 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   if (robotSitemap.length > 0) {
     for (let i = 0; i < robotSitemap.length; i++) {
       let sitemap = robotSitemap[i]
-      console.log('trying sitemap', sitemap)
       let pages = await getPagesFromSitemap(sitemap)
       if (pages.length > 0 && pages.length < 100) {
-        console.log(' Robot Sitemap success')
         return success({
           url: sitemap,
           pagesCount: pages.length,
@@ -178,7 +172,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   let sitemapUrl = url + '/sitemap.xml'
   let firstSitemap = await gettingSitemap(sitemapUrl)
   if (firstSitemap.length > 0) {
-    console.log(' Manual Sitemap success')
     return success({
       url: sitemapUrl,
       pagesCount: firstSitemap.length,
@@ -188,7 +181,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   // if no sitemap, lets just make a manual one.
   let links = await getIndexPageAndLinks(url)
   if (links.length > 0) {
-    console.log(' Index success')
     return success({
       url,
       pagesCount: links.length,

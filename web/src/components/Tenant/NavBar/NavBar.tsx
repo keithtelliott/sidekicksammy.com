@@ -1,5 +1,14 @@
-import { Flex, Box, Image, Text, useColorModeValue } from '@chakra-ui/react'
-import { Button, useColorMode } from '@chakra-ui/react'
+import {
+  Button,
+  useColorMode,
+  Icon,
+  Flex,
+  Box,
+  Image,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react'
+import { FaMoon, FaSun } from 'react-icons/fa'
 
 const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -27,14 +36,15 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
         </Text>
       </Flex>
       <Flex>
-        <Button onClick={toggleColorMode}
-        // text should use the textColorScheme
-        color={useColorModeValue(
-          `${secondaryColor.light}`,
-          `${secondaryColor.dark}`
-        )}
+        <Button
+          onClick={toggleColorMode}
+          // text should use the textColorScheme
+          color={useColorModeValue(
+            `${secondaryColor.light}`,
+            `${secondaryColor.dark}`
+          )}
         >
-          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+          {colorMode === 'light' ? <Icon as={FaMoon} /> : <Icon as={FaSun} />}
         </Button>
       </Flex>
       {/* Additional Navbar content (e.g., navigation links) can be added here */}
