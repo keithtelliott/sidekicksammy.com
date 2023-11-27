@@ -12,7 +12,6 @@ export default function MessageBox(props: { output: string }) {
     output = output.replace(citationRegex, `\n\nSource: [${title}](${href})`)
   }
 
-  console.log({ output })
   const textColor = useColorModeValue('navy.700', 'white')
   // lets add some code to chagne how a links and citations are rendered
   return (

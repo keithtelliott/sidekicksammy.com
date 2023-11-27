@@ -28,7 +28,7 @@ const TenantLayout = ({ children }: TenantLayoutProps) => {
           flex="1"
           fontWeight="bold"
         >
-          <GridItem pl="2" bg="" area={'header'}>
+          <GridItem bg="" area={'header'}>
             {/* NavBar */}
             <NavBar
               logo={tenantData.logo}
@@ -40,10 +40,10 @@ const TenantLayout = ({ children }: TenantLayoutProps) => {
           {/* <GridItem pl="2" bg="pink.300" area={'nav'}>
           Nav
         </GridItem> */}
-          <GridItem pl="2" bg="" area={'main'}>
+          <GridItem bg="" area={'main'}>
             {children}
           </GridItem>
-          <GridItem pl="2" bg="" area={'footer'}>
+          <GridItem bg="" area={'footer'}>
             {/* Footer */}
             <Footer
               companyName={tenantData.name}

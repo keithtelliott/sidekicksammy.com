@@ -2,8 +2,6 @@ import { MetaTags } from '@redwoodjs/web'
 import { Box, Heading } from '@chakra-ui/react'
 import AgentCell from 'src/components/AgentCell'
 const AgentPage = ({ title }) => {
-  let mapIdTo
-  console.log({ title })
   if (!title) {
     title = 'keithtelliott/skinnyraven'
   }
