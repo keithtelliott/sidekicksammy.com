@@ -69,8 +69,7 @@ export default function MessageBox(props: { output: string }) {
           },
         }}
       >
-        {/*{output ? output : ''}*/}
-        {output + '...'}
+        {output ? output : ''}
       </ReactMarkdown>
     </Box>
   )
