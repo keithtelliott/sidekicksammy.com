@@ -25,11 +25,9 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
         properties: data,
         associations: []
       })
-      console.log(contact)
 
       return contact.properties as { [key: string]: string };
     } catch (e) {
-      console.log(e.body);
       if (e.body.status == 'error') {
         let errorObject = {
           status: e.body.message,
@@ -50,9 +48,7 @@ export const createHubspotContact: MutationResolvers['createHubspotContact'] =
 export const getHubspotContact: QueryResolvers['getHubspotContact'] =
   async ({ title }) => {
     let contact = await getContactBySidekickTitle({ title });
-    console.log(contact);
     let mappedContact = mapHubspotContactToContact({contact});
-    console.log(mappedContact);
     return mappedContact;
   }
 

@@ -1,7 +1,18 @@
 import { useColorModeValue, Box } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
 export default function MessageBox(props: { output: string }) {
-  const { output } = props
+  let { output } = props
+
+  // TODO: Try mdxjs and see if that renders this better.  FIXIE has some odd things...
+  let citationRegex = /<Citation title="(.*)" href="(.*)" \/>/g
+  let citationMatch = citationRegex.exec(output)
+  if (citationMatch) {
+    let title = citationMatch[1]
+    let href = citationMatch[2]
+    output = output.replace(citationRegex, `\n\nSource: [${title}](${href})`)
+  }
+
+  console.log({ output })
   const textColor = useColorModeValue('navy.700', 'white')
   // lets add some code to chagne how a links and citations are rendered
   return (
@@ -56,25 +67,10 @@ export default function MessageBox(props: { output: string }) {
               </a>
             )
           },
-          //Citation is a weird one, it is not a standard markdown tag
-          // its a custom tag that has a title, and a href
-          // lets see if we can get it to work
-          Citation: ({ node, ...props }) => {
-            return (
-              <a
-                {...props}
-                style={{
-                  color: 'blue',
-                  textDecoration: 'underline',
-                }}
-              >
-                {props.children}
-              </a>
-            )
-          },
         }}
       >
-        {output ? output : ''}
+        {/*{output ? output : ''}*/}
+        {output + '...'}
       </ReactMarkdown>
     </Box>
   )

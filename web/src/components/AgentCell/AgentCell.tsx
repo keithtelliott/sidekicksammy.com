@@ -198,15 +198,6 @@ export const Success = ({
           }}
         >
           <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
-          <AgentMessage text={tenant.greeting} />
 
           {conversation &&
             conversation.turns.map((turn, turnIndex) => (
