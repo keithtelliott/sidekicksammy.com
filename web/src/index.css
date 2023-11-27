@@ -1,0 +1,109 @@
+/* in e.g. index.css */
+@font-face {
+  font-family: 'Noka';
+  src: url('/fonts/noka/NokaTrial-Bold-BF63bccdec13b50.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Noka - Hairline */
+@font-face {
+  font-family: 'Noka';
+  src: url('/fonts/noka/NokaTrial-Hairline-BF63bccdec0ae17.otf')
+    format('opentype');
+  font-weight: 100; /* Adjust as needed for hairline */
+  font-style: normal;
+}
+
+/* Noka - Light */
+@font-face {
+  font-family: 'Noka';
+  src: url('/fonts/noka/NokaTrial-Light-BF63bccdec12905.otf') format('opentype');
+  font-weight: 300; /* Light */
+  font-style: normal;
+}
+
+/* Noka - Medium */
+@font-face {
+  font-family: 'Noka';
+  src: url('/fonts/noka/NokaTrial-Medium-BF63bccdebda4ed.otf')
+    format('opentype');
+  font-weight: 500; /* Medium */
+  font-style: normal;
+}
+
+/* Noka - Semi-bold */
+@font-face {
+  font-family: 'Noka';
+  src: url('/fonts/noka/NokaTrial-Semibold-BF63bccdec16a7a.otf')
+    format('opentype');
+  font-weight: 600; /* Semi-bold */
+  font-style: normal;
+}
+
+/* Libre Caslon Condensed - Bold */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Libre Caslon Condensed - Bold Italic */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-BoldItalic.otf')
+    format('opentype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Libre Caslon Condensed - Italic */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-Italic.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* Libre Caslon Condensed - Medium */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-Medium.otf') format('opentype');
+  font-weight: 500; /* Medium */
+  font-style: normal;
+}
+
+/* Libre Caslon Condensed - Medium Italic */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-MediumItalic.otf')
+    format('opentype');
+  font-weight: 500; /* Medium */
+  font-style: italic;
+}
+
+/* Libre Caslon Condensed - Regular */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Libre Caslon Condensed - SemiBold */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-SemiBold.otf') format('opentype');
+  font-weight: 600; /* SemiBold */
+  font-style: normal;
+}
+
+/* Libre Caslon Condensed - SemiBold Italic */
+@font-face {
+  font-family: 'Libre Caslon Condensed';
+  src: url('/fonts/libre/LibreCaslonCondensed-SemiBoldItalic.otf')
+    format('opentype');
+  font-weight: 600; /* SemiBold */
+  font-style: italic;
+}
