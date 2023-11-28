@@ -1,9 +1,9 @@
-import { useTenant } from 'src/helpers/TenantContext'
 import { Box, Flex, Spacer, useColorModeValue } from '@chakra-ui/react'
 import { Grid, GridItem } from '@chakra-ui/react'
 
-import NavBar from 'src/components/Tenant/NavBar'
 import Footer from 'src/components/Tenant/Footer'
+import NavBar from 'src/components/Tenant/NavBar'
+import { useTenant } from 'src/helpers/TenantContext'
 
 type TenantLayoutProps = {
   children?: React.ReactNode

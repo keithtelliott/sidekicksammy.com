@@ -1,10 +1,5 @@
-import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
+import { useEffect, useState, useRef } from 'react'
 
-import {
-  type CellSuccessProps,
-  type CellFailureProps,
-  MetaTags,
-} from '@redwoodjs/web'
 import {
   Text,
   Button,
@@ -17,12 +12,21 @@ import {
   Flex,
   Grid,
   GridItem,
+  IconButton,
 } from '@chakra-ui/react'
-import { routes } from '@redwoodjs/router'
-import { useTenant } from 'src/helpers/TenantContext'
 import { useFixie } from 'fixie/web'
-import { useEffect, useState, useRef } from 'react'
+import { FaArrowUp } from 'react-icons/fa'
+import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
+
+import { routes } from '@redwoodjs/router'
+import {
+  type CellSuccessProps,
+  type CellFailureProps,
+  MetaTags,
+} from '@redwoodjs/web'
+
 import MessageBox from 'src/components/MessageBox/MessageBox'
+import { useTenant } from 'src/helpers/TenantContext'
 export const QUERY = gql`
   query tenant($title: String!) {
     getHubspotContact(title: $title) {
@@ -32,7 +36,7 @@ export const QUERY = gql`
     }
   }
 `
-let mapData = (data) => {
+const mapData = (data) => {
   return {
     name: data.title || 'Demo Tenansdft',
     colorScheme: data?.colorScheme || 'blue',
@@ -68,12 +72,12 @@ export const Success = ({
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
   if (!getHubspotContact.sidekickTitle) return <Empty />
   const { updateTenantData } = useTenant()
-  let colorScheme = JSON.parse(getHubspotContact.sidekickColorScheme)
-  let data = {
+  const colorScheme = JSON.parse(getHubspotContact.sidekickColorScheme)
+  const data = {
     ...mapData(colorScheme),
     name: getHubspotContact.sidekickTitle,
   }
-  let tenant = mapData(data)
+  const tenant = mapData(data)
   useEffect(() => {
     updateTenantData(data)
   }, [])
@@ -95,20 +99,20 @@ export const Success = ({
 
   const [input, setInput] = useState('')
 
-  let handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
     sendMessage(input)
     setInput('')
   }
   // lets rename user and assistant to ...
-  let role = (name) => {
+  const role = (name) => {
     if (name === 'user') {
       return 'You'
     } else {
       return 'Agent'
     }
   }
-  let AgentMessage = ({ text }) => {
+  const AgentMessage = ({ text }) => {
     return (
       <Box
         p={2}
@@ -134,7 +138,7 @@ export const Success = ({
       </Box>
     )
   }
-  let UserMessage = ({ text }) => {
+  const UserMessage = ({ text }) => {
     // the name and text should
     return (
       <Box
@@ -238,9 +242,15 @@ export const Success = ({
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                 />
-                <Button as={'button'} type="submit" colorScheme={'green'}>
-                  Send
-                </Button>
+                <Box>
+                  <IconButton
+                    as={'button'}
+                    aria-label="Send Message"
+                    icon={<FaArrowUp />}
+                    colorScheme="green"
+                    onClick={handleSubmit}
+                  />
+                </Box>
               </Flex>
             </form>
           </Box>
