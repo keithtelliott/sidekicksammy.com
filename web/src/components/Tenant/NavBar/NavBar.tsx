@@ -7,6 +7,7 @@ import {
   Image,
   Text,
   useColorModeValue,
+  VStack,
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
@@ -31,12 +32,17 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
     >
       <Flex align="center">
         {logo && <Image src={logo} h="40px" mr="2rem" />}
-        <Text fontSize="lg" fontWeight="bold">
-          {companyName}
-        </Text>
+        <VStack align={'left'} spacing="10px">
+          <Text fontSize="lg" fontWeight="bold">
+            {companyName}
+          </Text>
+          {/* // KTE, 11/30/2023: There's a space here that I want to remove.  How? */}
+          <Text fontWeight={'light'}>AI Assistant</Text>
+        </VStack>
       </Flex>
       <Flex>
-        <Button
+        <Box></Box>
+        {/* <Button
           onClick={toggleColorMode}
           // text should use the textColorScheme
           color={useColorModeValue(
@@ -45,7 +51,7 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
           )}
         >
           {colorMode === 'light' ? <Icon as={FaMoon} /> : <Icon as={FaSun} />}
-        </Button>
+        </Button> */}
       </Flex>
       {/* Additional Navbar content (e.g., navigation links) can be added here */}
     </Flex>
