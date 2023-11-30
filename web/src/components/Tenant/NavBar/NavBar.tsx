@@ -34,13 +34,13 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
     >
       <Flex align="center">
         {logo && <Image src={logo} h="40px" mr="2rem" />}
-        <VStack align={'left'} spacing="10px">
-          <Text fontSize="lg" fontWeight="bold">
-            {companyName}
-          </Text>
-          {/* // KTE, 11/30/2023: There's a space here that I want to remove.  How? */}
-          <Text fontWeight={'light'}>AI Assistant</Text>
-        </VStack>
+        {/* <VStack align={'left'} spacing="10px"> */}
+        <Text fontSize="lg" fontWeight="bold">
+          {companyName}
+        </Text>
+        {/* // KTE, 11/30/2023: There's a space here that I want to remove.  How? */}
+        {/* <Text fontWeight={'light'}>AI Assistant</Text>
+        </VStack> */}
       </Flex>
       {/* <Flex> */}
       {/* <Button
