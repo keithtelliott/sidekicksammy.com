@@ -8,6 +8,7 @@ import {
   Text,
   useColorModeValue,
   VStack,
+  Spacer,
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
@@ -19,6 +20,7 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
       as="nav"
       align="center"
       justify="space-between"
+      // KTE, 11/30/2023:  I'm trying to get the company title to be horizontally centered, but I'm out of time for now...
       padding="1.5rem"
       backgroundColor={useColorModeValue(
         `${primaryColor.light}`,
@@ -40,9 +42,8 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
           <Text fontWeight={'light'}>AI Assistant</Text>
         </VStack>
       </Flex>
-      <Flex>
-        <Box></Box>
-        {/* <Button
+      {/* <Flex> */}
+      {/* <Button
           onClick={toggleColorMode}
           // text should use the textColorScheme
           color={useColorModeValue(
@@ -52,7 +53,7 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
         >
           {colorMode === 'light' ? <Icon as={FaMoon} /> : <Icon as={FaSun} />}
         </Button> */}
-      </Flex>
+      {/* </Flex> */}
       {/* Additional Navbar content (e.g., navigation links) can be added here */}
     </Flex>
   )
