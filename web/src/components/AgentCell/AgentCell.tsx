@@ -186,7 +186,7 @@ export const Success = ({
         gap={4}
         templateRows={'1fr auto'}
         templateColumns={'1fr'}
-        h={`calc(100vh - 100px)`} // KTE, 11/30/2023, changed from 200px to 100px
+        h={`calc(100vh - 200px)`} // KTE, 11/30/2023, changed from 200px to 100px and then back...
       >
         {/* Conversation Area */}
         <GridItem
