@@ -17,10 +17,11 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
 
   return (
     <Flex
+      height={'75px'}
       as="nav"
       align="center"
       justify="space-between"
-      padding="1.5rem"
+      padding="0.75rem"
       backgroundColor={useColorModeValue(
         `${primaryColor.light}`,
         `${primaryColor.dark}`

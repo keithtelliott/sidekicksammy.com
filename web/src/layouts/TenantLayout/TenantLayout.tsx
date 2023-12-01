@@ -23,7 +23,8 @@ const TenantLayout = ({ children }: TenantLayoutProps) => {
           // KTE, 11/30/2023:  Removed footer to preserve space for chatbot
           templateAreas={`"header"
                       "main"`}
-          gridTemplateRows={'audit 1fr'}
+          gridTemplateRows={'75px 1fr'}
+          // gridTemplateRows={'audit 1fr'}
           gridTemplateColumns={'1fr'}
           flex="1"
           fontWeight="bold"
@@ -40,9 +41,7 @@ const TenantLayout = ({ children }: TenantLayoutProps) => {
           {/* <GridItem pl="2" bg="pink.300" area={'nav'}>
           Nav
         </GridItem> */}
-          <GridItem bg="" area={'main'}>
-            {children}
-          </GridItem>
+          <GridItem area={'main'}>{children}</GridItem>
           {/*
           // KTE, 11/30/2023: Removed footer to preserve space for chatbot
           <GridItem bg="" area={'footer'}>

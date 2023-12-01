@@ -170,7 +170,7 @@ export const Success = ({
   }
   return (
     <Box>
-      <MetaTags title="Agent" description="Agent page" />
+      <MetaTags title="Agent" description="Agent page" themeColor="blue" />
       {/**convsation at the top, send at the bottom */}
       {/**how can i do this with grid templates box */}
       <Grid
@@ -182,11 +182,10 @@ export const Success = ({
         // there's only 3 rows, so we can just use the row gap
         // greeting at the top, conversation in the middle, input at the bottom
         // input should be fixed to the bottom
-
-        gap={4}
+        // gap={4}
         templateRows={'1fr auto'}
         templateColumns={'1fr'}
-        h={`calc(100vh - 200px)`} // KTE, 11/30/2023, changed from 200px to 100px and then back...
+        h={`calc(100svh - 85px)`} // KTE, 11/30/2023, changed from 200px to 100px and then back...
       >
         {/* Conversation Area */}
         <GridItem
@@ -230,7 +229,7 @@ export const Success = ({
         <GridItem colSpan={2} area={'input'}>
           {/**this is being covered by the page footer... lets fix that */}
           <Box
-            p={4}
+            p={3}
             bg={useColorModeValue('white', 'gray.800')}
             boxShadow={'md'}
             rounded={'lg'}
