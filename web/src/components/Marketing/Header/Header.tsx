@@ -12,40 +12,34 @@ const Header = () => {
   return (
     <>
       <Flex
-        minWidth="max-content"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-        pt="4"
-        paddingX="2"
+        align={{ base: 'center', md: 'center' }}
+        justify={{ base: 'center', md: 'space-between' }}
+        padding={{ base: '1rem', md: '5rem' }}
+        gap="2em"
       >
-        <Box p="2">
-          <Image
-            boxSize="400px"
-            objectFit="contain"
-            src="./images/header/logo.png"
-            alt="Sidekick Sammy Logo"
-          />
-        </Box>
-        <Spacer />
-        <ButtonGroup gap="2">
-          {/* <Button> */}
-          <Image
-            boxSize="200px"
-            objectFit="contain"
-            src="./images/header/pricing.png"
-            alt="Sidekick Sammy Logo"
-          />
-          {/* </Button> */}
-          {/* <Button> */}
-          <Image
-            boxSize="200px"
-            objectFit="contain"
-            src="./images/header/getStarted.png"
-            alt="Sidekick Sammy Logo"
-          />
-          {/* </Button> */}
-        </ButtonGroup>
+        <Image
+          boxSize={{ base: '75%', md: '35%', lg: '22%' }}
+          objectFit="contain"
+          src="./images/header/logo.png"
+          alt="Sidekick Sammy Logo"
+        />
+
+        <Spacer display={{ base: 'none', md: 'block' }} />
+
+        <Image
+          display={{ base: 'none', md: 'flex' }}
+          width={{ md: '20%', lg: '15%' }}
+          objectFit="scale-down"
+          src="./images/header/pricing.png"
+          alt="Pricing"
+        />
+        <Image
+          display={{ base: 'none', md: 'flex' }}
+          width={{ md: '20%', lg: '15%' }}
+          objectFit="scale-down"
+          src="./images/header/getStarted.png"
+          alt="Get Started"
+        />
       </Flex>
     </>
   )

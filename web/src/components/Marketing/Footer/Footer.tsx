@@ -1,9 +1,24 @@
+import { Box, Stack, Text, HStack, Flex } from '@chakra-ui/react'
+
 const Footer = () => {
+  const currentYear = () => {
+    const date = new Date()
+    return date.getFullYear()
+  }
+
   return (
-    <div>
-      <h2>{'Footer'}</h2>
-      <p>{'Find me in ./web/src/components/Footer/Footer.tsx'}</p>
-    </div>
+    <Flex
+      direction="column"
+      // textAlign="center" // Center align text
+      // mx="auto"
+      // wrap="wrap"
+      justify="center" // Center content horizontally
+      align="center" // Center content vertically
+      padding="5rem" // Optional padding for spacing
+    >
+      <Text>Copyright &copy; {currentYear()}. Sidekick Sammy</Text>
+      <Text>Privacy • Disclaimers • Terms and Conditions</Text>
+    </Flex>
   )
 }
 

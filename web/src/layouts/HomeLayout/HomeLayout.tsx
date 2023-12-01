@@ -9,23 +9,24 @@ type HomeLayoutProps = {
 const HomeLayout = ({ children }: HomeLayoutProps) => {
   return (
     <Grid
-      templateAreas={`"header"
-                  "main"
-                  "footer"`}
-      gridTemplateRows={'145px auto 75px'}
-      gridTemplateColumns={'auto'}
+      templateAreas={{
+        base: `"header" "main" "footer"`,
+        md: `"header" "main" "footer"`,
+      }}
+      gridTemplateRows={{
+        base: 'auto 1fr auto',
+        md: '245px 1fr auto',
+      }}
+      gridTemplateColumns={{ base: '1fr', md: '1fr' }}
       h="100vh"
     >
-      <GridItem
-        pl="2"
-        bg="lightCream"
-        area={'header'}
-        display="flex" // Set display to flex
-      >
+      <GridItem bg="lightCream" area={'header'}>
         <Header />
       </GridItem>
+
       <GridItem area={'main'}>{children}</GridItem>
-      <GridItem pl="2" bg="blue.300" area={'footer'}>
+
+      <GridItem bg="lightCream" area={'footer'}>
         <Footer />
       </GridItem>
     </Grid>
