@@ -109,7 +109,7 @@ export const Success = ({
     if (name === 'user') {
       return 'You'
     } else {
-      return 'Agent'
+      return 'AI Assistant'
     }
   }
   const AgentMessage = ({ text }) => {
