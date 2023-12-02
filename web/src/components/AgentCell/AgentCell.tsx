@@ -32,6 +32,7 @@ export const QUERY = gql`
     getHubspotContact(title: $title) {
       sidekickTitle
       fixieCorpusId
+      fixieAgentId
       sidekickColorScheme
     }
   }
@@ -84,7 +85,8 @@ export const Success = ({
 
   const { conversation, sendMessage, newConversation } = useFixie({
     //agentId: 'keithtelliott/skinnyraven',
-    agentId: getHubspotContact.fixieCorpusId,
+    //agentId: getHubspotContact.fixieCorpusId,
+    agentId: getHubspotContact.fixieAgentId,
   })
 
   const endOfMessagesRef = useRef(null)

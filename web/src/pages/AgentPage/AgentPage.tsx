@@ -12,7 +12,7 @@ const AgentPage = ({ title }) => {
       <Box
         flex="1"
         overflowY="auto"
-        maxHeight="90vh"
+        //maxHeight="90vh"
         zIndex={1}
         sx={{
           '&::-webkit-scrollbar': {
