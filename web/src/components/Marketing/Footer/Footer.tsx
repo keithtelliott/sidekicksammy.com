@@ -7,17 +7,8 @@ const Footer = () => {
   }
 
   return (
-    <Flex
-      direction="column"
-      // textAlign="center" // Center align text
-      // mx="auto"
-      // wrap="wrap"
-      justify="center" // Center content horizontally
-      align="center" // Center content vertically
-      padding="5rem" // Optional padding for spacing
-    >
+    <Flex direction="column" justify="center" align="center" padding="1rem">
       <Text>Copyright &copy; {currentYear()}. Sidekick Sammy</Text>
-      <Text>Privacy • Disclaimers • Terms and Conditions</Text>
     </Flex>
   )
 }

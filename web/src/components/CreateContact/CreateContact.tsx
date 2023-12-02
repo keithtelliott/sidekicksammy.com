@@ -186,13 +186,7 @@ const CreateContact = () => {
   }
   return (
     <Box>
-      <Flex
-      // minH={'100vh'}
-      // align={'center'}
-      // justify={'center'}
-      // py={12}
-      // bg={useColorModeValue('gray.50', 'gray.800')}
-      >
+      <Flex>
         <Stack
           // boxShadow={'2xl'}
           // bg={useColorModeValue('white', 'gray.700')}
@@ -203,19 +197,6 @@ const CreateContact = () => {
           align={'center'}
           display={state === 'success' ? 'none' : 'block'}
         >
-          {/*<Icon as={NotificationIcon} w={24} h={24} />*/}
-          {/* <Stack align={'center'} spacing={2}>
-            <Heading
-              textTransform={'uppercase'}
-              fontSize={'3xl'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-            >
-              Get Started
-            </Heading>
-            <Text fontSize={'lg'} color={'gray.500'}>
-              Your goals await. Sign up now.
-            </Text>
-          </Stack> */}
           <Stack
             gap={1}
             spacing={4}

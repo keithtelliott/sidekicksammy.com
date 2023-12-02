@@ -8,6 +8,7 @@ import {
   UnorderedList,
   AspectRatio,
   VStack,
+  LinkOverlay,
 } from '@chakra-ui/react'
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
@@ -41,24 +42,26 @@ const HomePage = () => {
         >
           Add an interactive, topic specific bot to your website.
         </Heading>
-        <Image
-          boxSize={{ base: '300px', md: '400px' }}
-          objectFit="contain"
-          src="./images/body/letsGetStarted.png"
-          alt="Let's Get Started"
-        />
+        <LinkOverlay href="#getStarted">
+          <Image
+            boxSize={{ base: '300px', md: '400px' }}
+            objectFit="contain"
+            src="./images/body/letsGetStarted.png"
+            alt="Let's Get Started"
+          />
+        </LinkOverlay>
       </Flex>
       <Flex
         bg="darkBlue"
         mx="auto"
-        justifyContent="center" // Center content horizontally
-        alignItems="center" // Center content vertically
+        justifyContent="center"
+        alignItems="center"
         padding="5rem"
       >
         <AspectRatio
-          maxW={{ base: '70%', sm: '60%', md: '60%', lg: '55%' }} // Adjust max width responsively
+          maxW={{ base: '70%', sm: '60%', md: '60%', lg: '55%' }}
           ratio={16 / 9}
-          width="full" // Take full width of Flex container
+          width="full"
         >
           <iframe
             src="https://www.youtube.com/embed/qhKEJ_PCbsA?si=JGiQwuxr9GVrvKP4"
@@ -68,14 +71,7 @@ const HomePage = () => {
         </AspectRatio>
       </Flex>
 
-      <Flex
-        direction="column"
-        // align="left"
-        // alignContent={'left'}
-        bg="lightCream"
-        // mx="auto"
-        padding="5rem"
-      >
+      <Flex direction="column" bg="lightCream" padding="5rem">
         <Text
           fontSize={{ base: '2xl', md: '4xl' }}
           fontFamily="Libre Caslon Condensed"
@@ -107,7 +103,6 @@ const HomePage = () => {
           alt="Let's Get Started"
         />
 
-        {/* <Flex> */}
         <Flex gap="12" align="center">
           <Image
             boxSize="60%"
@@ -143,9 +138,7 @@ const HomePage = () => {
         paddingX="5rem"
         paddingBottom={'5rem'}
       >
-        {/* <Flex> */}
         <Text
-          // display="flex"
           fontSize={{ base: '2xl', md: '4xl' }}
           fontFamily="Libre Caslon Condensed"
           pb="4"
@@ -154,7 +147,6 @@ const HomePage = () => {
         </Text>
         <Heading
           as="h2"
-          // display="flex"
           size={{ base: 'xl', md: '2xl' }}
           fontFamily="Libre Caslon Condensed"
           pb="2"
@@ -163,7 +155,6 @@ const HomePage = () => {
         </Heading>
         <Heading
           as="h2"
-          // display="flex"
           size={{ base: 'md', md: '2xl' }}
           fontFamily="Libre Caslon Condensed"
         >
@@ -177,7 +168,6 @@ const HomePage = () => {
           src="./images/body/blueLine.png"
           alt="Let's Get Started"
         />
-        {/* </Flex> */}
 
         <Flex gap="12" align="center">
           <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
@@ -217,6 +207,7 @@ const HomePage = () => {
         <Text
           fontSize={{ base: '2xl', md: '4xl' }}
           fontFamily="Libre Caslon Condensed"
+          id="pricing"
         >
           LET'S GET STARTED
         </Text>
@@ -244,7 +235,13 @@ const HomePage = () => {
         </UnorderedList>
       </Flex>
 
-      <Flex direction="column" bg="darkBlue" align="center" paddingY="5rem">
+      <Flex
+        direction="column"
+        bg="darkBlue"
+        align="center"
+        paddingY="5rem"
+        id="getStarted"
+      >
         <CreateContact />
       </Flex>
     </>

@@ -14,8 +14,8 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
         md: `"header" "main" "footer"`,
       }}
       gridTemplateRows={{
-        base: 'auto 1fr auto',
-        md: '245px 1fr auto',
+        base: 'auto 1fr 1fr',
+        md: '245px 1fr 1fr',
       }}
       gridTemplateColumns={{ base: '1fr', md: '1fr' }}
       h="100vh"

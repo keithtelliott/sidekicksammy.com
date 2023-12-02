@@ -6,6 +6,8 @@ import {
   Heading,
   Spacer,
   Image,
+  LinkOverlay,
+  Link,
 } from '@chakra-ui/react'
 
 const Header = () => {
@@ -26,20 +28,28 @@ const Header = () => {
 
         <Spacer display={{ base: 'none', md: 'block' }} />
 
-        <Image
+        <LinkOverlay
           display={{ base: 'none', md: 'flex' }}
           width={{ md: '20%', lg: '15%' }}
-          objectFit="scale-down"
-          src="./images/header/pricing.png"
-          alt="Pricing"
-        />
-        <Image
+          href="/#pricing"
+        >
+          <Image
+            objectFit="scale-down"
+            src="./images/header/pricing.png"
+            alt="Pricing"
+          />
+        </LinkOverlay>
+        <LinkOverlay
           display={{ base: 'none', md: 'flex' }}
           width={{ md: '20%', lg: '15%' }}
-          objectFit="scale-down"
-          src="./images/header/getStarted.png"
-          alt="Get Started"
-        />
+          href="/#getStarted"
+        >
+          <Image
+            objectFit="scale-down"
+            src="./images/header/getStarted.png"
+            alt="Get Started"
+          />
+        </LinkOverlay>
       </Flex>
     </>
   )
