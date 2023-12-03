@@ -2,12 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 
 import {
   Text,
-  Button,
   Box,
-  Code,
-  Heading,
   useColorModeValue,
-  Link,
   Input,
   Flex,
   Grid,
@@ -18,7 +14,6 @@ import { useFixie } from 'fixie/web'
 import { FaArrowUp } from 'react-icons/fa'
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
 
-import { routes } from '@redwoodjs/router'
 import {
   type CellSuccessProps,
   type CellFailureProps,
@@ -84,8 +79,6 @@ export const Success = ({
   }, [])
 
   const { conversation, sendMessage, newConversation } = useFixie({
-    //agentId: 'keithtelliott/skinnyraven',
-    //agentId: getHubspotContact.fixieCorpusId,
     agentId: getHubspotContact.fixieAgentId,
   })
 
@@ -187,7 +180,7 @@ export const Success = ({
         // gap={4}
         templateRows={'1fr auto'}
         templateColumns={'1fr'}
-        h={`calc(100svh - 85px)`} // KTE, 11/30/2023, changed from 200px to 100px and then back...
+        h={`calc(100svh - 85px)`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
       >
         {/* Conversation Area */}
         <GridItem
