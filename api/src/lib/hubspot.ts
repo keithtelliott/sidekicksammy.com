@@ -14,6 +14,7 @@ export let getAllContact = async ({ after }: { after?: string }) => {
     'sidekick_color_text',
     'sidekick_logo_url',
     'sidekick_fixie_corpus_id',
+    'sidekick_fixie_agent_id',
     'sidekick_outcome',
     'sidekick_personality',
     'sidekick_title',
@@ -89,6 +90,8 @@ export let mapHubspotContactToContact = ({ contact }: { contact: any }) => {
   }
 
   // lets get the opposite of the primary color
+  console.log('sidekick_fixie_agent_id: ' + contact?.properties?.sidekick_fixie_agent_id)
+  console.log('sidekick_fixie_corpus_id: ' + contact?.properties?.sidekick_fixie_corpus_id)
   return {
     id: contact?.id,
     fixieCorpusId: contact?.properties.sidekick_fixie_corpus_id,

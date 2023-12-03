@@ -7,6 +7,8 @@ import {
   Image,
   Text,
   useColorModeValue,
+  VStack,
+  Spacer,
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
@@ -15,10 +17,13 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
 
   return (
     <Flex
+      position={'fixed'}
+      width="100%"
+      height={'75px'}
       as="nav"
       align="center"
       justify="space-between"
-      padding="1.5rem"
+      padding="0.75rem"
       backgroundColor={useColorModeValue(
         `${primaryColor.light}`,
         `${primaryColor.dark}`
@@ -29,25 +34,13 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
       )}
       boxShadow="sm"
     >
-      <Flex align="center">
-        {logo && <Image src={logo} h="40px" mr="2rem" />}
-        <Text fontSize="lg" fontWeight="bold">
-          {companyName}
-        </Text>
-      </Flex>
-      <Flex>
-        <Button
-          onClick={toggleColorMode}
-          // text should use the textColorScheme
-          color={useColorModeValue(
-            `${secondaryColor.light}`,
-            `${secondaryColor.dark}`
-          )}
-        >
-          {colorMode === 'light' ? <Icon as={FaMoon} /> : <Icon as={FaSun} />}
-        </Button>
-      </Flex>
-      {/* Additional Navbar content (e.g., navigation links) can be added here */}
+      {logo && <Image src={logo} h="40px" mr="2rem" />}
+      <Text fontSize="lg" fontWeight="bold">
+        {companyName}
+      </Text>
+      <Text color={primaryColor.dark} fontWeight={'light'}>
+        AI Assistant
+      </Text>
     </Flex>
   )
 }

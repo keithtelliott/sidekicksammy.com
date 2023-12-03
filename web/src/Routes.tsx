@@ -8,6 +8,7 @@
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
 import { Set, Router, Route } from '@redwoodjs/router'
+
 import HomeLayout from './layouts/HomeLayout'
 import TenantLayout from './layouts/TenantLayout'
 
@@ -23,14 +24,13 @@ const Routes = () => {
 
   return (
     <Router>
-
-      <Route path="/mobile-test" page={MobileTestPage} name="mobileTest" />
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
         <Route notfound page={NotFoundPage} />
       </Set>
       <Set wrap={TenantLayout}>
-        <Route path="/agent/{title...}" page={DemoPage} name="agent" />{/**Fixie's embedded client */}
+        <Route path="/agent/{title...}" page={DemoPage} name="agent" />
+        {/**Fixie's embedded client */}
         <Route path="/{title}" page={AgentPage} name="demo" />
       </Set>
     </Router>
