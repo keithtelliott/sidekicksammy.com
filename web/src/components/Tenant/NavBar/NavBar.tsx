@@ -17,6 +17,8 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
 
   return (
     <Flex
+      position={'fixed'}
+      width="100%"
       height={'75px'}
       as="nav"
       align="center"
