@@ -14,7 +14,15 @@ import {
   SkeletonCircle,
 } from '@chakra-ui/react'
 
-import { Form, Label, TextField, Submit, FieldError, set, TextAreaField } from '@redwoodjs/forms'
+import {
+  Form,
+  Label,
+  TextField,
+  Submit,
+  FieldError,
+  set,
+  TextAreaField,
+} from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
 const CREATE_CONTACT = gql`
   mutation CreateContactMutation($input: CreateHubspotContactInput!) {
@@ -40,9 +48,9 @@ const CreateContact = () => {
       })
   }
 
-  const [state, setState] = useState<'initial' | 'loading' | 'ready' | 'submitting' | 'success'>(
-    'initial'
-  )
+  const [state, setState] = useState<
+    'initial' | 'loading' | 'ready' | 'submitting' | 'success'
+  >('initial')
   const [url, setUrl] = useState('')
   const [sitemap, setSiteMap] = useState('')
   const [message, setMessage] = useState('')
@@ -76,7 +84,8 @@ const CreateContact = () => {
   // if the site is not responding, we'll present an error message and a button to schedule a meeting to figue out what pages to include
   let getRandomPersonality = () => {
     let personalitiesLength = personalities.length
-    let personality = personalities[Math.floor(Math.random() * personalitiesLength)]
+    let personality =
+      personalities[Math.floor(Math.random() * personalitiesLength)]
     setPersonality(personality)
   }
   let getRandomOutcome = () => {
@@ -108,7 +117,9 @@ const CreateContact = () => {
         if (!isError) {
           setSiteMap(JSON.stringify(data))
           setSiteMapPages(data.data.pagesCount)
-          setButtonLabel('Found ' + data.data.pagesCount + ' pages. Submit to start.')
+          setButtonLabel(
+            'Found ' + data.data.pagesCount + ' pages. Submit to start.'
+          )
           setState('ready')
           return
         }
@@ -175,61 +186,52 @@ const CreateContact = () => {
   }
   return (
     <Box>
-      <Flex
-        minH={'100vh'}
-        align={'center'}
-        justify={'center'}
-        py={12}
-        bg={useColorModeValue('gray.50', 'gray.800')}
-      >
+      <Flex>
         <Stack
-          boxShadow={'2xl'}
-          bg={useColorModeValue('white', 'gray.700')}
+          // boxShadow={'2xl'}
+          // bg={useColorModeValue('white', 'gray.700')}
+          bg="lightCream"
           rounded={'xl'}
           p={10}
           spacing={8}
           align={'center'}
           display={state === 'success' ? 'none' : 'block'}
         >
-          {/*<Icon as={NotificationIcon} w={24} h={24} />*/}
-          <Stack align={'center'} spacing={2}>
-            <Heading
-              textTransform={'uppercase'}
-              fontSize={'3xl'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-            >
-              Get Started
-            </Heading>
-            <Text fontSize={'lg'} color={'gray.500'}>
-              Your goals await. Sign up now.
-            </Text>
-          </Stack>
           <Stack
             gap={1}
             spacing={4}
             direction={{ base: 'column', md: 'row' }}
             maxW={'md'}
           >
-            <Form
-              onSubmit={onSubmit}
-              config={{ mode: 'onBlur' }}
-            >
+            <Form onSubmit={onSubmit} config={{ mode: 'onBlur' }}>
               <Box
-
                 color={useColorModeValue('gray.800', 'gray.200')}
                 w={'full'}
                 mb={1}
               >
                 <Label name="website">{'Website'}</Label>
-                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="website" className="error" pl={1} />
+                <Box
+                  as={FieldError}
+                  color={useColorModeValue('red.500', 'red.300')}
+                  name="website"
+                  className="error"
+                  pl={1}
+                />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   as={TextField}
                   color={useColorModeValue('gray.800', 'gray.200')}
                   name="website"
                   //regex is just word.word
-                  validation={{ required: true, pattern: { value: RegExp(/^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$/), message: 'Invalid website address' } }}
+                  validation={{
+                    required: true,
+                    pattern: {
+                      value: RegExp(
+                        /^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$/
+                      ),
+                      message: 'Invalid website address',
+                    },
+                  }}
                   placeholder="example.com"
                   mb={1}
                   // when focus leaves
@@ -238,8 +240,13 @@ const CreateContact = () => {
                   }}
                 />
                 <Label name="email">{'Email'}</Label>
-                <Box as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="email" className="error" pl={1} />
+                <Box
+                  as={FieldError}
+                  color={useColorModeValue('red.500', 'red.300')}
+                  name="email"
+                  className="error"
+                  pl={1}
+                />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
@@ -249,13 +256,24 @@ const CreateContact = () => {
                   onChange={(event) => {
                     setEmail(event.target.value)
                   }}
-                  validation={{ required: true, pattern: { value: RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i), message: 'Invalid email address' } }}
+                  validation={{
+                    required: true,
+                    pattern: {
+                      value: RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i),
+                      message: 'Invalid email address',
+                    },
+                  }}
                   placeholder="john@example.com"
                   mb={1}
                 />
                 <Label name="personality">{'Personality'}</Label>
-                <Text as={FieldError} color={useColorModeValue('red.500', 'red.300')}
-                  name="personality" className="error" pl={1} />
+                <Text
+                  as={FieldError}
+                  color={useColorModeValue('red.500', 'red.300')}
+                  name="personality"
+                  className="error"
+                  pl={1}
+                />
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
@@ -270,7 +288,9 @@ const CreateContact = () => {
                   mb={1}
                 />
 
-                <Label name="outcomes">{'Outcomes'} {state === 'loading' && <AnimatedElipses />}</Label>
+                <Label name="outcomes">
+                  {'Outcomes'} {state === 'loading' && <AnimatedElipses />}
+                </Label>
                 <Input
                   bgColor={useColorModeValue('gray.50', 'gray.800')}
                   color={useColorModeValue('gray.800', 'gray.200')}
@@ -296,7 +316,13 @@ const CreateContact = () => {
                   w="100%"
                   mb={1}
                   type={state === 'success' ? 'button' : 'submit'}
-                  isDisabled={state !== 'ready' || url === '' || email === '' || personality === '' || outcomes === ''}
+                  isDisabled={
+                    state !== 'ready' ||
+                    url === '' ||
+                    email === '' ||
+                    personality === '' ||
+                    outcomes === ''
+                  }
                 >
                   {buttonLabel}
                   {state === 'success' && <CheckIcon />}
