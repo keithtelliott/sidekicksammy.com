@@ -184,7 +184,9 @@ export const Success = ({
         // gap={4}
         templateRows={'1fr auto'}
         templateColumns={'1fr'}
-        h={`calc(100svh - ${NAV_BAR_HEIGHT} - ${INPUT_FORM_HEIGHT})`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+        // h={`calc(100svh - ${NAV_BAR_HEIGHT} - ${INPUT_FORM_HEIGHT})`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+        h={`calc(100svh - 150px)`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+        // h={`10svh`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
       >
         {/* Conversation Area */}
         <GridItem
