@@ -172,7 +172,7 @@ export const Success = ({
       {/**convsation at the top, send at the bottom */}
       {/**how can i do this with grid templates box */}
       <Grid
-        bg="yellow"
+        // bg="yellow"
         templateAreas={[
           `
           "conversation"
