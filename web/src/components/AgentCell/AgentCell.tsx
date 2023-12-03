@@ -52,7 +52,7 @@ const mapData = (data) => {
       dark: data?.textColorScheme?.dark || 'whiteAlpha.900',
     },
     logo: data?.logo || 'https://via.placeholder.com/50',
-    greeting: data?.greeting || 'Hello, how can I help you?',
+    greeting: data?.greeting || 'How can I help?',
   }
 }
 
@@ -81,22 +81,11 @@ export const Success = ({
     updateTenantData(data)
   }, [])
 
-  const [isReady, setIsReady] = useState(false)
-
   const { conversation, sendMessage, newConversation } = useFixie({
     agentId: getHubspotContact.fixieAgentId,
   })
 
   const endOfMessagesRef = useRef(null)
-
-  useEffect(() => {
-    // Set a timeout to ensure the browser settles before fixing the input form
-    const timer = setTimeout(() => {
-      setIsReady(true)
-    }, 500) // Adjust the delay time as needed
-
-    return () => clearTimeout(timer)
-  }, [])
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -105,15 +94,6 @@ export const Success = ({
   useEffect(() => {
     scrollToBottom()
   }, [conversation])
-
-  useEffect(() => {
-    // Set a timeout to ensure the browser settles before fixing the input form
-    const timer = setTimeout(() => {
-      setIsReady(true)
-    }, 500) // Adjust the delay time as needed
-
-    return () => clearTimeout(timer)
-  }, [])
 
   const [input, setInput] = useState('')
 
@@ -223,6 +203,7 @@ export const Success = ({
           }}
           paddingBottom={'75px'}
         >
+          <AgentMessage text={'Welcome!'} />
           <AgentMessage text={tenant.greeting} />
 
           {conversation &&
@@ -248,43 +229,41 @@ export const Success = ({
           <div ref={endOfMessagesRef} />
         </GridItem>
 
-        {isReady && (
-          <GridItem
-            colSpan={2}
-            area={'input'}
-            position={'fixed'}
-            bottom="0"
-            width="100%"
+        <GridItem
+          colSpan={2}
+          area={'input'}
+          position={'fixed'}
+          bottom="0"
+          width="100%"
+        >
+          <Box
+            p={3}
+            bg={useColorModeValue('white', 'gray.800')}
+            boxShadow={'md'}
+            rounded={'lg'}
+            left="0" // Align the box to the left side of the viewport
+            right="0" // Align the box to the right side of the viewport
           >
-            <Box
-              p={3}
-              bg={useColorModeValue('white', 'gray.800')}
-              boxShadow={'md'}
-              rounded={'lg'}
-              left="0" // Align the box to the left side of the viewport
-              right="0" // Align the box to the right side of the viewport
-            >
-              <form onSubmit={handleSubmit}>
-                <Flex gap={1}>
-                  <Input
-                    as={'input'}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
+            <form onSubmit={handleSubmit}>
+              <Flex gap={1}>
+                <Input
+                  as={'input'}
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                />
+                <Box>
+                  <IconButton
+                    as={'button'}
+                    aria-label="Send Message"
+                    icon={<FaArrowUp />}
+                    colorScheme="green"
+                    onClick={handleSubmit}
                   />
-                  <Box>
-                    <IconButton
-                      as={'button'}
-                      aria-label="Send Message"
-                      icon={<FaArrowUp />}
-                      colorScheme="green"
-                      onClick={handleSubmit}
-                    />
-                  </Box>
-                </Flex>
-              </form>
-            </Box>
-          </GridItem>
-        )}
+                </Box>
+              </Flex>
+            </form>
+          </Box>
+        </GridItem>
       </Grid>
     </Box>
   )
