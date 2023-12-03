@@ -194,6 +194,7 @@ export const Success = ({
             '-ms-overflow-style': 'none' /* IE and Edge */,
             scrollbarWidth: 'none' /* Firefox */,
           }}
+          paddingBottom={'75px'}
         >
           <AgentMessage text={tenant.greeting} />
 
@@ -221,13 +222,20 @@ export const Success = ({
         </GridItem>
 
         {/* Input */}
-        <GridItem colSpan={2} area={'input'}>
-          {/**this is being covered by the page footer... lets fix that */}
+        <GridItem
+          colSpan={2}
+          area={'input'}
+          position={'fixed'}
+          bottom="0"
+          width="100%"
+        >
           <Box
             p={3}
             bg={useColorModeValue('white', 'gray.800')}
             boxShadow={'md'}
             rounded={'lg'}
+            left="0" // Align the box to the left side of the viewport
+            right="0" // Align the box to the right side of the viewport
           >
             <form onSubmit={handleSubmit}>
               <Flex gap={1}>

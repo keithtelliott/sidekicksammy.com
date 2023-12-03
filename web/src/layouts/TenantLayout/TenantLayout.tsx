@@ -22,6 +22,7 @@ const TenantLayout = ({ children }: TenantLayoutProps) => {
           gridTemplateColumns={'1fr'}
           flex="1"
           fontWeight="bold"
+          position={'relative'}
         >
           <GridItem bg="" area={'header'}>
             <NavBar
