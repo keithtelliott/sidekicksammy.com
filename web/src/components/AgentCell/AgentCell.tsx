@@ -81,11 +81,22 @@ export const Success = ({
     updateTenantData(data)
   }, [])
 
+  const [isReady, setIsReady] = useState(false)
+
   const { conversation, sendMessage, newConversation } = useFixie({
     agentId: getHubspotContact.fixieAgentId,
   })
 
   const endOfMessagesRef = useRef(null)
+
+  useEffect(() => {
+    // Set a timeout to ensure the browser settles before fixing the input form
+    const timer = setTimeout(() => {
+      setIsReady(true)
+    }, 500) // Adjust the delay time as needed
+
+    return () => clearTimeout(timer)
+  }, [])
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -94,6 +105,15 @@ export const Success = ({
   useEffect(() => {
     scrollToBottom()
   }, [conversation])
+
+  useEffect(() => {
+    // Set a timeout to ensure the browser settles before fixing the input form
+    const timer = setTimeout(() => {
+      setIsReady(true)
+    }, 500) // Adjust the delay time as needed
+
+    return () => clearTimeout(timer)
+  }, [])
 
   const [input, setInput] = useState('')
 
@@ -189,6 +209,7 @@ export const Success = ({
         // h={`10svh`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
       >
         {/* Conversation Area */}
+
         <GridItem
           colSpan={2}
           area={'conversation'}
@@ -227,42 +248,43 @@ export const Success = ({
           <div ref={endOfMessagesRef} />
         </GridItem>
 
-        {/* Input */}
-        <GridItem
-          colSpan={2}
-          area={'input'}
-          position={'fixed'}
-          bottom="0"
-          width="100%"
-        >
-          <Box
-            p={3}
-            bg={useColorModeValue('white', 'gray.800')}
-            boxShadow={'md'}
-            rounded={'lg'}
-            left="0" // Align the box to the left side of the viewport
-            right="0" // Align the box to the right side of the viewport
+        {isReady && (
+          <GridItem
+            colSpan={2}
+            area={'input'}
+            position={'fixed'}
+            bottom="0"
+            width="100%"
           >
-            <form onSubmit={handleSubmit}>
-              <Flex gap={1}>
-                <Input
-                  as={'input'}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                />
-                <Box>
-                  <IconButton
-                    as={'button'}
-                    aria-label="Send Message"
-                    icon={<FaArrowUp />}
-                    colorScheme="green"
-                    onClick={handleSubmit}
+            <Box
+              p={3}
+              bg={useColorModeValue('white', 'gray.800')}
+              boxShadow={'md'}
+              rounded={'lg'}
+              left="0" // Align the box to the left side of the viewport
+              right="0" // Align the box to the right side of the viewport
+            >
+              <form onSubmit={handleSubmit}>
+                <Flex gap={1}>
+                  <Input
+                    as={'input'}
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
                   />
-                </Box>
-              </Flex>
-            </form>
-          </Box>
-        </GridItem>
+                  <Box>
+                    <IconButton
+                      as={'button'}
+                      aria-label="Send Message"
+                      icon={<FaArrowUp />}
+                      colorScheme="green"
+                      onClick={handleSubmit}
+                    />
+                  </Box>
+                </Flex>
+              </form>
+            </Box>
+          </GridItem>
+        )}
       </Grid>
     </Box>
   )
