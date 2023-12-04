@@ -1,3 +1,17 @@
+import { useEffect, useState, useRef } from 'react'
+
+import {
+  Text,
+  Box,
+  useColorModeValue,
+  Input,
+  Flex,
+  Grid,
+  GridItem,
+  IconButton,
+} from '@chakra-ui/react'
+import { useFixie } from 'fixie/web'
+import { FaArrowUp } from 'react-icons/fa'
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
 
 import {
@@ -5,34 +19,23 @@ import {
   type CellFailureProps,
   MetaTags,
 } from '@redwoodjs/web'
-import {
-  Text,
-  Button,
-  Box,
-  Code,
-  Heading,
-  useColorModeValue,
-  Link,
-  Input,
-  Flex,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react'
-import { routes } from '@redwoodjs/router'
-import { useTenant } from 'src/helpers/TenantContext'
-import { useFixie } from 'fixie/web'
-import { useEffect, useState, useRef } from 'react'
+
 import MessageBox from 'src/components/MessageBox/MessageBox'
+import { useTenant } from 'src/helpers/TenantContext'
 export const QUERY = gql`
   query tenant($title: String!) {
     getHubspotContact(title: $title) {
       sidekickTitle
       fixieCorpusId
+      fixieAgentId
       sidekickColorScheme
     }
   }
 `
-let mapData = (data) => {
+const NAV_BAR_HEIGHT = '75px'
+const INPUT_FORM_HEIGHT = '75px'
+
+const mapData = (data) => {
   return {
     name: data.title || 'Demo Tenansdft',
     colorScheme: data?.colorScheme || 'blue',
@@ -49,7 +52,7 @@ let mapData = (data) => {
       dark: data?.textColorScheme?.dark || 'whiteAlpha.900',
     },
     logo: data?.logo || 'https://via.placeholder.com/50',
-    greeting: data?.greeting || 'Hello, how can I help you?',
+    greeting: data?.greeting || 'How can I help?',
   }
 }
 
@@ -68,19 +71,18 @@ export const Success = ({
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
   if (!getHubspotContact.sidekickTitle) return <Empty />
   const { updateTenantData } = useTenant()
-  let colorScheme = JSON.parse(getHubspotContact.sidekickColorScheme)
-  let data = {
+  const colorScheme = JSON.parse(getHubspotContact.sidekickColorScheme)
+  const data = {
     ...mapData(colorScheme),
     name: getHubspotContact.sidekickTitle,
   }
-  let tenant = mapData(data)
+  const tenant = mapData(data)
   useEffect(() => {
     updateTenantData(data)
   }, [])
 
   const { conversation, sendMessage, newConversation } = useFixie({
-    //agentId: 'keithtelliott/skinnyraven',
-    agentId: getHubspotContact.fixieCorpusId,
+    agentId: getHubspotContact.fixieAgentId,
   })
 
   const endOfMessagesRef = useRef(null)
@@ -95,20 +97,20 @@ export const Success = ({
 
   const [input, setInput] = useState('')
 
-  let handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
     sendMessage(input)
     setInput('')
   }
   // lets rename user and assistant to ...
-  let role = (name) => {
+  const role = (name) => {
     if (name === 'user') {
       return 'You'
     } else {
-      return 'Agent'
+      return 'AI Assistant'
     }
   }
-  let AgentMessage = ({ text }) => {
+  const AgentMessage = ({ text }) => {
     return (
       <Box
         p={2}
@@ -134,7 +136,7 @@ export const Success = ({
       </Box>
     )
   }
-  let UserMessage = ({ text }) => {
+  const UserMessage = ({ text }) => {
     // the name and text should
     return (
       <Box
@@ -166,10 +168,11 @@ export const Success = ({
   }
   return (
     <Box>
-      <MetaTags title="Agent" description="Agent page" />
+      <MetaTags title="Agent" description="Agent page" themeColor="blue" />
       {/**convsation at the top, send at the bottom */}
       {/**how can i do this with grid templates box */}
       <Grid
+        // bg="yellow"
         templateAreas={[
           `
           "conversation"
@@ -178,13 +181,15 @@ export const Success = ({
         // there's only 3 rows, so we can just use the row gap
         // greeting at the top, conversation in the middle, input at the bottom
         // input should be fixed to the bottom
-
-        gap={4}
+        // gap={4}
         templateRows={'1fr auto'}
         templateColumns={'1fr'}
-        h={`calc(100vh - 200px)`}
+        // h={`calc(100svh - ${NAV_BAR_HEIGHT} - ${INPUT_FORM_HEIGHT})`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+        h={`calc(100svh - 150px)`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+        // h={`10svh`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
       >
         {/* Conversation Area */}
+
         <GridItem
           colSpan={2}
           area={'conversation'}
@@ -196,7 +201,9 @@ export const Success = ({
             '-ms-overflow-style': 'none' /* IE and Edge */,
             scrollbarWidth: 'none' /* Firefox */,
           }}
+          paddingBottom={'75px'}
         >
+          <AgentMessage text={'Welcome!'} />
           <AgentMessage text={tenant.greeting} />
 
           {conversation &&
@@ -222,14 +229,20 @@ export const Success = ({
           <div ref={endOfMessagesRef} />
         </GridItem>
 
-        {/* Input */}
-        <GridItem colSpan={2} area={'input'}>
-          {/**this is being covered by the page footer... lets fix that */}
+        <GridItem
+          colSpan={2}
+          area={'input'}
+          position={'fixed'}
+          bottom="0"
+          width="100%"
+        >
           <Box
-            p={4}
+            p={3}
             bg={useColorModeValue('white', 'gray.800')}
             boxShadow={'md'}
             rounded={'lg'}
+            left="0" // Align the box to the left side of the viewport
+            right="0" // Align the box to the right side of the viewport
           >
             <form onSubmit={handleSubmit}>
               <Flex gap={1}>
@@ -238,9 +251,15 @@ export const Success = ({
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                 />
-                <Button as={'button'} type="submit" colorScheme={'green'}>
-                  Send
-                </Button>
+                <Box>
+                  <IconButton
+                    as={'button'}
+                    aria-label="Send Message"
+                    icon={<FaArrowUp />}
+                    colorScheme="green"
+                    onClick={handleSubmit}
+                  />
+                </Box>
               </Flex>
             </form>
           </Box>

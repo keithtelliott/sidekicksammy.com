@@ -17,6 +17,7 @@ import CreateContact from 'src/components/CreateContact/CreateContact'
 const HomePage = () => {
   return (
     <>
+
       <MetaTags
         title="Sidekick Sammy"
         description="Boost Your Website's Superpowers with Sidekick Sammy"
