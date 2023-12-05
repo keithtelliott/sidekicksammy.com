@@ -25,7 +25,7 @@ const Routes = () => {
   return (
     <Router>
       <Route path="/mobile-test" page={MobileTestPage} name="mobileTest" />
-      <Set wrap={HomeLayout} prerender>
+      <Set wrap={HomeLayout} >
         <Route path="/" page={HomePage} name="home" />
       </Set>
       <Set wrap={TenantLayout}>
