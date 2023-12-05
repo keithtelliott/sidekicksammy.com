@@ -23,7 +23,7 @@ import {
 import MessageBox from 'src/components/MessageBox/MessageBox'
 import { useTenant } from 'src/helpers/TenantContext'
 export const QUERY = gql`
-  query tenant($title: String!) {
+  query getAgents($title: String!) {
     getHubspotContact(title: $title) {
       sidekickTitle
       fixieCorpusId
