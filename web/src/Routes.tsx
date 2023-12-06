@@ -24,6 +24,7 @@ const Routes = () => {
 
   return (
     <Router>
+      <Route path="/agent2" page={Agent2Page} name="agent2" />
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
         <Route notfound page={NotFoundPage} />
@@ -31,8 +32,9 @@ const Routes = () => {
       <Set wrap={TenantLayout}>
         <Route path="/agent/{title...}" page={DemoPage} name="agent" />
         {/**Fixie's embedded client */}
-        <Route path="/{title}" page={AgentPage} name="demo" />
+        {/* <Route path="/{title}" page={AgentPage} name="demo" /> */}
       </Set>
+      <Route path="/{title}" page={Agent2Page} name="demo" />
     </Router>
   )
 }
