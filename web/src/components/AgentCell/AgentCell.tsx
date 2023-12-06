@@ -29,6 +29,7 @@ export const QUERY = gql`
       fixieCorpusId
       fixieAgentId
       sidekickColorScheme
+      sidekickGreeting
     }
   }
 `
@@ -75,6 +76,7 @@ export const Success = ({
   const data = {
     ...mapData(colorScheme),
     name: getHubspotContact.sidekickTitle,
+    greeting: getHubspotContact.sidekickGreeting,
   }
   const tenant = mapData(data)
   useEffect(() => {

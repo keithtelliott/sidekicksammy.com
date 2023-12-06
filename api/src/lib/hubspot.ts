@@ -18,6 +18,7 @@ export let getAllContact = async ({ after }: { after?: string }) => {
     'sidekick_outcome',
     'sidekick_personality',
     'sidekick_title',
+    'sidekick_greeting',
     'email',
     'id',
   ];
@@ -97,6 +98,7 @@ export let mapHubspotContactToContact = ({ contact }: { contact: any }) => {
     fixieCorpusId: contact?.properties.sidekick_fixie_corpus_id,
     fixieAgentId: contact?.properties.sidekick_fixie_agent_id,
     sidekickTitle: contact?.properties.sidekick_title,
+    sidekickGreeting: contact?.properties.sidekick_greeting,
     sidekickColorScheme: JSON.stringify(colorScheme)
   }
 }
