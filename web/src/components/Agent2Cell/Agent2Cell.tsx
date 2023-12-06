@@ -218,22 +218,25 @@ export const Success = ({
           left="0" // Align the box to the left side of the viewport
           right="0" // Align the box to the right side of the viewport
         >
-          <Flex gap={1}>
-            <Input
-              as={'input'}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-            />
-            <Box>
-              <IconButton
-                as={'button'}
-                aria-label="Send Message"
-                icon={<FaArrowUp />}
-                colorScheme="green"
-                onClick={handleSubmit}
+          <form onSubmit={handleSubmit}>
+            {/* the form tag allows browsers to auto submit when the return key is pressed */}
+            <Flex gap={1}>
+              <Input
+                as={'input'}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
               />
-            </Box>
-          </Flex>
+              <Box>
+                <IconButton
+                  as={'button'}
+                  aria-label="Send Message"
+                  icon={<FaArrowUp />}
+                  colorScheme="green"
+                  onClick={handleSubmit}
+                />
+              </Box>
+            </Flex>
+          </form>
         </Box>
       </Box>
     </>
