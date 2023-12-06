@@ -25,12 +25,13 @@ import { useTenant } from 'src/helpers/TenantContext'
 
 import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
 export const QUERY = gql`
-  query tenant($title: String!) {
+  query getAgents($title: String!) {
     getHubspotContact(title: $title) {
       sidekickTitle
       fixieCorpusId
       fixieAgentId
       sidekickColorScheme
+      sidekickGreeting
     }
   }
 `
