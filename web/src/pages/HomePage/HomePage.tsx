@@ -20,7 +20,7 @@ const HomePage = () => {
       <MetaTags
         title="Sidekick Sammy"
         description="Boost Your Website's Superpowers with Sidekick Sammy"
-        ogUrl="https://sidekicksammy.com"
+        ogUrl="https://sidekicksammy.fly.dev/"
         ogContentUrl="./images/body/dog1.png"
       />
 
