@@ -12,14 +12,17 @@ import {
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
+export const NAV_BAR_HEIGHT = '75px'
+
 const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
   const { colorMode, toggleColorMode } = useColorMode()
 
   return (
     <Flex
       position={'fixed'}
+      top={0}
       width="100%"
-      height={'75px'}
+      height={NAV_BAR_HEIGHT}
       as="nav"
       align="center"
       justify="space-between"
@@ -33,6 +36,7 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
         `${secondaryColor.dark}`
       )}
       boxShadow="sm"
+      zIndex={10}
     >
       {logo && <Image src={logo} h="40px" mr="2rem" />}
       <Text fontSize="lg" fontWeight="bold">
