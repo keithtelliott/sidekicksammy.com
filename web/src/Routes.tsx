@@ -26,13 +26,13 @@ const Routes = () => {
     <Router>
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
-        <Route notfound page={NotFoundPage} />
       </Set>
       <Set wrap={TenantLayout}>
         <Route path="/agent/{title...}" page={DemoPage} name="agent" />
         {/**Fixie's embedded client */}
         <Route path="/{title}" page={AgentPage} name="demo" />
       </Set>
+      <Route notfound page={NotFoundPage} />
     </Router>
   )
 }
