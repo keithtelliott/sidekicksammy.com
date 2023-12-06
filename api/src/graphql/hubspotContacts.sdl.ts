@@ -23,6 +23,7 @@ export const schema = gql`
     personality: String
     sidekickTitle: String
     sidekickColorScheme: String
+    sidekickGreeting: String
     status: String
     website: String!
   }
