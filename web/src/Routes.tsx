@@ -8,6 +8,7 @@
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
 import { Set, Router, Route } from '@redwoodjs/router'
+
 import HomeLayout from './layouts/HomeLayout'
 import TenantLayout from './layouts/TenantLayout'
 
@@ -28,9 +29,9 @@ const Routes = () => {
         <Route notfound page={NotFoundPage} />
       </Set>
       <Set wrap={TenantLayout}>
-        <Route path="/tenant/{tenantName}" page={TenantPage} name="tenant" />
-        <Route path="/{title}" page={DemoPage} name="demo1" />
-        <Route path="/demo/{title}" page={DemoPage} name="demo2" />
+        <Route path="/agent/{title...}" page={DemoPage} name="agent" />
+        {/**Fixie's embedded client */}
+        <Route path="/{title}" page={AgentPage} name="demo" />
       </Set>
     </Router>
   )

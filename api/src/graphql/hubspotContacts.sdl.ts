@@ -7,6 +7,7 @@ export const schema = gql`
     archived: Boolean!
     email: String!
     fixieCorpusId: String
+    fixieAgentId: String
     hs_all_contact_vids: String!
     hs_email_domain: String!
     hs_is_contact: String!

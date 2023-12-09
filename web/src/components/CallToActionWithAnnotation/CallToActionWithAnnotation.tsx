@@ -7,6 +7,7 @@ import {
   Container,
   Text,
   Button,
+  Link,
   Stack,
   Icon,
   useColorModeValue,
@@ -14,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 
 export default function CallToActionWithAnnotation({
+  textColor,
   heading,
   subheading,
   buttonLabel,
@@ -23,6 +25,7 @@ export default function CallToActionWithAnnotation({
   alternateCTAButtonLabel,
   ...props
 }) {
+  if(!textColor) textColor = useColorModeValue('gray.800', 'gray.200')
   return (
     <>
       <Container maxW={'3xl'}>
@@ -34,7 +37,9 @@ export default function CallToActionWithAnnotation({
           <Heading
             fontWeight={600}
             fontSize={{ base: '2xl', sm: '4xl', md: '6xl' }}
-            lineHeight={'110%'}>
+            lineHeight={'110%'}
+            color={textColor}
+          >
             {heading}
           </Heading>
           <Text color={'gray.500'}>
@@ -48,15 +53,14 @@ export default function CallToActionWithAnnotation({
             position={'relative'}>
 
             <Button
+            as={Link}
+            href={buttonLink}
               colorScheme={'green'}
               bg={'green.400'}
               rounded={'full'}
               px={6}
               _hover={{
                 bg: 'green.500',
-              }}
-              onClick={() => {
-                window.location.href = buttonLink
               }}
               >
               {buttonLabel}
@@ -81,7 +85,9 @@ export default function CallToActionWithAnnotation({
                 position={'absolute'}
                 right={'-125px'}
                 top={'-15px'}
-                transform={'rotate(10deg)'}>
+                transform={'rotate(10deg)'}
+                color={useColorModeValue('gray.800', 'gray.300')}
+              >
                 {annotation}
               </Text>
             </Box>

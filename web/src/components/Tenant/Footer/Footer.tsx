@@ -10,9 +10,6 @@ import {
 } from '@chakra-ui/react'
 
 const Footer = ({ companyName, primaryColor, secondaryColor }) => {
-  //console.log('Footer primaryColor: ', primaryColor)
-  //console.log('Footer secondaryColor: ', secondaryColor)
-
   return (
     <Box
       as="footer"
