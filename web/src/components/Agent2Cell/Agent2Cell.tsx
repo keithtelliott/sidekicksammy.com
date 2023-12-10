@@ -6,8 +6,6 @@ import {
   useColorModeValue,
   Input,
   Flex,
-  Grid,
-  GridItem,
   IconButton,
 } from '@chakra-ui/react'
 import { useFixie } from 'fixie/web'
@@ -53,7 +51,7 @@ const mapData = (data) => {
       light: data?.textColorScheme?.light || 'whiteAlpha.900',
       dark: data?.textColorScheme?.dark || 'whiteAlpha.900',
     },
-    logo: data?.logo || 'https://via.placeholder.com/50',
+    logo: data?.logo || 'https://placehold.co/50?text=your%20logo',
     greeting: data?.greeting || 'How can I help?',
   }
 }
@@ -77,6 +75,7 @@ export const Success = ({
   const data = {
     ...mapData(colorScheme),
     name: getHubspotContact.sidekickTitle,
+    greeting: getHubspotContact.sidekickGreeting,
   }
   const tenant = mapData(data)
   useEffect(() => {
@@ -183,8 +182,7 @@ export const Success = ({
         paddingTop={1}
         paddingBottom={1}
       >
-        <AgentMessage text={'Welcome!'} />
-        <AgentMessage text={tenant.greeting} />
+        <AgentMessage text={data.greeting} />
 
         {conversation &&
           conversation.turns.map((turn, turnIndex) => (
@@ -213,6 +211,7 @@ export const Success = ({
           bottom={0}
           height={INPUT_FORM_HEIGHT}
           p={3}
+          bg="white"
           // bg={useColorModeValue('white', 'gray.800')}
           boxShadow={'md'}
           rounded={'lg'}
