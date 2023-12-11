@@ -1,0 +1,2 @@
+# every 30th minute of every hour of every day, run the following command
+30 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/refreshFixieCorpuses

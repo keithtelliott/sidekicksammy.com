@@ -6,8 +6,6 @@ import {
   useColorModeValue,
   Input,
   Flex,
-  Grid,
-  GridItem,
   IconButton,
 } from '@chakra-ui/react'
 import { useFixie } from 'fixie/web'
@@ -22,6 +20,8 @@ import {
 
 import MessageBox from 'src/components/MessageBox/MessageBox'
 import { useTenant } from 'src/helpers/TenantContext'
+
+import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
 export const QUERY = gql`
   query getAgents($title: String!) {
     getHubspotContact(title: $title) {
@@ -33,7 +33,6 @@ export const QUERY = gql`
     }
   }
 `
-const NAV_BAR_HEIGHT = '75px'
 const INPUT_FORM_HEIGHT = '75px'
 
 const mapData = (data) => {
@@ -52,7 +51,7 @@ const mapData = (data) => {
       light: data?.textColorScheme?.light || 'whiteAlpha.900',
       dark: data?.textColorScheme?.dark || 'whiteAlpha.900',
     },
-    logo: data?.logo || 'https://via.placeholder.com/50',
+    logo: data?.logo || 'https://placehold.co/50?text=your%20logo',
     greeting: data?.greeting || 'How can I help?',
   }
 }
@@ -169,104 +168,77 @@ export const Success = ({
     )
   }
   return (
-    <Box>
+    <>
       <MetaTags title="Agent" description="Agent page" themeColor="blue" />
-      {/**convsation at the top, send at the bottom */}
-      {/**how can i do this with grid templates box */}
-      <Grid
-        // bg="yellow"
-        templateAreas={[
-          `
-          "conversation"
-          "input"`,
-        ]}
-        // there's only 3 rows, so we can just use the row gap
-        // greeting at the top, conversation in the middle, input at the bottom
-        // input should be fixed to the bottom
-        // gap={4}
-        templateRows={'1fr auto'}
-        templateColumns={'1fr'}
-        // h={`calc(100svh - ${NAV_BAR_HEIGHT} - ${INPUT_FORM_HEIGHT})`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
-        h={`calc(100svh - 150px)`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
-        // h={`10svh`} // KTE, 11/30/2023, this is a hack to get the footer to not cover the input
+      <NavBar
+        logo={data.logo}
+        companyName={data.name}
+        primaryColor={data.primaryColorScheme}
+        secondaryColor={data.textColorScheme}
+      />
+      <Box
+        marginTop={NAV_BAR_HEIGHT}
+        marginBottom={INPUT_FORM_HEIGHT}
+        paddingTop={1}
+        paddingBottom={1}
       >
-        {/* Conversation Area */}
+        <AgentMessage text={data.greeting} />
 
-        <GridItem
-          colSpan={2}
-          area={'conversation'}
-          overflowY="auto"
-          sx={{
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-            '-ms-overflow-style': 'none' /* IE and Edge */,
-            scrollbarWidth: 'none' /* Firefox */,
-          }}
-          paddingBottom={'75px'}
-        >
-          <AgentMessage text={'Welcome!'} />
-          <AgentMessage text={tenant.greeting} />
+        {conversation &&
+          conversation.turns.map((turn, turnIndex) => (
+            <Box key={`turn-${turnIndex}`} className="turn">
+              {turn.messages.map(
+                (message, messageIndex) =>
+                  message.kind === 'text' && (
+                    <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
+                      {turn.role !== 'user' && (
+                        <AgentMessage text={message.content} />
+                      )}
+                      {turn.role === 'user' && (
+                        <UserMessage text={message.content} />
+                      )}
+                    </Box>
+                  )
+              )}
+            </Box>
+          ))}
 
-          {conversation &&
-            conversation.turns.map((turn, turnIndex) => (
-              <Box key={`turn-${turnIndex}`} className="turn">
-                {turn.messages.map(
-                  (message, messageIndex) =>
-                    message.kind === 'text' && (
-                      <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
-                        {turn.role !== 'user' && (
-                          <AgentMessage text={message.content} />
-                        )}
-                        {turn.role === 'user' && (
-                          <UserMessage text={message.content} />
-                        )}
-                      </Box>
-                    )
-                )}
-              </Box>
-            ))}
+        {/* Invisible element at the end of the messages */}
+        <div ref={endOfMessagesRef} />
 
-          {/* Invisible element at the end of the messages */}
-          <div ref={endOfMessagesRef} />
-        </GridItem>
-
-        <GridItem
-          colSpan={2}
-          area={'input'}
+        <Box
           position={'fixed'}
-          bottom="0"
-          width="100%"
+          bottom={0}
+          height={INPUT_FORM_HEIGHT}
+          p={3}
+          bg="white"
+          // bg={useColorModeValue('white', 'gray.800')}
+          boxShadow={'md'}
+          rounded={'lg'}
+          left="0" // Align the box to the left side of the viewport
+          right="0" // Align the box to the right side of the viewport
         >
-          <Box
-            p={3}
-            bg={useColorModeValue('white', 'gray.800')}
-            boxShadow={'md'}
-            rounded={'lg'}
-            left="0" // Align the box to the left side of the viewport
-            right="0" // Align the box to the right side of the viewport
-          >
-            <form onSubmit={handleSubmit}>
-              <Flex gap={1}>
-                <Input
-                  as={'input'}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
+          <form onSubmit={handleSubmit}>
+            {/* the form tag allows browsers to auto submit when the return key is pressed */}
+            <Flex gap={1}>
+              <Input
+                as={'input'}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+              />
+              <Box>
+                <IconButton
+                  as={'button'}
+                  aria-label="Send Message"
+                  icon={<FaArrowUp />}
+                  colorScheme="green"
+                  onClick={handleSubmit}
                 />
-                <Box>
-                  <IconButton
-                    as={'button'}
-                    aria-label="Send Message"
-                    icon={<FaArrowUp />}
-                    colorScheme="green"
-                    onClick={handleSubmit}
-                  />
-                </Box>
-              </Flex>
-            </form>
-          </Box>
-        </GridItem>
-      </Grid>
-    </Box>
+              </Box>
+            </Flex>
+          </form>
+        </Box>
+      </Box>
+    </>
   )
 }
