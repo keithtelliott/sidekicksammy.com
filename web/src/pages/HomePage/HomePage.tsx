@@ -10,8 +10,10 @@ import {
   VStack,
   LinkOverlay,
 } from '@chakra-ui/react'
+
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
+
 import CreateContact from 'src/components/CreateContact/CreateContact'
 
 const HomePage = () => {
@@ -120,7 +122,7 @@ const HomePage = () => {
           <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
             <ListItem>
               Answer technical questions about your products and documentation,
-              so that your users have instant
+              facilitating customer support
             </ListItem>
             <ListItem>
               Enhance user experiences by funneling potential customers to the
@@ -178,12 +180,12 @@ const HomePage = () => {
           <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
             <ListItem>
               Answer questions about your services, facilitating smoother client
-              interactions and saving you valuable time
+              interactions and saving valuable time
             </ListItem>
             <ListItem>
-              Boost your lead generation by guiding potential clients toward
-              your services, increasing conversion rates and enhancing your
-              sales funnel
+              Boost lead generation by guiding potential clients toward your
+              services, increasing conversion rates and enhancing your sales
+              funnel
             </ListItem>
             <ListItem>
               Improve client satisfaction by addresing inquires in real-time,
