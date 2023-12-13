@@ -10,51 +10,34 @@ generator client {
 
 // Define your own datamodels here and run `yarn redwood prisma migrate dev`
 // to create migrations for them and apply to your dev DB.
-// TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+
+model HubspotBot {
+  id                    Int       @id @default(autoincrement())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  refreshToken          String?
+  refreshTokenExpiresAt DateTime?
+  prompt                String?
+  channelAccountId      String?
+  channelId             String?
+  hubspotUserId         String?
+  fixieCorpusId         String?
+  urlSlug               String?
+  logoUrl               String?
+  backgroundColor       String?
+  textColor             String?
+  userId                Int?
+  User                  User?     @relation(fields: [userId], references: [id])
 }
 
-//SimplePublicObject {
-//  id: '3651',
-//  properties: {
-//    createdate: '2023-11-17T02:36:11.613Z',
-//    email: 'bart+2023-11-17@example.com',
-//    hs_all_contact_vids: '3651',
-//    hs_email_domain: 'example.com',
-//    hs_is_contact: 'true',
-//    hs_is_unworked: 'true',
-//    hs_lifecyclestage_lead_date: '2023-11-17T02:36:11.613Z',
-//    hs_object_id: '3651',
-//    hs_object_source: 'INTEGRATION',
-//    hs_object_source_id: '2432611',
-//    hs_pipeline: 'contacts-lifecycle-pipeline',
-//    lastmodifieddate: '2023-11-17T02:36:11.613Z',
-//    lifecyclestage: 'lead',
-//    website: 'https://www.example.com'
-//  },
-//  createdAt: 2023-11-17T02:36:11.613Z,
-//  updatedAt: 2023-11-17T02:36:11.613Z,
-//  archived: false
-//}
-model HubspotContact {
-  id                          Int      @id @default(autoincrement())
-  email                       String
-  hs_all_contact_vids         String
-  hs_email_domain             String
-  hs_is_contact               String
-  hs_is_unworked              String
-  hs_lifecyclestage_lead_date String
-  hs_object_id                String
-  hs_object_source            String
-  hs_object_source_id         String
-  hs_pipeline                 String
-  lastmodifieddate            String
-  lifecyclestage              String
-  website                     String
-  createdAt                   DateTime @default(now())
-  updatedAt                   DateTime @default(now())
-  archived                    Boolean  @default(false)
+model User {
+  id                  Int          @id @default(autoincrement())
+  name                String?
+  email               String       @unique
+  hashedPassword      String
+  salt                String
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  roles               String       @default("customer")
+  HubspotBot          HubspotBot[]
 }

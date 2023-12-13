@@ -1,61 +1,170 @@
-import type { Prisma } from '@prisma/client'
 import { db } from 'api/src/lib/db'
-
+import { hashPassword } from '@redwoodjs/auth-dbauth-api'
+import {getAllContact} from 'api/src/lib/hubspot'
 export default async () => {
   try {
-    //
-    // Manually seed via `yarn rw prisma db seed`
-    // Seeds automatically with `yarn rw prisma migrate dev` and `yarn rw prisma migrate reset`
-    //
-    // Update "const data = []" to match your data model and seeding needs
-    //
-    const data: Prisma.UserExampleCreateArgs['data'][] = [
-      // To try this example data with the UserExample model in schema.prisma,
-      // uncomment the lines below and run 'yarn rw prisma migrate dev'
-      //
-      // { name: 'alice', email: 'alice@example.com' },
-      // { name: 'mark', email: 'mark@example.com' },
-      // { name: 'jackie', email: 'jackie@example.com' },
-      // { name: 'bob', email: 'bob@example.com' },
+    const adminEmails = [
+      "bruce.canedy@technologyplayground.com",
+      "jace@benson.run",
+      "keith.t.elliot@gmail.com"
     ]
-    console.log(
-      "\nUsing the default './scripts/seed.{js,ts}' template\nEdit the file to add seed data\n"
+    let contacts = await getAllContact({ after: undefined });
+    // lets filter out the contacts that don't have a sidekick_title
+    contacts = contacts.filter((contact) => {
+      if (contact.properties.sidekick_title && contact.properties.email) {
+        return true;
+      }
+      return false;
+    })
+
+    await Promise.all(
+      adminEmails.map((email) => {
+        // lets generate a random password 10 numbers long
+        // we'll just reset it
+        let password = Math.random().toString(36).slice(-10)
+        const [hashedPassword, salt] = hashPassword(password)
+        // look to see if the user exists
+        return db.user.findFirst({ where: { email } }).then((user) => {
+          // if the user exists, skip it
+          // if the user doesn't exist, lets create the user
+          if (!user) {
+            return db.user.create({
+              data: {
+                email,
+                hashedPassword,
+                salt,
+                name: email,
+                roles: 'admin',
+              },
+            })
+          }
+        })
+      })
+    )
+    // lets get all the contacts from hubspot
+    // lets create a new user for each contact
+    await Promise.all(
+      contacts.map(async (contact) => {
+        if(!contact.properties.email) return
+        let userExists = await db.user.count({ where: { email: contact.properties?.email } }).then((count) => count > 0)
+        if (userExists) {
+          console.log({note: 'user already exists', email: contact.properties.email, title: contact.properties.sidekick_title, count: userExists})
+          return
+        }
+        console.log({note: 'creating user', email: contact.properties?.email, title: contact.properties.sidekick_title})
+        let email = contact.properties.email;
+        let password = Math.random().toString(36).slice(-10)
+        const [hashedPassword, salt] = hashPassword(password)
+        return db.user.create({
+          data: {
+            email,
+            hashedPassword,
+            salt,
+            name: contact.properties.sidekick_title,
+            roles: 'customer',
+          },
+        })
+      })
+    )
+    // lets create a new bot for each contact
+    await Promise.all(
+      contacts.map(async (contact) => {
+        // if the bot exists, skip it
+        console.log({contact})
+        let botExists = await db.hubspotBot.findFirst({ where: { fixieCorpusId: contact.properties.sidekick_fixie_corpus_id } }).then((bot) => bot)
+        if (botExists) return
+        let email = contact.properties.email;
+        if(!email) throw new Error('Missing Email', contact)
+        let urlSlug = contact.properties.sidekick_title;
+        let userId = await db.user.findFirst({ where: { email } }).then((user) => user.id)
+        return db.hubspotBot.create({
+          data: {
+            prompt: JSON.stringify([
+              {
+                role: "system",
+                content: [
+                  `You are an AI-powered chatbot named "${contact.properties.sidekick_title}".`,
+                  `Your main function is to ${contact.properties.sidekick_outcome}.`,
+                  `Take on a personality of ${contact.properties.sidekick_personality}.`,
+                  "When you are asked a question, you should respond with a short answer that is relevant to the question.",
+                  "If that answer has a SOURCE, you should include that source in your response.",
+                  "Answer in plain text, not HTML, not Markdown.",
+                  "Answer should be short and concise, aim for 1-2 sentences.",
+                  "Related Context: {{context}}"
+                ].join('\n')
+              },
+              {
+                role: "assistant",
+                content: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`
+              },
+            ]),
+            channelAccountId: contact.id,
+            channelId: contact.id,
+            hubspotUserId: contact.id,
+            fixieCorpusId: contact.properties.sidekick_fixie_corpus_id,
+            urlSlug,
+            userId,
+            logoUrl: contact.properties.sidekick_logo_url,
+          },
+        })
+      }
+      )
     )
 
+
+    const hubspotBots = [
+      {
+        prompt: JSON.stringify([
+          {
+            role: "system",
+            content: [
+              "You are an AI-powered chatbot named \"JaceBot\" embedded on Jace Benson's websites and social media platforms.",
+              "Your main function is to provide quick and concise answers related to Jace Benson, his websites, and the services he offers.",
+              "Your goal is to assist users by providing information and scheduling meetings for Jace with this link, https://app.simplymeet.me/jacebenson/30min.",
+              "When you are asked a question, you should respond with a short answer that is relevant to the question.",
+              "If that answer has a SOURCE, you should include that source in your response.",
+              "Answer in plain text, not HTML or Markdown.",
+              "Answer should be short and concise, aim for 1-2 sentences.",
+            ].join('\n')
+          },
+          {
+            role: "assistant",
+            content: "Hello, I'm JaceBot. I'm here to help you with any questions you may have about Jace Benson, his websites, and the services he offers. How can I help you?"
+          },
+          {
+            role: "system",
+            content: "Related Context: {{context}}"
+          },
+          {
+            role: "user",
+            content: "What can you help me with?"
+          },
+          {
+            role: "assistant",
+            content: "I can help you learn about Jace, his websites, and schedule a meeting with him."
+          }
+        ]),
+        channelAccountId: "2d10388f-656f-400b-8361-80ed0332fe04",
+        channelId: "1000",
+        hubspotUserId: "A-61925955",
+        fixieCorpusId: "2d10388f-656f-400b-8361-80ed0332fe04",
+        urlSlug: "jace",
+        userId: await db.user.findFirst({ where: { email: "jace@benson.run" } }).then((user) => user.id),
+      }
+    ]
     // Note: if using PostgreSQL, using `createMany` to insert multiple records is much faster
     // @see: https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany
     await Promise.all(
-      //
-      // Change to match your data model and seeding needs
-      //
-      data.map(async (data: Prisma.UserExampleCreateArgs['data']) => {
-        const record = await db.userExample.create({ data })
-        console.log(record)
+      hubspotBots.map(async(bot) => {
+        // if the bot exists, skip it
+        let botExists = await db.hubspotBot.findFirst({ where: { fixieCorpusId: bot.fixieCorpusId } }).then((bot) => bot)
+        if (botExists) return
+        return db.hubspotBot.create({
+          data: bot,
+        })
       })
     )
 
-    // If using dbAuth and seeding users, you'll need to add a `hashedPassword`
-    // and associated `salt` to their record. Here's how to create them using
-    // the same algorithm that dbAuth uses internally:
-    //
-    //   import { hashPassword } from '@redwoodjs/auth-dbauth-api'
-    //
-    //   const users = [
-    //     { name: 'john', email: 'john@example.com', password: 'secret1' },
-    //     { name: 'jane', email: 'jane@example.com', password: 'secret2' }
-    //   ]
-    //
-    //   for (const user of users) {
-    //     const [hashedPassword, salt] = hashPassword(user.password)
-    //     await db.user.create({
-    //       data: {
-    //         name: user.name,
-    //         email: user.email,
-    //         hashedPassword,
-    //         salt
-    //       }
-    //     })
-    //   }
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)

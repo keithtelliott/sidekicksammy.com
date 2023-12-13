@@ -6409,6 +6409,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@redwoodjs/auth-dbauth-api@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@redwoodjs/auth-dbauth-api@npm:6.4.0"
+  dependencies:
+    "@babel/runtime-corejs3": 7.23.2
+    "@redwoodjs/project-config": 6.4.0
+    base64url: 3.0.1
+    core-js: 3.33.2
+    md5: 2.3.0
+    uuid: 9.0.0
+  checksum: 5a3ed452c8af198777f7e6562f84659f91220b9957bca591556060491c63e69084154ea15f353c97fd2d2db283b0da7526307706fec7afdfaf8bcc2ab79f7495
+  languageName: node
+  linkType: hard
+
+"@redwoodjs/auth-dbauth-setup@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@redwoodjs/auth-dbauth-setup@npm:6.4.0"
+  dependencies:
+    "@babel/runtime-corejs3": 7.23.2
+    "@redwoodjs/cli-helpers": 6.4.0
+    "@simplewebauthn/browser": 7.2.0
+    core-js: 3.33.2
+    prompts: 2.4.2
+    terminal-link: 2.1.1
+  checksum: d5f06d2fb76f4321fdf367d94120b855a01ce1269d9e421404f7328575e9fef67df9e3687a107bd75fa060ac4153615517f6cf3af5e22ffef308f27be2456b78
+  languageName: node
+  linkType: hard
+
+"@redwoodjs/auth-dbauth-web@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@redwoodjs/auth-dbauth-web@npm:6.4.0"
+  dependencies:
+    "@babel/runtime-corejs3": 7.23.2
+    "@redwoodjs/auth": 6.4.0
+    "@simplewebauthn/browser": 7.2.0
+    core-js: 3.33.2
+  checksum: 5e9ceb06ba5e4bb8f1b0c5eb902f3e71c72fdd88d532892b37fd7983c5d4d8e8c2e6b60c8f429b61366769ef25456135d6b02c4c7eacae111dff20e28a1d1412
+  languageName: node
+  linkType: hard
+
 "@redwoodjs/auth@npm:6.4.0":
   version: 6.4.0
   resolution: "@redwoodjs/auth@npm:6.4.0"
@@ -6987,6 +7027,22 @@ __metadata:
     prettier:
       optional: true
   checksum: 275247e686cc999d91623d67ce09171f9ed17764616bb7941877439ce44b1cba305ac049e91981660cd8690f18d797cd27cecdf26cf436eb81895093e0223f42
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/browser@npm:7.2.0":
+  version: 7.2.0
+  resolution: "@simplewebauthn/browser@npm:7.2.0"
+  dependencies:
+    "@simplewebauthn/typescript-types": "*"
+  checksum: 7a12b06bb20e1f6214524603b5d030ec110c85dee1399946400315ee4fb9e1fcc79809a41851445b7f09513b56fb6e6fca5c78365e04dee7244e19b985672cb4
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/typescript-types@npm:*":
+  version: 8.3.4
+  resolution: "@simplewebauthn/typescript-types@npm:8.3.4"
+  checksum: 763384ad35c78d10b50b9108c3aee5e471cd4bf0d8ba3efb4a581901b57c1b5d3d425c2c86eb3f88823b4a86fd9d3d7d5bbb4d757c4eb8eeea427a4eb517a472
   languageName: node
   linkType: hard
 
@@ -10167,6 +10223,7 @@ __metadata:
   dependencies:
     "@hubspot/api-client": ^10.0.0
     "@redwoodjs/api": 6.4.0
+    "@redwoodjs/auth-dbauth-api": 6.4.0
     "@redwoodjs/graphql-server": 6.4.0
     "@xmldom/xmldom": ^0.8.10
     robots-parser: ^3.0.1
@@ -11001,6 +11058,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64url@npm:3.0.1":
+  version: 3.0.1
+  resolution: "base64url@npm:3.0.1"
+  checksum: 5ca9d6064e9440a2a45749558dddd2549ca439a305793d4f14a900b7256b5f4438ef1b7a494e1addc66ced5d20f5c010716d353ed267e4b769e6c78074991241
+  languageName: node
+  linkType: hard
+
 "base@npm:^0.11.1":
   version: 0.11.2
   resolution: "base@npm:0.11.2"
@@ -11763,6 +11827,13 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 96e4731b9ec8050cbb56ab684e8c48d6c33f7826b755802d14e3ebfdc51c57afeece3ea39bc6b09acc359e4363525388b915e16640c1378053820f5e70d0f27d
+  languageName: node
+  linkType: hard
+
+"charenc@npm:0.0.2":
+  version: 0.0.2
+  resolution: "charenc@npm:0.0.2"
+  checksum: a45ec39363a16799d0f9365c8dd0c78e711415113c6f14787a22462ef451f5013efae8a28f1c058f81fc01f2a6a16955f7a5fd0cd56247ce94a45349c89877d8
   languageName: node
   linkType: hard
 
@@ -12680,6 +12751,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 5738c312387081c98d69c98e105b6327b069197f864a60593245d64c8089c8a0a744e16349281210d56835bb9274130d825a78b2ad6853ca13cfbeffc0c31750
+  languageName: node
+  linkType: hard
+
+"crypt@npm:0.0.2":
+  version: 0.0.2
+  resolution: "crypt@npm:0.0.2"
+  checksum: adbf263441dd801665d5425f044647533f39f4612544071b1471962209d235042fb703c27eea2795c7c53e1dfc242405173003f83cf4f4761a633d11f9653f18
   languageName: node
   linkType: hard
 
@@ -17118,7 +17196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^1.0.2, is-buffer@npm:^1.1.5":
+"is-buffer@npm:^1.0.2, is-buffer@npm:^1.1.5, is-buffer@npm:~1.1.6":
   version: 1.1.6
   resolution: "is-buffer@npm:1.1.6"
   checksum: ae18aa0b6e113d6c490ad1db5e8df9bdb57758382b313f5a22c9c61084875c6396d50bbf49315f5b1926d142d74dfb8d31b40d993a383e0a158b15fea7a82234
@@ -19194,6 +19272,17 @@ __metadata:
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
   checksum: b7bd75077f419c8e013fc4d4dada48be71882e37d69a44af65a2f2804b91e253441eb43a0614423a1c91bb830b8140b0dc906bc797245e2e275759584f4efcc5
+  languageName: node
+  linkType: hard
+
+"md5@npm:2.3.0":
+  version: 2.3.0
+  resolution: "md5@npm:2.3.0"
+  dependencies:
+    charenc: 0.0.2
+    crypt: 0.0.2
+    is-buffer: ~1.1.6
+  checksum: 14a21d597d92e5b738255fbe7fe379905b8cb97e0a49d44a20b58526a646ec5518c337b817ce0094ca94d3e81a3313879c4c7b510d250c282d53afbbdede9110
   languageName: node
   linkType: hard
 
@@ -23237,6 +23326,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
+    "@redwoodjs/auth-dbauth-setup": 6.4.0
     "@redwoodjs/cli-storybook": 6.4.0
     "@redwoodjs/core": 6.4.0
   languageName: unknown
@@ -26354,6 +26444,7 @@ __metadata:
     "@chakra-ui/react": ^2
     "@emotion/react": ^11
     "@emotion/styled": ^11
+    "@redwoodjs/auth-dbauth-web": 6.4.0
     "@redwoodjs/forms": 6.4.0
     "@redwoodjs/router": 6.4.0
     "@redwoodjs/vite": 6.4.0
@@ -26362,6 +26453,7 @@ __metadata:
     "@types/react-dom": 18.2.6
     fixie: ^6.0.1
     framer-motion: ^10.16.5
+    humanize-string: 2.1.0
     prop-types: 15.8.1
     react: 18.2.0
     react-dom: 18.2.0
