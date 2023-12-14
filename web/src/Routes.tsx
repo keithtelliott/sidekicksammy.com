@@ -7,7 +7,7 @@
 // 'src/pages/HomePage/HomePage.js'         -> HomePage
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
-import { Set, Router, Route } from '@redwoodjs/router'
+import { Set, Router, Route, PrivateSet } from '@redwoodjs/router'
 
 import ScaffoldLayout from 'src/layouts/ScaffoldLayout'
 
@@ -38,18 +38,32 @@ const Routes = () => {
         <Route path="/agent/{title...}" page={DemoPage} name="agent" />
       </Set>
       <Route notfound page={NotFoundPage} />
-      <Set wrap={ScaffoldLayout} title="Bots" titleTo="bots" buttonLabel="New Bot" buttonTo="newBot">
+      <PrivateSet
+        unauthenticated='login'
+        wrap={ScaffoldLayout}
+        title="Bots"
+        titleTo="bots"
+        buttonLabel="New Bot"
+        buttonTo="newBot"
+      >
         <Route path="/bots/new" page={BotNewBotPage} name="newBot" />
         <Route path="/bots/{id:Int}/edit" page={BotEditBotPage} name="editBot" />
         <Route path="/bots/{id:Int}" page={BotBotPage} name="bot" />
         <Route path="/bots" page={BotBotsPage} name="bots" />
-      </Set>
-      <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
+      </PrivateSet>
+      <PrivateSet
+        unauthenticated='login'
+        wrap={ScaffoldLayout}
+        title="Users"
+        titleTo="users"
+        buttonLabel="New User"
+        buttonTo="newUser"
+      >
         <Route path="/users/new" page={UserNewUserPage} name="newUser" />
         <Route path="/users/{id:Int}/edit" page={UserEditUserPage} name="editUser" />
         <Route path="/users/{id:Int}" page={UserUserPage} name="user" />
         <Route path="/users" page={UserUsersPage} name="users" />
-      </Set>
+      </PrivateSet>
       <Route path="/login" page={LoginPage} name="login" />
       <Route path="/signup" page={SignupPage} name="signup" />
       <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
