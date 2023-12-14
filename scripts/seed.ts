@@ -111,60 +111,6 @@ export default async () => {
       )
     )
 
-
-    const hubspotBots = [
-      {
-        prompt: JSON.stringify([
-          {
-            role: "system",
-            content: [
-              "You are an AI-powered chatbot named \"JaceBot\" embedded on Jace Benson's websites and social media platforms.",
-              "Your main function is to provide quick and concise answers related to Jace Benson, his websites, and the services he offers.",
-              "Your goal is to assist users by providing information and scheduling meetings for Jace with this link, https://app.simplymeet.me/jacebenson/30min.",
-              "When you are asked a question, you should respond with a short answer that is relevant to the question.",
-              "If that answer has a SOURCE, you should include that source in your response.",
-              "Answer in plain text, not HTML or Markdown.",
-              "Answer should be short and concise, aim for 1-2 sentences.",
-            ].join('\n')
-          },
-          {
-            role: "assistant",
-            content: "Hello, I'm JaceBot. I'm here to help you with any questions you may have about Jace Benson, his websites, and the services he offers. How can I help you?"
-          },
-          {
-            role: "system",
-            content: "Related Context: {{context}}"
-          },
-          {
-            role: "user",
-            content: "What can you help me with?"
-          },
-          {
-            role: "assistant",
-            content: "I can help you learn about Jace, his websites, and schedule a meeting with him."
-          }
-        ]),
-        channelAccountId: "2d10388f-656f-400b-8361-80ed0332fe04",
-        channelId: "1000",
-        hubspotUserId: "A-61925955",
-        fixieCorpusId: "2d10388f-656f-400b-8361-80ed0332fe04",
-        urlSlug: "jace",
-        userId: await db.user.findFirst({ where: { email: "jace@benson.run" } }).then((user) => user.id),
-      }
-    ]
-    // Note: if using PostgreSQL, using `createMany` to insert multiple records is much faster
-    // @see: https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany
-    await Promise.all(
-      hubspotBots.map(async(bot) => {
-        // if the bot exists, skip it
-        let botExists = await db.hubspotBot.findFirst({ where: { fixieCorpusId: bot.fixieCorpusId } }).then((bot) => bot)
-        if (botExists) return
-        return db.hubspotBot.create({
-          data: bot,
-        })
-      })
-    )
-
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)
