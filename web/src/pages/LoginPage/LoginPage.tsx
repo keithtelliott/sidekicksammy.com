@@ -1,6 +1,4 @@
-import { useRef } from 'react'
 import { useEffect } from 'react'
-
 import {
   Form,
   Label,
@@ -53,12 +51,12 @@ const LoginPage = () => {
 
   return (
     <Box
-    // lets center the login form
-    display={'flex'}
-    flexDirection={'column'}
-    alignItems={'center'}
-    justifyContent={'center'}
-    height={'100vh'}
+      // lets center the login form
+      display={'flex'}
+      flexDirection={'column'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      height={'100vh'}
     >
       <MetaTags title="Login" />
       <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
@@ -67,14 +65,14 @@ const LoginPage = () => {
         p={4}
         borderWidth="1px"
         borderRadius="lg"
-        >
+      >
         <Heading>Login</Heading>
-          <Form onSubmit={onSubmit}>
-            <Flex direction="column" align="center" justify="center" gap={4}>
+        <Form onSubmit={onSubmit}>
+          <Flex direction="column" align="center" justify="center" gap={4}>
             <FormControl>
               <FormLabel as={Label} name={"email"}
-              className="rw-label"
-              errorClassName="none"
+                className="rw-label"
+                errorClassName="none"
               >Email address</FormLabel>
               <Input as={TextField}
                 name="email"
@@ -98,17 +96,17 @@ const LoginPage = () => {
               />
             </FormControl>
             <Button as={Submit}
-            colorScheme={'blue'}
+              colorScheme={'blue'}
             >Login</Button>
-            </Flex>
-          </Form>
-        </Box>
-        <Box>
-          <Link to={routes.forgotPassword()}>Forgot Password?</Link>
-        </Box>
-        <Box>
-          <Link to={routes.signup()}>Sign Up</Link>
-        </Box>
+          </Flex>
+        </Form>
+      </Box>
+      <Box>
+        <Link to={routes.forgotPassword()}>Forgot Password?</Link>
+      </Box>
+      <Box>
+        <Link to={routes.signup()}>Sign Up</Link>
+      </Box>
     </Box>
   )
 }
