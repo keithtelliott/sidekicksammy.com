@@ -236,9 +236,16 @@ const HomePage = () => {
         />
 
         <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
-          <ListItem>Embeddable bot ready for your site</ListItem>
-          <ListItem>Support getting your bot ready with your content</ListItem>
-          <ListItem>60 day moneyback guarantee</ListItem>
+          <ListItem>Let's connect: Point us to your website address</ListItem>
+          <ListItem>Let's crawl: We'll read your site content</ListItem>
+          <ListItem>
+            Let's chat: Your customized chatbot will be ready to serve
+          </ListItem>
+          <ListItem>
+            Let's collaborate: We'll help integrate & refine your new tool
+          </ListItem>
+          {/* <ListItem>Support getting your bot ready with your content</ListItem> */}
+          {/* <ListItem>60 day moneyback guarantee</ListItem> // KTE, 12/14/2023 - let's move this to an FAQ*/}
         </UnorderedList>
       </Flex>
 
