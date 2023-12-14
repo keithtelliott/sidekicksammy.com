@@ -16,6 +16,7 @@ export const schema = gql`
     logoUrl: String
     backgroundColor: String
     textColor: String
+    greeting: String
     userId: Int
     User: User
   }
@@ -56,6 +57,7 @@ export const schema = gql`
     logoUrl: String
     backgroundColor: String
     textColor: String
+    greeting: String
     userId: Int
   }
 

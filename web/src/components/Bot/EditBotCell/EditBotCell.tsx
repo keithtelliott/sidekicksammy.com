@@ -27,6 +27,7 @@ export const QUERY = gql`
       logoUrl
       backgroundColor
       textColor
+      greeting
       userId
     }
   }

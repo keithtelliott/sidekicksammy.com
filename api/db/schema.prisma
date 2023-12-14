@@ -27,6 +27,7 @@ model Bot {
   logoUrl                 String?
   backgroundColor         String?
   textColor               String?
+  greeting                String?
   userId                  Int?
   User                    User?     @relation(fields: [userId], references: [id])
 }

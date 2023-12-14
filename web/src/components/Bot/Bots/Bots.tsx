@@ -68,7 +68,6 @@ const BotsList = ({ bots }: FindBots) => {
             <Th>Logo url</Th>
             <Th>Card image url</Th>
             <Th>Url slug</Th>
-            <Th>Fixie corpus id</Th>
             <Th>Description</Th>
             <Th>Owned By</Th>
             <Th>&nbsp;</Th>
@@ -82,10 +81,12 @@ const BotsList = ({ bots }: FindBots) => {
               <Td>{truncate(bot.id)}</Td>
               <Td>
                 <Image
-                maxW="100px"
+                  backgroundColor={bot.backgroundColor}
+                  padding="2"
+                  maxW="100px"
                   //boxSize="100px"
                   objectFit="cover"
-                  src={bot.logoUrl}
+                  src={bot.logoUrl || `https://placehold.co/50?text=${bot.urlSlug}}`}
                   alt={bot.description}
                 />
               </Td>
@@ -100,7 +101,6 @@ const BotsList = ({ bots }: FindBots) => {
                 </ChakraLink>
               </Td>
 
-              <Td>{truncate(bot.fixieCorpusId)}</Td>
               <Td>{truncate(bot.description)}</Td>
 
               <Td>
