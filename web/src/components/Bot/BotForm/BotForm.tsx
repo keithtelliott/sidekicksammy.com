@@ -4,6 +4,7 @@ import {
   FieldError,
   Label,
   TextField,
+  TextAreaField,
   DatetimeLocalField,
   NumberField,
   Submit,
@@ -11,6 +12,8 @@ import {
 
 import type { EditBotById, UpdateBotInput } from 'types/graphql'
 import type { RWGqlError } from '@redwoodjs/forms'
+import { FormControl, FormLabel, Input, Center, Flex, Textarea, Tabs, TabList, Tab, TabPanel, TabPanels, Button } from '@chakra-ui/react'
+import Bot from '../Bot/Bot'
 
 const formatDatetime = (value) => {
   if (value) {
@@ -29,265 +32,171 @@ interface BotFormProps {
 
 const BotForm = (props: BotFormProps) => {
   const onSubmit = (data: FormBot) => {
+    // convert userId to number
+    data.userId = parseInt(data.userId)
     props.onSave(data, props?.bot?.id)
   }
-
+  let BotTextInput = (props) => {
+    return (
+      <FormControl>
+        <FormLabel>{props.label}</FormLabel>
+        <Input
+          as={TextField}
+          // lets make the width contain the content
+          //width={"auto"}
+          // this doesn't work
+          minW={"fit-content"}
+          name={props.name}
+          defaultValue={props.defaultValue}
+          className="rw-input"
+          errorClassName={props.errorClassName}
+          validation={props.validation}
+        />
+        <FieldError name={props.name} className="rw-field-error" />
+      </FormControl>
+    )
+  }
+  let BotTextArea = (props) => {
+    return (
+      <FormControl>
+        <FormLabel>{props.label}</FormLabel>
+        <Textarea
+          as={TextAreaField}
+          fontFamily={"monospace"}
+          name={props.name}
+          defaultValue={props.defaultValue}
+          className="rw-input"
+          errorClassName={props.errorClassName}
+          validation={props.validation}
+        />
+        <FieldError name={props.name} className="rw-field-error" />
+      </FormControl>
+    )
+  }
   return (
-    <div className="rw-form-wrapper">
-      <Form<FormBot> onSubmit={onSubmit} error={props.error}>
-        <FormError
-          error={props.error}
-          wrapperClassName="rw-form-error-wrapper"
-          titleClassName="rw-form-error-title"
-          listClassName="rw-form-error-list"
-        />
-
-        <Label
-          name="hsRefreshToken"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
+    <Form<FormBot> onSubmit={onSubmit} error={props.error}>
+      <Center
+        background={"gray.100"}
+        p={4}
+        rounded={6}
+        width={"75vw"}
+      >
+        <Flex
+          gap={2}
+          direction={"column"}
+          background={"white"}
+          p={4}
+          rounded={6}
+          width={"75vw"}
         >
-          Hs refresh token
-        </Label>
+          <FormError
+            error={props.error}
+            wrapperClassName="rw-form-error-wrapper"
+            titleClassName="rw-form-error-title"
+            listClassName="rw-form-error-list"
+          />
+          <BotTextInput
+            name="urlSlug"
+            label="Url slug"
+            defaultValue={props.bot?.urlSlug}
+            errorClassName="rw-field-error"
+          />
+          <BotTextInput
+            name="logoUrl"
+            label="Logo url"
+            defaultValue={props.bot?.logoUrl}
+            errorClassName="rw-field-error"
+          />
+          <BotTextInput
+            name="cardImageUrl"
+            label="Card image url"
+            defaultValue={props.bot?.cardImageUrl}
+            errorClassName="rw-field-error"
+          />
 
-        <TextField
-          name="hsRefreshToken"
-          defaultValue={props.bot?.hsRefreshToken}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
+          <BotTextInput
+            name="backgroundColor"
+            label="Background color"
+            defaultValue={props.bot?.backgroundColor}
+            errorClassName="rw-field-error"
 
-        <FieldError name="hsRefreshToken" className="rw-field-error" />
+          />
+          <BotTextInput
+            name="textColor"
+            label="Text color"
+            defaultValue={props.bot?.textColor}
+            errorClassName="rw-field-error"
+          />
+          <BotTextInput
+            name="userId"
+            label="User id"
+            defaultValue={props.bot?.userId}
+            errorClassName="rw-field-error"
+          />
+          <BotTextArea
+            name="description"
+            label="Description"
+            defaultValue={props.bot?.description}
+            errorClassName="rw-field-error"
+          />
+          <Tabs>
+            <TabList>
+              <Tab>Fixie</Tab>
+              <Tab>Hubspot</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <BotTextInput
+                  name="fixieCorpusId"
+                  label="Fixie corpus id"
+                  defaultValue={props.bot?.fixieCorpusId}
+                  errorClassName="rw-field-error"
+                />
+              </TabPanel>
+              <TabPanel>
+                <BotTextInput
+                  name="hsChannelAccountId"
+                  label="Hs channel account id"
+                  defaultValue={props.bot?.hsChannelAccountId}
+                  errorClassName="rw-field-error"
+                />
+                <BotTextInput
+                  name="hsChannelId"
+                  label="Hs channel id"
+                  defaultValue={props.bot?.hsChannelId}
+                  errorClassName="rw-field-error"
+                />
+                <BotTextInput
+                  name="hsUserId"
+                  label="Hs user id"
+                  defaultValue={props.bot?.hsUserId}
+                  errorClassName="rw-field-error"
+                />
 
-        <Label
-          name="hsRefreshTokenExpiresAt"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Hs refresh token expires at
-        </Label>
+                <BotTextArea
+                  name="hsPrompt"
+                  label="Hs prompt"
+                  defaultValue={props.bot?.hsPrompt}
+                  errorClassName="rw-field-error"
+                />
+              </TabPanel>
 
-        <DatetimeLocalField
-          name="hsRefreshTokenExpiresAt"
-          defaultValue={formatDatetime(props.bot?.hsRefreshTokenExpiresAt)}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
+            </TabPanels>
+          </Tabs>
+        </Flex>
+      </Center>
+      <Button
+        as={Submit}
+        type='submit'
+        disabled={props.loading}
+        className="rw-button rw-button-blue"
+        colorScheme={"blue"}
+        p={4}
+      >
+        Save
+      </Button>
 
-        <FieldError name="hsRefreshTokenExpiresAt" className="rw-field-error" />
-
-        <Label
-          name="hsPrompt"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Hs prompt
-        </Label>
-
-        <TextField
-          name="hsPrompt"
-          defaultValue={props.bot?.hsPrompt}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="hsPrompt" className="rw-field-error" />
-
-        <Label
-          name="hsChannelAccountId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Hs channel account id
-        </Label>
-
-        <TextField
-          name="hsChannelAccountId"
-          defaultValue={props.bot?.hsChannelAccountId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="hsChannelAccountId" className="rw-field-error" />
-
-        <Label
-          name="hsChannelId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Hs channel id
-        </Label>
-
-        <TextField
-          name="hsChannelId"
-          defaultValue={props.bot?.hsChannelId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="hsChannelId" className="rw-field-error" />
-
-        <Label
-          name="hsUserId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Hs user id
-        </Label>
-
-        <TextField
-          name="hsUserId"
-          defaultValue={props.bot?.hsUserId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          emptyAs={'undefined'}
-        />
-
-        <FieldError name="hsUserId" className="rw-field-error" />
-
-        <Label
-          name="fixieCorpusId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Fixie corpus id
-        </Label>
-
-        <TextField
-          name="fixieCorpusId"
-          defaultValue={props.bot?.fixieCorpusId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="fixieCorpusId" className="rw-field-error" />
-
-        <Label
-          name="cardImageUrl"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Card image url
-        </Label>
-
-        <TextField
-          name="cardImageUrl"
-          defaultValue={props.bot?.cardImageUrl}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="cardImageUrl" className="rw-field-error" />
-
-        <Label
-          name="description"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Description
-        </Label>
-
-        <TextField
-          name="description"
-          defaultValue={props.bot?.description}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="description" className="rw-field-error" />
-
-        <Label
-          name="urlSlug"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Url slug
-        </Label>
-
-        <TextField
-          name="urlSlug"
-          defaultValue={props.bot?.urlSlug}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="urlSlug" className="rw-field-error" />
-
-        <Label
-          name="logoUrl"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Logo url
-        </Label>
-
-        <TextField
-          name="logoUrl"
-          defaultValue={props.bot?.logoUrl}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="logoUrl" className="rw-field-error" />
-
-        <Label
-          name="backgroundColor"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Background color
-        </Label>
-
-        <TextField
-          name="backgroundColor"
-          defaultValue={props.bot?.backgroundColor}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="backgroundColor" className="rw-field-error" />
-
-        <Label
-          name="textColor"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Text color
-        </Label>
-
-        <TextField
-          name="textColor"
-          defaultValue={props.bot?.textColor}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="textColor" className="rw-field-error" />
-
-        <Label
-          name="userId"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          User id
-        </Label>
-
-        <NumberField
-          name="userId"
-          defaultValue={props.bot?.userId}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-        />
-
-        <FieldError name="userId" className="rw-field-error" />
-
-        <div className="rw-button-group">
-          <Submit disabled={props.loading} className="rw-button rw-button-blue">
-            Save
-          </Submit>
-        </div>
-      </Form>
-    </div>
+    </Form>
   )
 }
 

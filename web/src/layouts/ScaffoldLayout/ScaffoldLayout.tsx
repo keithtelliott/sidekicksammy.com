@@ -17,7 +17,6 @@ const ScaffoldLayout = ({
   buttonTo,
   children,
 }: LayoutProps) => {
-  // lets chakra this
   return (
     <Box
       display="flex"

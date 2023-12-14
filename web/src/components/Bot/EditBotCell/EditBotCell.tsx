@@ -6,6 +6,7 @@ import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 import BotForm from 'src/components/Bot/BotForm'
+import { Box } from '@chakra-ui/react'
 
 export const QUERY = gql`
   query EditBotById($id: Int!) {
