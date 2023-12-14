@@ -28,11 +28,11 @@ const Routes = () => {
 
   return (
     <Router useAuth={useAuth}>
-      <Set wrap={ScaffoldLayout} title="HubspotBots" titleTo="hubspotBots" buttonLabel="New HubspotBot" buttonTo="newHubspotBot">
-        <Route path="/hubspot-bots/new" page={HubspotBotNewHubspotBotPage} name="newHubspotBot" />
-        <Route path="/hubspot-bots/{id:Int}/edit" page={HubspotBotEditHubspotBotPage} name="editHubspotBot" />
-        <Route path="/hubspot-bots/{id:Int}" page={HubspotBotHubspotBotPage} name="hubspotBot" />
-        <Route path="/hubspot-bots" page={HubspotBotHubspotBotsPage} name="hubspotBots" />
+      <Set wrap={ScaffoldLayout} title="Bots" titleTo="bots" buttonLabel="New Bot" buttonTo="newBot">
+        <Route path="/bots/new" page={BotNewBotPage} name="newBot" />
+        <Route path="/bots/{id:Int}/edit" page={BotEditBotPage} name="editBot" />
+        <Route path="/bots/{id:Int}" page={BotBotPage} name="bot" />
+        <Route path="/bots" page={BotBotsPage} name="bots" />
       </Set>
       <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
         <Route path="/users/new" page={UserNewUserPage} name="newUser" />

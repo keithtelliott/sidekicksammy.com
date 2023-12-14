@@ -71,15 +71,15 @@ export default async () => {
       contacts.map(async (contact) => {
         // if the bot exists, skip it
         console.log({contact})
-        let botExists = await db.hubspotBot.findFirst({ where: { fixieCorpusId: contact.properties.sidekick_fixie_corpus_id } }).then((bot) => bot)
+        let botExists = await db.bot.findFirst({ where: { fixieCorpusId: contact.properties.sidekick_fixie_corpus_id } }).then((bot) => bot)
         if (botExists) return
         let email = contact.properties.email;
         if(!email) throw new Error('Missing Email', contact)
         let urlSlug = contact.properties.sidekick_title;
         let userId = await db.user.findFirst({ where: { email } }).then((user) => user.id)
-        return db.hubspotBot.create({
+        return db.bot.create({
           data: {
-            prompt: JSON.stringify([
+            hsPrompt: JSON.stringify([
               {
                 role: "system",
                 content: [
@@ -98,9 +98,9 @@ export default async () => {
                 content: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`
               },
             ]),
-            channelAccountId: contact.id,
-            channelId: contact.id,
-            hubspotUserId: contact.id,
+            hsChannelAccountId: contact.id,
+            hsChannelId: contact.id,
+            hsUserId: contact.id,
             fixieCorpusId: contact.properties.sidekick_fixie_corpus_id,
             urlSlug,
             userId,

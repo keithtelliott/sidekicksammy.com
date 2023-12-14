@@ -1,23 +1,25 @@
-import type { FindHubspotBots } from 'types/graphql'
+import type { FindBots } from 'types/graphql'
 
 import { Link, routes } from '@redwoodjs/router'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
-import HubspotBots from 'src/components/HubspotBot/HubspotBots'
+import Bots from 'src/components/Bot/Bots'
 
 export const QUERY = gql`
-  query FindHubspotBots {
-    hubspotBots {
+  query FindBots {
+    bots {
       id
       createdAt
       updatedAt
-      refreshToken
-      refreshTokenExpiresAt
-      prompt
-      channelAccountId
-      channelId
-      hubspotUserId
+      hsRefreshToken
+      hsRefreshTokenExpiresAt
+      hsPrompt
+      hsChannelAccountId
+      hsChannelId
+      hsUserId
       fixieCorpusId
+      cardImageUrl
+      description
       urlSlug
       logoUrl
       backgroundColor
@@ -35,8 +37,8 @@ export const Loading = () => <div>Loading...</div>
 export const Empty = () => {
   return (
     <div className="rw-text-center">
-      {'No hubspotBots yet. '}
-      <Link to={routes.newHubspotBot()} className="rw-link">
+      {'No bots yet. '}
+      <Link to={routes.newBot()} className="rw-link">
         {'Create one?'}
       </Link>
     </div>
@@ -47,6 +49,6 @@ export const Failure = ({ error }: CellFailureProps) => (
   <div className="rw-cell-error">{error?.message}</div>
 )
 
-export const Success = ({ hubspotBots }: CellSuccessProps<FindHubspotBots>) => {
-  return <HubspotBots hubspotBots={hubspotBots} />
+export const Success = ({ bots }: CellSuccessProps<FindBots>) => {
+  return <Bots bots={bots} />
 }
