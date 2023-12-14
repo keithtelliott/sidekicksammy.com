@@ -62,12 +62,9 @@ const BotForm = (props: BotFormProps) => {
     console.log({ data })
     props.onSave({
       ...data,
-      userId: parseInt(data.userId),
+      userId: parseInt(data.userId, 10),
     }
       , props?.bot?.id)
-  }
-  let setValue = (name, value) => {
-    data[name] = value
   }
   let BotColorPicker = (props) => {
     return (
@@ -257,7 +254,6 @@ const BotForm = (props: BotFormProps) => {
                 // lets set the default value to the state's messages
                 //props.bot?.[props.name] = JSON.stringify(messages)
                 ///onClose()
-                setValue(props.name, JSON.stringify(messages))
               }}>
                 Set
               </Button>
