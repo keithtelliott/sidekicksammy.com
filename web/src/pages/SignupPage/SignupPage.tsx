@@ -2,6 +2,16 @@ import { useRef } from 'react'
 import { useEffect } from 'react'
 
 import {
+  Box,
+  Flex,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Input,
+  Button,
+  Heading
+} from '@chakra-ui/react'
+import {
   Form,
   Label,
   TextField,
@@ -45,6 +55,58 @@ const SignupPage = () => {
       toast.success('Welcome!')
     }
   }
+  // chakra up this page
+  return (
+    <Box
+      // lets center the login form
+      display={'flex'}
+      flexDirection={'column'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      height={'100vh'}
+    >
+      <MetaTags title="Signup" />
+      <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
+      <Box
+        p={8}
+        maxWidth={'500px'}
+        borderWidth={1}
+        borderRadius={8}
+        boxShadow={'lg'}
+        bg={'white'}
+        alignContent={'center'}
+      >
+        <Heading mb={6}>Sign Up</Heading>
+        <Form onSubmit={onSubmit}>
+          <Flex direction={'column'} mb={3} alignContent={'center'}>
+          <FormControl id="email" mb={3}>
+            <FormLabel>Email address</FormLabel>
+            <Input type="email" ref={emailRef} />
+          </FormControl>
+          <FormControl id="password" mb={6}>
+            <FormLabel>Password</FormLabel>
+            <Input type="password" />
+          </FormControl>
+          {/**should be center and blue */}
+          {/*<Button type="submit" colorScheme="teal" size="lg" fontSize="md">
+          Sign Up
+  </Button>*/}
+          <Button as={Submit}
+            colorScheme={'blue'}
+            size="lg"
+            fontSize="md"
+          >
+            Sign Up
+          </Button>
+          </Flex>
+        </Form>
+      </Box>
+      <Box mt={6}>
+        <Link to={routes.login()}>Already have an account? Log in!</Link>
+      </Box>
+    </Box>
+
+  )
 
   return (
     <>
