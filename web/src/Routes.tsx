@@ -25,9 +25,19 @@ const Routes = () => {
       // ... add other tenant-specific properties
     }
   }
+// order matters here.... the last /{title} will catch anything.... so it's last
 
   return (
     <Router useAuth={useAuth}>
+      <Set wrap={HomeLayout}>
+        <Route path="/" page={HomePage} name="home" />
+      </Set>
+      <Route path="/agent2" page={Agent2Page} name="agent2" />
+
+      <Set wrap={TenantLayout}>
+        <Route path="/agent/{title...}" page={DemoPage} name="agent" />
+      </Set>
+      <Route notfound page={NotFoundPage} />
       <Set wrap={ScaffoldLayout} title="Bots" titleTo="bots" buttonLabel="New Bot" buttonTo="newBot">
         <Route path="/bots/new" page={BotNewBotPage} name="newBot" />
         <Route path="/bots/{id:Int}/edit" page={BotEditBotPage} name="editBot" />
@@ -44,17 +54,7 @@ const Routes = () => {
       <Route path="/signup" page={SignupPage} name="signup" />
       <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
-      <Route path="/agent2" page={Agent2Page} name="agent2" />
-      <Set wrap={HomeLayout}>
-        <Route path="/" page={HomePage} name="home" />
-      </Set>
-      <Set wrap={TenantLayout}>
-        <Route path="/agent/{title...}" page={DemoPage} name="agent" />
-        {/**Fixie's embedded client */}
-        {/* <Route path="/{title}" page={AgentPage} name="demo" /> */}
-      </Set>
       <Route path="/{title}" page={Agent2Page} name="demo" />
-      <Route notfound page={NotFoundPage} />
     </Router>
   )
 }
