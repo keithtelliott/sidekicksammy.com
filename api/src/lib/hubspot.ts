@@ -106,25 +106,6 @@ export let respond = async ({ message, threadId, who }) => {
   console.log('from customer');
   // lets get the account, channel, and channelAccount
   let [account, channelId, channelAccountId, hubspotToken] = ['', '', '', ''];
-  let thread = await db.thread.findUnique({
-    where: {
-      id: threadId
-    },
-    select: {
-      Sidekick: {
-        select: {
-          hubspotAIAccountId: true,
-          hubspotChannelId: true,
-          hubspotChannelAccountId: true,
-          hubspotToken: true
-        }
-      },
-      }
-  });
-  if(thread) {
-    [account, channelId, channelAccountId, hubspotToken] = [thread.Sidekick.hubspotAIAccountId, thread.Sidekick.hubspotChannelId, thread.Sidekick.hubspotChannelAccountId, thread.Sidekick.hubspotToken];
-  }
-  // eles
   let responseBody = {
     "type": "MESSAGE",
     "text": message,

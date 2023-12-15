@@ -11,19 +11,23 @@ import './index.css'
 
 import { TenantProvider } from 'src/helpers/TenantContext'
 
+import { AuthProvider, useAuth } from './auth'
+
 const extendedTheme = theme
 
 const App = () => (
   <FatalErrorBoundary page={FatalErrorPage}>
     <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
-      <ColorModeScript />
-      <ChakraProvider theme={extendedTheme}>
-        <RedwoodApolloProvider>
-          <TenantProvider>
-            <Routes />
-          </TenantProvider>
-        </RedwoodApolloProvider>
-      </ChakraProvider>
+      <AuthProvider>
+        <ColorModeScript />
+        <ChakraProvider theme={extendedTheme}>
+          <RedwoodApolloProvider useAuth={useAuth}>
+            <TenantProvider>
+              <Routes />
+            </TenantProvider>
+          </RedwoodApolloProvider>
+        </ChakraProvider>
+      </AuthProvider>
     </RedwoodProvider>
   </FatalErrorBoundary>
 )
