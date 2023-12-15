@@ -1,4 +1,4 @@
-import { Box, Flex, Button } from "@chakra-ui/react"
+import { Box, Flex, Button, Spacer } from "@chakra-ui/react"
 import { Link } from "@redwoodjs/router";
 import { useAuth } from "src/auth";
 type AppLayoutProps = {
@@ -16,31 +16,42 @@ const NavBar = ({ children, isLoggedIn }: NavBarProps) => {
   // return everything before it
   let name = currentUser?.name
   function getFirstAlphaNumeric(name: string): string {
-    if(!name) return ''
+    if (!name) return ''
     const match = name.match(/^[a-zA-Z]+/);
     return match ? match[0] : '';
   }
   let nameUpToFirstNonAlphaNumeric = getFirstAlphaNumeric(name)
 
   return (
-    <Flex>
+    <Box>
       <Box>
         {children}
       </Box>
-      <Box>
+      <Flex
+        alignItems="center"
+        gap={9}>
+        <Link to="/">Home</Link>
+        <Spacer />
+        <Link
+          to="/bots"
+          style={{
+            marginLeft: '1rem',
+            marginRight: '1rem',
+          }}
+        >
+          Bots
+        </Link>
+        <Link to="/users">Users</Link>
+        <Spacer />
+
         {isAuthenticated && (
           <Button onClick={logOut}>Log Out {nameUpToFirstNonAlphaNumeric}</Button>
         )}
         {!isAuthenticated && (
-          <Button
-            as={Link}
-            to="/login"
-          >
-            Log In
-          </Button>
+          <Button as={Link} to="/login" > Log In </Button>
         )}
-      </Box>
-    </Flex>
+      </Flex>
+    </Box>
   )
 }
 
@@ -54,10 +65,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   let footer = <div>footer</div>
   let body = <div>{children}</div>
   return (
-<Box>
-  <NavBar />
-  {children}
-</Box>
+    <Box>
+      <NavBar />
+      {children}
+    </Box>
   )
 }
 
