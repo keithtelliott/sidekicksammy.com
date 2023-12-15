@@ -419,7 +419,6 @@ const BotForm = (props: BotFormProps) => {
                   label="Hs prompt"
                   defaultValue={props.bot?.hsPrompt}
                   errorClassName="rw-field-error"
-                  setValue={setValue}
                 />
               </TabPanel>
 
