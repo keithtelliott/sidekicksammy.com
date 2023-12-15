@@ -95,9 +95,19 @@ const LoginPage = () => {
                 name="password"
               />
             </FormControl>
-            <Button as={Submit}
-              colorScheme={'blue'}
-            >Login</Button>
+            {/**this is a hack, not sure why the button doesn just
+             * work
+             * also not sure why no errors come up when
+             * the password is wrong etc
+             */}
+            <Box as={Submit}
+            >
+              <Box as={Button}
+                colorScheme={'blue'}
+              >
+                Log in
+                </Box>
+            </Box>
           </Flex>
         </Form>
       </Box>
