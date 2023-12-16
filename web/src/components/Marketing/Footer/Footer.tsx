@@ -1,4 +1,4 @@
-import { Box, Stack, Text, HStack, Flex } from '@chakra-ui/react'
+import { Box, Stack, Text, HStack, Flex, Link } from '@chakra-ui/react'
 
 const Footer = () => {
   const currentYear = () => {
@@ -8,6 +8,7 @@ const Footer = () => {
 
   return (
     <Flex direction="column" justify="center" align="center" padding="1rem">
+      <Link href="/login">Login</Link>
       <Text>Copyright &copy; {currentYear()}. Sidekick Sammy</Text>
     </Flex>
   )
