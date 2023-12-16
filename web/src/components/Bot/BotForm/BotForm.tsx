@@ -66,7 +66,6 @@ const BotForm = (props: BotFormProps) => {
       hsUserId: parseInt(data.hsUserId, 10),
       hsChannelId: parseInt(data.hsChannelId, 10),
       hsChannelAccountId: parseInt(data.hsChannelAccountId, 10),
-
     }
       , props?.bot?.id)
   }
