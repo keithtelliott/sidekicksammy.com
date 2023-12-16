@@ -63,6 +63,10 @@ const BotForm = (props: BotFormProps) => {
     props.onSave({
       ...data,
       userId: parseInt(data.userId, 10),
+      hsUserId: parseInt(data.hsUserId, 10),
+      hsChannelId: parseInt(data.hsChannelId, 10),
+      hsChannelAccountId: parseInt(data.hsChannelAccountId, 10),
+
     }
       , props?.bot?.id)
   }
@@ -160,8 +164,8 @@ const BotForm = (props: BotFormProps) => {
     let handlePromptClick = (url) => {
       onOpen()
     }
-    let firstSystemMessage = messages.find((message) => message.role === "system")
-    console.log({content: firstSystemMessage.content})
+    let firstSystemMessage = messages?.find((message) => message.role === "system")
+    console.log({content: firstSystemMessage?.content})
     let setSystemMessage = (message) => {
       // look for the first message, if it's there and it's "role" is "system"
       // update it
@@ -324,6 +328,12 @@ const BotForm = (props: BotFormProps) => {
             listClassName="rw-form-error-list"
           />
           <BotTextInput
+            name="title"
+            label="Title"
+            defaultValue={props.bot?.title}
+            errorClassName="rw-field-error"
+          />
+          <BotTextInput
             name="urlSlug"
             label="Url slug"
             defaultValue={props.bot?.urlSlug}
@@ -389,7 +399,13 @@ const BotForm = (props: BotFormProps) => {
                 />
               </TabPanel>
               <TabPanel>
-                <BotTextInput
+              <BotTextInput
+                  name="hsAccessToken"
+                  label="Hs access token"
+                  defaultValue={props.bot?.hsAccessToken}
+                  errorClassName="rw-field-error"
+                />
+              <BotTextInput
                   name="hsChannelAccountId"
                   label="Hs channel account id"
                   defaultValue={props.bot?.hsChannelAccountId}

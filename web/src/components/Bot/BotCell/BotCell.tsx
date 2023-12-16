@@ -10,8 +10,8 @@ export const QUERY = gql`
       id
       createdAt
       updatedAt
-      hsRefreshToken
-      hsRefreshTokenExpiresAt
+      hsAccessToken
+      hsAccessTokenExpiresAt
       hsPrompt
       hsChannelAccountId
       hsChannelId

@@ -14,8 +14,8 @@ export const QUERY = gql`
       id
       createdAt
       updatedAt
-      hsRefreshToken
-      hsRefreshTokenExpiresAt
+      hsAccessToken
+      hsAccessTokenExpiresAt
       hsPrompt
       hsChannelAccountId
       hsChannelId
@@ -24,6 +24,7 @@ export const QUERY = gql`
       cardImageUrl
       description
       urlSlug
+      title
       logoUrl
       backgroundColor
       textColor
@@ -38,8 +39,8 @@ const UPDATE_BOT_MUTATION = gql`
       id
       createdAt
       updatedAt
-      hsRefreshToken
-      hsRefreshTokenExpiresAt
+      hsAccessToken
+      hsAccessTokenExpiresAt
       hsPrompt
       hsChannelAccountId
       hsChannelId
@@ -48,6 +49,7 @@ const UPDATE_BOT_MUTATION = gql`
       cardImageUrl
       description
       urlSlug
+      title
       logoUrl
       backgroundColor
       textColor

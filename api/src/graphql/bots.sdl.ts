@@ -3,20 +3,23 @@ export const schema = gql`
     id: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
-    hsRefreshToken: String
-    hsRefreshTokenExpiresAt: DateTime
-    hsPrompt: String
-    hsChannelAccountId: String
-    hsChannelId: String
-    hsUserId: String
-    fixieCorpusId: String
+    backgroundColor: String
     cardImageUrl: String
     description: String
-    urlSlug: String
-    logoUrl: String
-    backgroundColor: String
-    textColor: String
+    fixieCorpusId: String
     greeting: String
+    hsActive: Boolean
+    hsChannelAccountId: Int
+    hsChannelId: Int
+    hsPrompt: String
+    hsRefreshToken: String
+    hsAccessToken: String
+    hsAccessTokenExpiresAt: DateTime
+    hsUserId: Int
+    logoUrl: String
+    title: String
+    textColor: String
+    urlSlug: String
     userId: Int
     User: User
   }
@@ -27,37 +30,47 @@ export const schema = gql`
   }
 
   input CreateBotInput {
-    hsRefreshToken: String
-    hsRefreshTokenExpiresAt: DateTime
-    hsPrompt: String
-    hsChannelAccountId: String
-    hsChannelId: String
-    hsUserId: String
-    fixieCorpusId: String
+    backgroundColor: String
     cardImageUrl: String
     description: String
-    urlSlug: String
+    fixieCorpusId: String
+    hsActive: Boolean
+    hsAppId: Int
+    hsChannelAccountId: Int
+    hsChannelId: Int
+    hsPortalId: Int
+    hsPrompt: String
+    hsRefreshToken: String
+    hsAccessToken: String
+    hsAccessTokenExpiresAt: DateTime
+    hsUserId: Int
     logoUrl: String
-    backgroundColor: String
+    title: String
     textColor: String
+    urlSlug: String
     userId: Int
   }
 
   input UpdateBotInput {
-    hsRefreshToken: String
-    hsRefreshTokenExpiresAt: DateTime
-    hsPrompt: String
-    hsChannelAccountId: String
-    hsChannelId: String
-    hsUserId: String
-    fixieCorpusId: String
+    backgroundColor: String
     cardImageUrl: String
     description: String
-    urlSlug: String
-    logoUrl: String
-    backgroundColor: String
-    textColor: String
+    fixieCorpusId: String
     greeting: String
+    hsActive: Boolean
+    hsAppId: Int
+    hsChannelAccountId: Int
+    hsChannelId: Int
+    hsPortalId: Int
+    hsPrompt: String
+    hsRefreshToken: String
+    hsAccessToken: String
+    hsAccessTokenTokenExpiresAt: DateTime
+    hsUserId: Int
+    logoUrl: String
+    textColor: String
+    title: String
+    urlSlug: String
     userId: Int
   }
 

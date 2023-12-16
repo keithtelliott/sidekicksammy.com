@@ -28,7 +28,7 @@ const Header = () => {
 
         <Spacer display={{ base: 'none', md: 'block' }} />
 
-        <LinkOverlay
+        <Link
           display={{ base: 'none', md: 'flex' }}
           width={{ md: '20%', lg: '15%' }}
           href="/#pricing"
@@ -38,8 +38,8 @@ const Header = () => {
             src="./images/header/pricing.png"
             alt="Pricing"
           />
-        </LinkOverlay>
-        <LinkOverlay
+        </Link>
+        <Link
           display={{ base: 'none', md: 'flex' }}
           width={{ md: '20%', lg: '15%' }}
           href="/#getStarted"
@@ -49,7 +49,7 @@ const Header = () => {
             src="./images/header/getStarted.png"
             alt="Get Started"
           />
-        </LinkOverlay>
+        </Link>
       </Flex>
     </>
   )

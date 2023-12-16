@@ -50,23 +50,15 @@ const BotsList = ({ bots }: FindBots) => {
       deleteBot({ variables: { id } })
     }
   }
-    let slugify = (str: string) => {
-    // lower case
-    // strip out non alpha numeric characters
-    // replace spaces with dashes
-    let returnString = str.toLowerCase();
-    returnString = returnString.replace(/[^a-z0-9 ]/g, "");
-    returnString = returnString.replace(/\s+/g, '-');
-    return returnString;
-  }
   return (
     <TableContainer>
       <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>
             <Th>Id</Th>
+            <Th>Active</Th>
             <Th>Logo url</Th>
-            <Th>Card image url</Th>
+            <Th>Title</Th>
             <Th>Url slug</Th>
             <Th>Description</Th>
             <Th>Owned By</Th>
@@ -75,10 +67,10 @@ const BotsList = ({ bots }: FindBots) => {
         </Thead>
         <Tbody>
           {bots.map((bot) => {
-            let slug = "/" + slugify(bot.urlSlug);
             return (
             <Tr key={bot.id}>
               <Td>{truncate(bot.id)}</Td>
+              <Td>{bot.hsActive ? 'true' : 'false'}</Td>
               <Td>
                 <Image
                   backgroundColor={bot.backgroundColor}
@@ -90,14 +82,14 @@ const BotsList = ({ bots }: FindBots) => {
                   alt={bot.description}
                 />
               </Td>
-              <Td>{truncate(bot.cardImageUrl)}</Td>
+              <Td>{truncate(bot.title)}</Td>
               <Td>
                 <ChakraLink
-                  href={slug}
-                  title={slug}
+                  href={bot.urlSlug}
+                  title={bot.urlSlug}
                   className="rw-button rw-button-small"
                 >
-                  {slug}
+                  {bot.urlSlug}
                 </ChakraLink>
               </Td>
 

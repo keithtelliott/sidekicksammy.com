@@ -9,6 +9,7 @@ import {
   AspectRatio,
   VStack,
   LinkOverlay,
+  Link as ChakraLink,
 } from '@chakra-ui/react'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -49,14 +50,14 @@ const HomePage = () => {
         >
           Add an interactive, topic specific bot to your website.
         </Heading>
-        <LinkOverlay href="#getStarted">
+        <ChakraLink href="#getStarted">
           <Image
             boxSize={{ base: '300px', md: '400px' }}
             objectFit="contain"
             src="./images/body/letsGetStarted.png"
             alt="Let's Get Started"
           />
-        </LinkOverlay>
+        </ChakraLink>
       </Flex>
       <Flex
         bg="darkBlue"

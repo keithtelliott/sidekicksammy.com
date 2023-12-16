@@ -11,8 +11,9 @@ export const QUERY = gql`
       id
       createdAt
       updatedAt
-      hsRefreshToken
-      hsRefreshTokenExpiresAt
+      hsActive
+      hsAccessToken
+      hsAccessTokenExpiresAt
       hsPrompt
       hsChannelAccountId
       hsChannelId
@@ -23,6 +24,7 @@ export const QUERY = gql`
       urlSlug
       logoUrl
       backgroundColor
+      title
       textColor
       userId
       User {
