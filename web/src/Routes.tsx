@@ -32,7 +32,6 @@ const Routes = () => {
       <Set wrap={HomeLayout}>
         <Route path="/" page={HomePage} name="home" />
       </Set>
-      <Route path="/agent2" page={Agent2Page} name="agent2" />
 
       <Set wrap={TenantLayout}>
         <Route path="/agent/{title...}" page={DemoPage} name="agent" />
@@ -70,7 +69,7 @@ const Routes = () => {
       <Route path="/signup" page={SignupPage} name="signup" />
       <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
-      <Route path="/{title}" page={Agent2Page} name="demo" />
+      <Route path="/{title}" page={AgentPage} name="demo" />
     </Router>
   )
 }

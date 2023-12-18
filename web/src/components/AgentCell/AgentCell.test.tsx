@@ -35,7 +35,7 @@ describe('AgentCell', () => {
 
   it('renders Success successfully', async () => {
     expect(() => {
-      render(<Success agent={standard().agent} />)
+      render(<Success agent={standard().agent2} />)
     }).not.toThrow()
   })
 })
