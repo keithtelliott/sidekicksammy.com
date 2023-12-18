@@ -15,6 +15,8 @@ import { FaMoon, FaSun } from 'react-icons/fa'
 export const NAV_BAR_HEIGHT = '75px'
 
 const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
+  if(!primaryColor) primaryColor = { light: 'blue.700', dark: 'blue.800' }
+  if(!secondaryColor) secondaryColor = { light: 'blue.400', dark: 'blue.500' }
   const { colorMode, toggleColorMode } = useColorMode()
 
   return (

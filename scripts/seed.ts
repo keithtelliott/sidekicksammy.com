@@ -1,6 +1,17 @@
 import { db } from 'api/src/lib/db'
+import { convertColorToHex } from 'api/src/lib/color'
 import { hashPassword } from '@redwoodjs/auth-dbauth-api'
 import {getAllContact} from 'api/src/lib/hubspot'
+let slugify = (text) => {
+  // simple slugify function
+  let slug = text.toString().toLowerCase()
+    .replace(/\s+/g, '-')        // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')   // Remove all non-word chars
+    .replace(/\-\-+/g, '-')      // Replace multiple - with single -
+    .replace(/^-+/, '')          // Trim - from start of text
+    .replace(/-+$/, '')          // Trim - from end of text
+  return slug;
+}
 export default async () => {
   try {
     const adminEmails = [
@@ -71,21 +82,52 @@ export default async () => {
       contacts.map(async (contact) => {
         // if the bot exists, skip it
         console.log({contact})
-        let botExists = await db.bot.findFirst({ where: { fixieCorpusId: contact.properties.sidekick_fixie_corpus_id } }).then((bot) => bot)
-        if (botExists) return
+        let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })
+        if (botExists) {
+          let modifiedData = {...botExists}
+          delete modifiedData.id
+          if(contact.properties.sidekick_title) {
+            modifiedData.title = contact.properties.sidekick_title
+            modifiedData.urlSlug = slugify(contact.properties.sidekick_title)
+          }
+          if(contact.properties.sidekick_greeting) {
+            modifiedData.greeting = contact.properties.sidekick_greeting
+          }
+          if(contact.properties.sidekick_color_primary) {
+            modifiedData.backgroundColor = convertColorToHex(contact.properties.sidekick_color_primary)
+          }
+          if(contact.properties.sidekick_color_text) {
+            modifiedData.textColor = convertColorToHex(contact.properties.sidekick_color_text)
+          }
+          if(contact.properties.sidekick_logo_url) {
+            modifiedData.logoUrl = contact.properties.sidekick_logo_url
+          }
+          if(contact.properties.sidekick_fixie_corpus_id) {
+            modifiedData.fixieCorpusId = contact.properties.sidekick_fixie_corpus_id
+          }
+          if(contact.properties.sidekick_fixie_agent_id) {
+            modifiedData.fixieAgentId = contact.properties.sidekick_fixie_agent_id
+          }
+          console.log({ modifiedData })
+          return await db.bot.update({
+            where: { id: botExists.id },
+            data: modifiedData,
+          })
+        }
         let email = contact.properties.email;
         if(!email) throw new Error('Missing Email', contact)
-        let urlSlug = contact.properties.sidekick_title;
+        let urlSlug = slugify(contact.properties.sidekick_title || '')
         let userId = await db.user.findFirst({ where: { email } }).then((user) => user.id)
-        return db.bot.create({
+        // lets look for the bot
+        return await db.bot.create({
           data: {
             hsPrompt: JSON.stringify([
               {
                 role: "system",
                 content: [
                   `You are an AI-powered chatbot named "${contact.properties.sidekick_title}".`,
-                  `Your main function is to ${contact.properties.sidekick_outcome}.`,
-                  `Take on a personality of ${contact.properties.sidekick_personality}.`,
+                  `Your main function is to ${contact.properties.sidekick_outcome || "help find the perfect product and answer"}.`,
+                  `Take on a personality of ${contact.properties.sidekick_personality || "jovial"}.`,
                   "When you are asked a question, you should respond with a short answer that is relevant to the question.",
                   "If that answer has a SOURCE, you should include that source in your response.",
                   "Answer in plain text, not HTML, not Markdown.",
@@ -98,13 +140,12 @@ export default async () => {
                 content: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`
               },
             ]),
-            hsChannelAccountId: contact.id,
-            hsChannelId: contact.id,
-            hsUserId: contact.id,
+            hsUserId: parseInt(contact.id,10),
             greeting: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`,
-            backgroundColor: contact.properties.sidekick_color_primary || '#000000',
-            textColor: contact.properties.sidekick_color_text || '#ffffff',
+            backgroundColor: convertColorToHex(contact.properties.sidekick_color_primary),
+            textColor: convertColorToHex(contact.properties.sidekick_color_text),
             fixieCorpusId: contact.properties.sidekick_fixie_corpus_id,
+            fixieAgentId: contact.properties.sidekick_fixie_agent_id,
             urlSlug,
             userId,
             logoUrl: contact.properties.sidekick_logo_url,

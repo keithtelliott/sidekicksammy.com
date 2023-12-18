@@ -7,10 +7,10 @@ export const schema = gql`
     cardImageUrl: String
     description: String
     fixieCorpusId: String
+    fixieAgentId: String
+    corpusRefetchIntervalDays: Int
     greeting: String
     hsActive: Boolean
-    hsChannelAccountId: Int
-    hsChannelId: Int
     hsPrompt: String
     hsRefreshToken: String
     hsAccessToken: String
@@ -27,6 +27,7 @@ export const schema = gql`
   type Query {
     bots: [Bot!]! @requireAuth
     bot(id: Int!): Bot @requireAuth
+    botBySlug(urlSlug: String!): Bot @skipAuth
   }
 
   input CreateBotInput {
@@ -34,10 +35,10 @@ export const schema = gql`
     cardImageUrl: String
     description: String
     fixieCorpusId: String
+    fixieAgentId: String
+    corpusRefetchIntervalDays: Int
     hsActive: Boolean
     hsAppId: Int
-    hsChannelAccountId: Int
-    hsChannelId: Int
     hsPortalId: Int
     hsPrompt: String
     hsRefreshToken: String
@@ -56,11 +57,11 @@ export const schema = gql`
     cardImageUrl: String
     description: String
     fixieCorpusId: String
+    fixieAgentId: String
+    corpusRefetchIntervalDays: Int
     greeting: String
     hsActive: Boolean
     hsAppId: Int
-    hsChannelAccountId: Int
-    hsChannelId: Int
     hsPortalId: Int
     hsPrompt: String
     hsRefreshToken: String

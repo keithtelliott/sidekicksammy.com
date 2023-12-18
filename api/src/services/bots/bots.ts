@@ -16,6 +16,13 @@ export const bot: QueryResolvers['bot'] = ({ id }) => {
   })
 }
 
+export const botBySlug: QueryResolvers['botBySlug'] = ({ urlSlug }) => {
+  console.log('urlSlug', urlSlug)
+  return db.bot.findFirst({
+    where: { urlSlug }
+  })
+}
+
 export const createBot: MutationResolvers['createBot'] = ({ input }) => {
   return db.bot.create({
     data: input,

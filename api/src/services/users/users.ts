@@ -36,7 +36,4 @@ export const deleteUser: MutationResolvers['deleteUser'] = ({ id }) => {
 }
 
 export const User: UserRelationResolvers = {
-  HubspotBot: (_obj, { root }) => {
-    return db.user.findUnique({ where: { id: root?.id } }).HubspotBot()
-  },
 }

@@ -13,8 +13,6 @@ export const QUERY = gql`
       hsAccessToken
       hsAccessTokenExpiresAt
       hsPrompt
-      hsChannelAccountId
-      hsChannelId
       hsUserId
       fixieCorpusId
       cardImageUrl
