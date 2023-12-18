@@ -8,7 +8,8 @@ import {
   DatetimeLocalField,
   NumberField,
   Submit,
-  ColorField
+  ColorField,
+  set
 } from '@redwoodjs/forms'
 
 import type { EditBotById, UpdateBotInput } from 'types/graphql'
@@ -36,9 +37,12 @@ import {
   ModalFooter,
   useDisclosure,
   Grid,
-  GridItem
+  GridItem,
+  Select,
+  Code
 } from '@chakra-ui/react'
 import Bot from '../Bot/Bot'
+import BotPromptInput from 'src/components/Bot/BotForm/BotPromptInput'
 import { useEffect } from 'react'
 
 const formatDatetime = (value) => {
@@ -57,6 +61,8 @@ interface BotFormProps {
 }
 
 const BotForm = (props: BotFormProps) => {
+  let [prompt, setPrompt] = React.useState(props.bot?.hsPrompt)
+  let [LogoColor, setLogoColor] = React.useState(props.bot?.backgroundColor)
   const onSubmit = (data: FormBot) => {
     // convert userId to number
     console.log({ data })
@@ -66,21 +72,40 @@ const BotForm = (props: BotFormProps) => {
       hsUserId: parseInt(data.hsUserId, 10),
       hsChannelId: parseInt(data.hsChannelId, 10),
       hsChannelAccountId: parseInt(data.hsChannelAccountId, 10),
+      hsPrompt: prompt
     }
       , props?.bot?.id)
   }
   let BotColorPicker = (props) => {
+    let [color, setColor] = React.useState(props.defaultValue)
     return (
       <FormControl>
-        <FormLabel>{props.label}</FormLabel>
+        <FormLabel>
+          <Flex gap={2}>
+          <Box>{props.label}</Box>
+          {props.setLogoColor &&
+            <Button
+              onClick={() => {
+                props.setLogoColor(color)
+              }}
+              size={"xs"}
+            >Update Logo</Button>
+          }
+          </Flex>
+        </FormLabel>
+
         <Box>{props.defaultValue}</Box>
         <Input
           as={ColorField}
           name={props.name}
-          defaultValue={props.defaultValue}
+          //defaultValue={props.defaultValue}
+          value={color}
           className="rw-input"
           errorClassName={props.errorClassName}
           validation={props.validation}
+          onChange={(e) => {
+            setColor(e.target.value)
+          }}
         />
         <FieldError name={props.name} className="rw-field-error" />
       </FormControl>
@@ -102,7 +127,7 @@ const BotForm = (props: BotFormProps) => {
          */}
         <Flex gap={2}>
           <Image
-            backgroundColor={props.backgroundColor}
+            backgroundColor={LogoColor}
             p={2}
             src={props.defaultValue}
             alt={"logo"}
@@ -144,125 +169,6 @@ const BotForm = (props: BotFormProps) => {
           {/*<Button>Update</Button>*/}
 
         </Flex>
-        <FieldError name={props.name} className="rw-field-error" />
-      </FormControl>
-    )
-  }
-  let BotPromptInput = (props) => {
-    // we will follow the same pattern as open ai's chat completion
-    // left section, full height is the "system"
-    // right section, is a growing list of messages with a role dropdown and message text
-    // to do this we need to store the messages initially
-    // and then update them as the user types
-    // we should only need state for the messages
-    // and the current message
-    // lets open a large modal
-    let [messages, setMessages] = React.useState(JSON.parse(props.defaultValue) || [])
-    let [currentMessage, setCurrentMessage] = React.useState("")
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    let handlePromptClick = (url) => {
-      onOpen()
-    }
-    let firstSystemMessage = messages?.find((message) => message.role === "system")
-    console.log({content: firstSystemMessage?.content})
-    let setSystemMessage = (message) => {
-      // look for the first message, if it's there and it's "role" is "system"
-      // update it
-      // otherwise add it
-      console.log({
-        "what": "setSystemMessage",
-        message,
-        messages
-      })
-      // lets copy the messages
-      let messagesCopy = [...messages]
-      // lets find the first message
-      let firstMessage = messagesCopy.find((message) => message.role === "system")
-      // if we found it, update it
-      if (firstMessage) {
-        firstMessage.content = message
-      } else {
-        // otherwise add it
-        messagesCopy.push({
-          role: "system",
-          content: message
-        })
-      }
-      // set the messages
-      setMessages(messagesCopy)
-    }
-    return (
-      <FormControl>
-        <FormLabel>{props.label}</FormLabel>
-        <Button
-          onClick={() => handlePromptClick(props.defaultValue)}
-        >Update</Button>
-        <Modal isOpen={isOpen} onClose={onClose} size={'full'}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Update prompt</ModalHeader>
-            <ModalCloseButton />
-            <Box p={4}>
-               <Grid
-                 templateAreas={`
-                 "SystemSection MessagesSection MessagesSection"
-                 "SystemSection MessagesSection MessagesSection"
-                 "SystemSection MessagesSection MessagesSection"`}
-                  templateColumns="repeat(3, 1fr)"
-                  templateRows="repeat(3, 1fr)"
-                  gap={4}
-
-                 >
-                  <GridItem
-
-                    p={4}
-                    gridArea="SystemSection"
-                  >
-                    System
-                    <Textarea
-                      fontFamily={"monospace"}
-                      onChange={(e) => {
-                        // this will always be the first message
-                        setSystemMessage(e.target.value)
-                      }}
-                      defaultValue={firstSystemMessage?.content}
-                      />
-                  </GridItem>
-                  <GridItem
-                    bg="papayawhip"
-                    p={4}
-                    gridArea="MessagesSection"
-                  >
-                    Messages
-                  </GridItem>
-
-               </Grid>
-
-            </Box>
-            <Input
-                 as={TextField}
-                 name={props.name}
-                 //defaultValue={JSON.stringify(messages)}
-                 // lets set default value to the state's messages
-                  defaultValue={JSON.stringify(messages)}
-                 className="rw-input"
-                 errorClassName={props.errorClassName}
-                 validation={props.validation}
-                />
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="blue" mr={3} onClick={() => {
-                // lets set the default value to the state's messages
-                //props.bot?.[props.name] = JSON.stringify(messages)
-                ///onClose()
-              }}>
-                Set
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
         <FieldError name={props.name} className="rw-field-error" />
       </FormControl>
     )
@@ -345,36 +251,18 @@ const BotForm = (props: BotFormProps) => {
             backgroundColor={props.bot?.backgroundColor}
             errorClassName="rw-field-error"
           />
-          <BotTextInput
-            name="cardImageUrl"
-            label="Card image url"
-            defaultValue={props.bot?.cardImageUrl}
-            errorClassName="rw-field-error"
-          />
 
           <BotColorPicker
             name="backgroundColor"
             label="Background color"
             defaultValue={props.bot?.backgroundColor}
             errorClassName="rw-field-error"
-
+            setLogoColor={setLogoColor}
           />
           <BotColorPicker
             name="textColor"
             label="Text color"
             defaultValue={props.bot?.textColor}
-            errorClassName="rw-field-error"
-          />
-          <BotTextInput
-            name="userId"
-            label="User id"
-            defaultValue={props.bot?.userId}
-            errorClassName="rw-field-error"
-          />
-          <BotTextArea
-            name="greeting"
-            label="Greeting"
-            defaultValue={props.bot?.greeting}
             errorClassName="rw-field-error"
           />
           <BotTextArea
@@ -385,10 +273,34 @@ const BotForm = (props: BotFormProps) => {
           />
           <Tabs>
             <TabList>
+              <Tab>General</Tab>
               <Tab>Fixie</Tab>
               <Tab>Hubspot</Tab>
             </TabList>
             <TabPanels>
+              <TabPanel>
+
+                <BotTextArea
+                  name="greeting"
+                  label="Greeting"
+                  defaultValue={props.bot?.greeting}
+                  errorClassName="rw-field-error"
+                />
+
+                <BotTextInput
+                  name="cardImageUrl"
+                  label="Card image url"
+                  defaultValue={props.bot?.cardImageUrl}
+                  errorClassName="rw-field-error"
+                />
+
+                <BotTextInput
+                  name="userId"
+                  label="User id"
+                  defaultValue={props.bot?.userId}
+                  errorClassName="rw-field-error"
+                />
+              </TabPanel>
               <TabPanel>
                 <BotTextInput
                   name="fixieCorpusId"
@@ -398,42 +310,19 @@ const BotForm = (props: BotFormProps) => {
                 />
               </TabPanel>
               <TabPanel>
-              <BotTextInput
-                  name="hsAccessToken"
-                  label="Hs access token"
-                  defaultValue={props.bot?.hsAccessToken}
-                  errorClassName="rw-field-error"
-                />
-              <BotTextInput
-                  name="hsChannelAccountId"
-                  label="Hs channel account id"
-                  defaultValue={props.bot?.hsChannelAccountId}
-                  errorClassName="rw-field-error"
-                />
-                <BotTextInput
-                  name="hsChannelId"
-                  label="Hs channel id"
-                  defaultValue={props.bot?.hsChannelId}
-                  errorClassName="rw-field-error"
-                />
                 <BotTextInput
                   name="hsUserId"
-                  label="Hs user id"
+                  label="Hubspot User ID to respond as"
                   defaultValue={props.bot?.hsUserId}
                   errorClassName="rw-field-error"
                 />
-{/*
-                <BotTextArea
-                  name="hsPrompt"
-                  label="Hs prompt"
-                  defaultValue={props.bot?.hsPrompt}
-                  errorClassName="rw-field-error"
-                />*/}
                 <BotPromptInput
+                  label="Prompt"
                   name="hsPrompt"
-                  label="Hs prompt"
+                  setPrompt={setPrompt}
                   defaultValue={props.bot?.hsPrompt}
                   errorClassName="rw-field-error"
+                  validation={{}}
                 />
               </TabPanel>
 
@@ -441,21 +330,23 @@ const BotForm = (props: BotFormProps) => {
           </Tabs>
         </Flex>
       </Center>
-      <Button
-        onClick={() => {
-          console.log({ props })
-        }}
-      >SHow Data!</Button>
-      <Button
-        as={Submit}
-        type='submit'
-        disabled={props.loading}
-        className="rw-button rw-button-blue"
-        colorScheme={"blue"}
-        p={4}
-      >
-        Save
-      </Button>
+      <Flex pt={4} gap={2}>
+        <Button
+          onClick={() => {
+            console.log({ props })
+          }}
+        >Show Data!</Button>
+        <Button
+          as={Submit}
+          type='submit'
+          disabled={props.loading}
+          className="rw-button rw-button-blue"
+          colorScheme={"blue"}
+          p={4}
+        >
+          Save
+        </Button>
+      </Flex>
 
     </Form>
   )
