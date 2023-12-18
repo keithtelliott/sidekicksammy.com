@@ -25,7 +25,7 @@ const Routes = () => {
       // ... add other tenant-specific properties
     }
   }
-// order matters here.... the last /{title} will catch anything.... so it's last
+  // order matters here.... the last /{title} will catch anything.... so it's last
 
   return (
     <Router useAuth={useAuth}>
@@ -38,33 +38,33 @@ const Routes = () => {
         <Route path="/agent/{title...}" page={DemoPage} name="agent" />
       </Set>
       <Route notfound page={NotFoundPage} />
-      <PrivateSet
-        unauthenticated='login'
-        wrap={ScaffoldLayout}
-        title="Bots"
-        titleTo="bots"
-        buttonLabel="New Bot"
-        buttonTo="newBot"
-      >
-        <Route path="/bots/new" page={BotNewBotPage} name="newBot" />
-        <Route path="/bots/{id:Int}/edit" page={BotEditBotPage} name="editBot" />
-        <Route path="/bots/{id:Int}" page={BotBotPage} name="bot" />
-        <Route path="/bots" page={BotBotsPage} name="bots" />
-      </PrivateSet>
       <Set wrap={AppLayout} >
-      <PrivateSet
-        unauthenticated='login'
-        wrap={ScaffoldLayout}
-        title="Users"
-        titleTo="users"
-        buttonLabel="New User"
-        buttonTo="newUser"
-      >
-        <Route path="/users/new" page={UserNewUserPage} name="newUser" />
-        <Route path="/users/{id:Int}/edit" page={UserEditUserPage} name="editUser" />
-        <Route path="/users/{id:Int}" page={UserUserPage} name="user" />
-        <Route path="/users" page={UserUsersPage} name="users" />
-      </PrivateSet>
+        <PrivateSet
+          unauthenticated='login'
+          wrap={ScaffoldLayout}
+          title="Bots"
+          titleTo="bots"
+          buttonLabel="New Bot"
+          buttonTo="newBot"
+        >
+          <Route path="/bots/new" page={BotNewBotPage} name="newBot" />
+          <Route path="/bots/{id:Int}/edit" page={BotEditBotPage} name="editBot" />
+          <Route path="/bots/{id:Int}" page={BotBotPage} name="bot" />
+          <Route path="/bots" page={BotBotsPage} name="bots" />
+        </PrivateSet>
+        <PrivateSet
+          unauthenticated='login'
+          wrap={ScaffoldLayout}
+          title="Users"
+          titleTo="users"
+          buttonLabel="New User"
+          buttonTo="newUser"
+        >
+          <Route path="/users/new" page={UserNewUserPage} name="newUser" />
+          <Route path="/users/{id:Int}/edit" page={UserEditUserPage} name="editUser" />
+          <Route path="/users/{id:Int}" page={UserUserPage} name="user" />
+          <Route path="/users" page={UserUsersPage} name="users" />
+        </PrivateSet>
       </Set>
       <Route path="/login" page={LoginPage} name="login" />
       <Route path="/signup" page={SignupPage} name="signup" />
