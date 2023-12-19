@@ -22,17 +22,6 @@ import MessageBox from 'src/components/MessageBox/MessageBox'
 import { useTenant } from 'src/helpers/TenantContext'
 
 import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
-/*export const QUERY = gql`
-  query getAgents($title: String!) {
-    getHubspotContact(title: $title) {
-      sidekickTitle
-      fixieCorpusId
-      fixieAgentId
-      sidekickColorScheme
-      sidekickGreeting
-    }
-  }
-`*/
 export const QUERY = gql`
   query getBot($urlSlug: String!) {
     botBySlug(urlSlug: $urlSlug) {
@@ -186,6 +175,7 @@ export const Success = ({
         companyName={botBySlug.title}
         primaryColor={{ light: botBySlug.backgroundColor, dark: botBySlug.textColor }}
         secondaryColor={{ light: botBySlug.textColor, dark: botBySlug.backgroundColor }}
+
       />
       <Box
         marginTop={NAV_BAR_HEIGHT}
