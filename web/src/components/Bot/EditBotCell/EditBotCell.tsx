@@ -17,10 +17,10 @@ export const QUERY = gql`
       hsAccessToken
       hsAccessTokenExpiresAt
       hsPrompt
-      hsChannelAccountId
-      hsChannelId
       hsUserId
       fixieCorpusId
+      fixieAgentId
+      corpusRefetchIntervalDays
       cardImageUrl
       description
       urlSlug
@@ -42,10 +42,10 @@ const UPDATE_BOT_MUTATION = gql`
       hsAccessToken
       hsAccessTokenExpiresAt
       hsPrompt
-      hsChannelAccountId
-      hsChannelId
       hsUserId
       fixieCorpusId
+      fixieAgentId
+      corpusRefetchIntervalDays
       cardImageUrl
       description
       urlSlug

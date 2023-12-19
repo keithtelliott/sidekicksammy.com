@@ -65,14 +65,12 @@ const BotForm = (props: BotFormProps) => {
   let [LogoColor, setLogoColor] = React.useState(props.bot?.backgroundColor)
   const onSubmit = (data: FormBot) => {
     // convert userId to number
-    console.log({ data })
     props.onSave({
       ...data,
       userId: parseInt(data.userId, 10),
       hsUserId: parseInt(data.hsUserId, 10),
-      hsChannelId: parseInt(data.hsChannelId, 10),
-      hsChannelAccountId: parseInt(data.hsChannelAccountId, 10),
-      hsPrompt: prompt
+      hsPrompt: prompt,
+      corpusRefetchIntervalDays: parseInt(data.corpusRefetchIntervalDays, 10)
     }
       , props?.bot?.id)
   }
@@ -286,6 +284,12 @@ const BotForm = (props: BotFormProps) => {
                   defaultValue={props.bot?.greeting}
                   errorClassName="rw-field-error"
                 />
+                <BotTextInput
+                  name="corpusRefetchIntervalDays"
+                  label="Corpus refetch interval days"
+                  defaultValue={props.bot?.corpusRefetchIntervalDays}
+                  errorClassName="rw-field-error"
+                />
 
                 <BotTextInput
                   name="cardImageUrl"
@@ -306,6 +310,13 @@ const BotForm = (props: BotFormProps) => {
                   name="fixieCorpusId"
                   label="Fixie corpus id"
                   defaultValue={props.bot?.fixieCorpusId}
+                  errorClassName="rw-field-error"
+                />
+
+                <BotTextInput
+                  name="fixieAgentId"
+                  label="Fixie agent id"
+                  defaultValue={props.bot?.fixieAgentId}
                   errorClassName="rw-field-error"
                 />
               </TabPanel>

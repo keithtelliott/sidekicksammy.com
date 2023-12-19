@@ -8,7 +8,6 @@ export const schema = gql`
     resetToken: String
     resetTokenExpiresAt: DateTime
     roles: String!
-    HubspotBot: [HubspotBot]!
   }
 
   type Query {

@@ -102,25 +102,3 @@ export let mapHubspotContactToContact = ({ contact }: { contact: any }) => {
     sidekickColorScheme: JSON.stringify(colorScheme)
   }
 }
-export let respond = async ({ message, threadId, who }) => {
-  console.log('from customer');
-  // lets get the account, channel, and channelAccount
-  let [account, channelId, channelAccountId, hubspotToken] = ['', '', '', ''];
-  let responseBody = {
-    "type": "MESSAGE",
-    "text": message,
-    //"richText": "<p>Hey there, followiasdfng up</p>",
-    //"richText": `<p>${message} RICH</p>`,
-    "senderActorId": account,
-    "channelId": channelId,
-    "channelAccountId": channelAccountId,
-    "subject": "Follow up"
-  }
-  let responseUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}/messages`;
-  let responseOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hubspotToken}` },
-    body: JSON.stringify(responseBody)
-  };
-  let responseResponse = await fetch(responseUrl, responseOptions);
-}

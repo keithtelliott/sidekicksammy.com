@@ -14,7 +14,9 @@ import { FaMoon, FaSun } from 'react-icons/fa'
 
 export const NAV_BAR_HEIGHT = '75px'
 
-const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
+const NavBar = ({ logoUrl, companyName, primaryColor, secondaryColor }) => {
+  if(!primaryColor) primaryColor = { light: 'blue.700', dark: 'blue.800' }
+  if(!secondaryColor) secondaryColor = { light: 'blue.400', dark: 'blue.500' }
   const { colorMode, toggleColorMode } = useColorMode()
 
   return (
@@ -38,11 +40,11 @@ const NavBar = ({ logo, companyName, primaryColor, secondaryColor }) => {
       boxShadow="sm"
       zIndex={10}
     >
-      {logo && <Image src={logo} h="40px" mr="2rem" />}
+      {logoUrl && <Image src={logoUrl} alt={`Logo of ${companyName}`} h="40px" mr="2rem" />}
       <Text fontSize="lg" fontWeight="bold">
         {companyName}
       </Text>
-      <Text color={primaryColor.dark} fontWeight={'light'}>
+      <Text color={primaryColor.dark} fontWeight={'light'} display={{ base: 'none', lg: 'block' }}>
         AI Assistant
       </Text>
     </Flex>

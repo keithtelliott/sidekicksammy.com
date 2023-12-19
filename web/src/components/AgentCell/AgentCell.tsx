@@ -23,39 +23,40 @@ import { useTenant } from 'src/helpers/TenantContext'
 
 import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
 export const QUERY = gql`
-  query getAgents($title: String!) {
-    getHubspotContact(title: $title) {
-      sidekickTitle
-      fixieCorpusId
+  query getBot($urlSlug: String!) {
+    botBySlug(urlSlug: $urlSlug) {
+      id
+      createdAt
+      updatedAt
+      hsActive
+      hsPrompt
+      corpusRefetchIntervalDays
       fixieAgentId
-      sidekickColorScheme
-      sidekickGreeting
+      fixieCorpusId
+      cardImageUrl
+      description
+      urlSlug
+      logoUrl
+      backgroundColor
+      title
+      textColor
+      greeting
     }
   }
 `
 const INPUT_FORM_HEIGHT = '75px'
-
-const mapData = (data) => {
-  return {
-    name: data.title || 'Demo Tenansdft',
-    colorScheme: data?.colorScheme || 'blue',
-    primaryColorScheme: {
-      light: data?.primaryColorScheme?.light || 'blue.700',
-      dark: data?.primaryColorScheme?.dark || 'blue.800',
-    },
-    secondaryColorScheme: {
-      light: data?.secondaryColorScheme?.light || 'blue.400',
-      dark: data?.secondaryColorScheme?.dark || 'blue.500',
-    },
-    textColorScheme: {
-      light: data?.textColorScheme?.light || 'whiteAlpha.900',
-      dark: data?.textColorScheme?.dark || 'whiteAlpha.900',
-    },
-    logo: data?.logo || 'https://placehold.co/50?text=your%20logo',
-    greeting: data?.greeting || 'How can I help?',
+export const beforeQuery = (props) => {
+  let returnObj = {}
+  if(props?.title && !props?.urlSlug) { props.urlSlug = props.title }
+  if (props?.urlSlug) {
+    returnObj = {
+      variables: {
+        urlSlug: props.urlSlug,
+      },
+    }
   }
+  return returnObj
 }
-
 export const Loading = () => <div>Loading...</div>
 
 export const Empty = () => <div>Empty</div>
@@ -67,23 +68,22 @@ export const Failure = ({
 )
 
 export const Success = ({
-  getHubspotContact,
+  botBySlug,
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
-  if (!getHubspotContact.sidekickTitle) return <Empty />
+  console.log({ botBySlug })
+  if (!botBySlug.title) return <Empty />
+  if (!botBySlug.greeting) botBySlug.greeting = 'How can I help?'
   const { updateTenantData } = useTenant()
-  const colorScheme = JSON.parse(getHubspotContact.sidekickColorScheme)
   const data = {
-    ...mapData(colorScheme),
-    name: getHubspotContact.sidekickTitle,
-    greeting: getHubspotContact.sidekickGreeting,
+    name: botBySlug.title,
+    greeting: botBySlug.greeting,
   }
-  const tenant = mapData(data)
   useEffect(() => {
     updateTenantData(data)
   }, [])
 
   const { conversation, sendMessage, newConversation } = useFixie({
-    agentId: getHubspotContact.fixieAgentId,
+    agentId: botBySlug.fixieAgentId,
   })
 
   const endOfMessagesRef = useRef(null)
@@ -169,12 +169,13 @@ export const Success = ({
   }
   return (
     <>
-      <MetaTags title="Agent" description="Agent page" themeColor="blue" />
+      <MetaTags title="Agent" description="Agent page" />
       <NavBar
-        logo={data.logo}
-        companyName={data.name}
-        primaryColor={data.primaryColorScheme}
-        secondaryColor={data.textColorScheme}
+        logoUrl={botBySlug.logoUrl}
+        companyName={botBySlug.title}
+        primaryColor={{ light: botBySlug.backgroundColor, dark: botBySlug.textColor }}
+        secondaryColor={{ light: botBySlug.textColor, dark: botBySlug.backgroundColor }}
+
       />
       <Box
         marginTop={NAV_BAR_HEIGHT}
@@ -182,7 +183,7 @@ export const Success = ({
         paddingTop={1}
         paddingBottom={1}
       >
-        <AgentMessage text={data.greeting} />
+        <AgentMessage text={botBySlug.greeting} />
 
         {conversation &&
           conversation.turns.map((turn, turnIndex) => (
@@ -202,8 +203,6 @@ export const Success = ({
               )}
             </Box>
           ))}
-
-        {/* Invisible element at the end of the messages */}
         <div ref={endOfMessagesRef} />
 
         <Box
