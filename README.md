@@ -37,3 +37,9 @@ $ ngrok http http://localhost:8910 --host-header="localhost:8910"
 ```bash
 fly ssh console
 ```
+
+## Deploying to Fly
+
+```bash
+$ flyctl deploy
+```
