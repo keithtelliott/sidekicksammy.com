@@ -147,7 +147,7 @@ let handleOauthCallback = async ({ code, sessionId }) => {
   return tokens.access_token
 }
 let updateAccessToken = async (botId: number) => {
-  let bot = await db.bot.findFirst({ where: { id: botId } })
+    let bot = await db.bot.findFirst({ where: { id: botId } })
   const refreshTokenProof = {
     grant_type: 'refresh_token',
     client_id: HUBSPOT_CLIENT_ID,
@@ -289,7 +289,7 @@ let sendMessageToHubspot = async ({ bot, message, threadId, channelId, channelAc
   return messageData
 }
 let openAIRequest = async ({ message, prompt }) => {
-  let openAIUrl = 'https://api.openai.com/v1/chat/completions'
+    let openAIUrl = 'https://api.openai.com/v1/chat/completions'
   let openAIOptions = {
     method: 'POST',
     headers: {
@@ -405,7 +405,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         params[key] = parsedBody[key]
       }
     }
-    let isUpdate = params.actionType === 'DROPDOWN_UPDATE'
+        let isUpdate = params.actionType === 'DROPDOWN_UPDATE'
     if (isUpdate) {
       // update the bot's hsUserId
       let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
@@ -435,7 +435,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       }
     }
     let isFetch = params.actionType === 'DROPDOWN_FETCH'
-    if (isFetch) {
+        if (isFetch) {
       let options = []
       let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
       if (!bot) {
@@ -447,7 +447,12 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           body: JSON.stringify({
             actionType: 'DROPDOWN_FETCH',
             response: {
-              options: [],
+              options: [
+                {
+                  text: 'No Bot Found',
+                  value: ''
+                }
+              ],
               selectedOption: '',
               placeholder: 'Bot Not Found'
             },
