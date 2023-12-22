@@ -85,7 +85,6 @@ export default async () => {
         console.log({ contact })
         let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })
         if (botExists) {
-
           let modifiedData = { ...botExists }
           delete modifiedData.id
           if (contact.properties.sidekick_title) {
