@@ -1,7 +1,7 @@
 import { db } from 'api/src/lib/db'
 import { convertColorToHex } from 'api/src/lib/color'
 import { hashPassword } from '@redwoodjs/auth-dbauth-api'
-import {getAllContact} from 'api/src/lib/hubspot'
+import { getAllContact } from 'api/src/lib/hubspot'
 let slugify = (text) => {
   // simple slugify function
   let slug = text.toString().toLowerCase()
@@ -32,6 +32,7 @@ export default async () => {
       adminEmails.map((email) => {
         // lets generate a random password 10 numbers long
         // we'll just reset it
+
         let password = Math.random().toString(36).slice(-10)
         const [hashedPassword, salt] = hashPassword(password)
         // look to see if the user exists
@@ -56,13 +57,13 @@ export default async () => {
     // lets create a new user for each contact
     await Promise.all(
       contacts.map(async (contact) => {
-        if(!contact.properties.email) return
+        if (!contact.properties.email) return
         let userExists = await db.user.count({ where: { email: contact.properties?.email } }).then((count) => count > 0)
         if (userExists) {
-          console.log({note: 'user already exists', email: contact.properties.email, title: contact.properties.sidekick_title, count: userExists})
+          console.log({ note: 'user already exists', email: contact.properties.email, title: contact.properties.sidekick_title, count: userExists })
           return
         }
-        console.log({note: 'creating user', email: contact.properties?.email, title: contact.properties.sidekick_title})
+        console.log({ note: 'creating user', email: contact.properties?.email, title: contact.properties.sidekick_title })
         let email = contact.properties.email;
         let password = Math.random().toString(36).slice(-10)
         const [hashedPassword, salt] = hashPassword(password)
@@ -81,31 +82,30 @@ export default async () => {
     await Promise.all(
       contacts.map(async (contact) => {
         // if the bot exists, skip it
-        console.log({contact})
-        let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })
-        if (botExists) {
-          let modifiedData = {...botExists}
+        console.log({ contact })
+        let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })        if (botExists) {
+          let modifiedData = { ...botExists }
           delete modifiedData.id
-          if(contact.properties.sidekick_title) {
+          if (contact.properties.sidekick_title) {
             modifiedData.title = contact.properties.sidekick_title
             modifiedData.urlSlug = slugify(contact.properties.sidekick_title)
           }
-          if(contact.properties.sidekick_greeting) {
+          if (contact.properties.sidekick_greeting) {
             modifiedData.greeting = contact.properties.sidekick_greeting
           }
-          if(contact.properties.sidekick_color_primary) {
+          if (contact.properties.sidekick_color_primary) {
             modifiedData.backgroundColor = convertColorToHex(contact.properties.sidekick_color_primary)
           }
-          if(contact.properties.sidekick_color_text) {
+          if (contact.properties.sidekick_color_text) {
             modifiedData.textColor = convertColorToHex(contact.properties.sidekick_color_text)
           }
-          if(contact.properties.sidekick_logo_url) {
+          if (contact.properties.sidekick_logo_url) {
             modifiedData.logoUrl = contact.properties.sidekick_logo_url
           }
-          if(contact.properties.sidekick_fixie_corpus_id) {
+          if (contact.properties.sidekick_fixie_corpus_id) {
             modifiedData.fixieCorpusId = contact.properties.sidekick_fixie_corpus_id
           }
-          if(contact.properties.sidekick_fixie_agent_id) {
+          if (contact.properties.sidekick_fixie_agent_id) {
             modifiedData.fixieAgentId = contact.properties.sidekick_fixie_agent_id
           }
           console.log({ modifiedData })
@@ -115,7 +115,7 @@ export default async () => {
           })
         }
         let email = contact.properties.email;
-        if(!email) throw new Error('Missing Email', contact)
+        if (!email) throw new Error('Missing Email', contact)
         let urlSlug = slugify(contact.properties.sidekick_title || '')
         let userId = await db.user.findFirst({ where: { email } }).then((user) => user.id)
         // lets look for the bot
@@ -140,7 +140,7 @@ export default async () => {
                 content: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`
               },
             ]),
-            hsUserId: parseInt(contact.id,10),
+            hsUserId: parseInt(contact.id, 10),
             greeting: contact.properties.sidekick_greeting || `Hello, I'm ${contact.properties.sidekick_title}. I'm here to help you with any questions you may have. How can I help you?`,
             backgroundColor: convertColorToHex(contact.properties.sidekick_color_primary),
             textColor: convertColorToHex(contact.properties.sidekick_color_text),

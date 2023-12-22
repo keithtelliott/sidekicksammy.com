@@ -110,14 +110,30 @@ export const handler = async (
     // If this returns anything else, it will be returned by the
     // `signUp()` function in the form of: `{ message: 'String here' }`.
     handler: ({ username, hashedPassword, salt, userAttributes }) => {
-      return db.user.create({
-        data: {
-          email: username,
-          hashedPassword: hashedPassword,
-          salt: salt,
-          // name: userAttributes.name
-        },
-      })
+      // lets see if the any users exist
+      let userExists = db.user.count().then((count) => count > 0)
+      if (!userExists) {
+        // if no users exist, lets create an admin user
+        return db.user.create({
+          data: {
+            email: username,
+            hashedPassword: hashedPassword,
+            salt: salt,
+            name: userAttributes.name,
+            roles: 'admin',
+          },
+        })
+      }
+      if (userExists) {
+        return db.user.create({
+          data: {
+            email: username,
+            hashedPassword: hashedPassword,
+            salt: salt,
+            // name: userAttributes.name
+          },
+        })
+      }
     },
 
     // Include any format checks for password here. Return `true` if the
