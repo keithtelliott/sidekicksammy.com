@@ -17,9 +17,9 @@ primary_region = "sea"
   PORT = "8910"
   REDWOOD_DISABLE_TELEMETRY = "1"
 
-#[[mounts]]
-  #source = "data"
-  #destination = "/data"
+[[mounts]]
+  source = "data"
+  destination = "/data"
 
 [processes]
   app = ".fly/start.sh"
