@@ -12,6 +12,7 @@ import { db } from 'src/lib/db'
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
 import crypto from 'crypto'
+import fetch from 'cross-fetch'
 
 const {
   HUBSPOT_CLIENT_ID,
