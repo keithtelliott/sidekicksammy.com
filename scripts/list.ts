@@ -8,8 +8,26 @@ export default async ({ args }) => {
   console.log(':: Executing script with args ::')
   console.log(args)
   let model = args['_'][1]
-  await db[model].findMany({}).then((users) => {
-    console.log(users)
+  let selectFields = args['_'][2]?.split(',') || []
+  console.log(selectFields)
+  if(selectFields.length > 0) {
+    // selectFields needs to be [{field: true}, {field: true}]
+    let select = {
+      id: true
+    }
+    selectFields.forEach((field) => {
+      select[field] = true
+    })
+    console.log({select})
+    await db[model].findMany({
+      select
+    }).then((records) => {
+      console.log(records)
+    })
+    return
+
   }
-  )
+  await db[model].findMany().then((records) => {
+    console.log(records)
+  })
 }

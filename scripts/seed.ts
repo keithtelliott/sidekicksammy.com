@@ -83,7 +83,9 @@ export default async () => {
       contacts.map(async (contact) => {
         // if the bot exists, skip it
         console.log({ contact })
-        let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })        if (botExists) {
+        let botExists = await db.bot.findFirst({ where: { title: contact.properties?.sidekick_title } })
+        if (botExists) {
+
           let modifiedData = { ...botExists }
           delete modifiedData.id
           if (contact.properties.sidekick_title) {
@@ -117,6 +119,7 @@ export default async () => {
         let email = contact.properties.email;
         if (!email) throw new Error('Missing Email', contact)
         let urlSlug = slugify(contact.properties.sidekick_title || '')
+        let title = contact.properties.sidekick_title
         let userId = await db.user.findFirst({ where: { email } }).then((user) => user.id)
         // lets look for the bot
         return await db.bot.create({
@@ -148,6 +151,7 @@ export default async () => {
             fixieAgentId: contact.properties.sidekick_fixie_agent_id,
             urlSlug,
             userId,
+            title,
             logoUrl: contact.properties.sidekick_logo_url,
           },
         })
