@@ -21,6 +21,7 @@ RUN --mount=type=cache,target=/root/.yarn/berry/cache \
 
 COPY redwood.toml .
 COPY graphql.config.js .
+COPY scripts scripts
 
 FROM dependencies as web_build
 
