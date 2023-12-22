@@ -41,5 +41,11 @@ fly ssh console
 ## Deploying to Fly
 
 ```bash
-$ flyctl deploy
+fly deploy
+```
+
+## Destroying a machine
+
+```bash
+fly machine destroy
 ```
