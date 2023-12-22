@@ -12,6 +12,7 @@ primary_region = "sea"
   release_command = ".fly/release.sh"
 
 [env]
+  # now pointing to rw
   #DATABASE_URL = "file://data/sqlite-1.db"
   MIGRATE_ON_BOOT = "true"
   PORT = "8910"
