@@ -1,6 +1,7 @@
 import { useState } from "react"
 import {
   Box, Button, Flex, Input,
+  Progress,
   Select,
   SimpleGrid,
   useColorModeValue,
@@ -34,13 +35,6 @@ const CreateBot = () => {
   // 1.c. not seen by user: create a fixie agent for the bot
   // 2. ask the user to confirm the bot's name, color, and greeting
   // 3. ask the user for their email address
-  const personalities = [
-    "friendly",
-    "professional",
-    "sarcastic",
-    "funny",
-    "serious"
-  ]
   const tones = [
     "formal",
     "informal",
@@ -72,10 +66,9 @@ const CreateBot = () => {
   ]
   let [botUrl, setBotUrl] = useState("")
   let [botOutcome, setBotOutcome] = useState("")
-  let [botPersonality, setBotPersonality] = useState("business casual")
   let [botColor, setBotColor] = useState("")
   let [botGreeting, setBotGreeting] = useState("Hi! I'm a bot.")
-  let [formPartsRemaining, setFormPartsRemaining] = useState(4)
+  let [formPartsRemaining, setFormPartsRemaining] = useState(3)
   let [userEmail, setUserEmail] = useState("")
   // other steps: confirm-bot, get-email, post-email
   const CreateBotForm = () => {
@@ -86,7 +79,7 @@ const CreateBot = () => {
         //navigate(routes.bots())
         console.log("bot created", data)
         // redirect to demo
-        navigate(routes.demo({title: data.createBotAndUser.urlSlug}))
+        navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
       }
     })
     const onSubmit = (input) => {
@@ -98,23 +91,18 @@ const CreateBot = () => {
         setBotOutcome(input.outcome)
         setFormPartsRemaining(formPartsRemaining - 1)
       }
-      if (input.personality && input.color && input.greeting) {
-        setBotPersonality(input.personality)
+      if (input.color && input.greeting) {
         setBotColor(input.color)
         setBotGreeting(input.greeting)
         setFormPartsRemaining(formPartsRemaining - 1)
       }
       if (input.email) {
         setUserEmail(input.email)
-        setFormPartsRemaining(formPartsRemaining - 1)
-      }
-      if (input.confirmed) {
         create({
           variables: {
             input: {
               url: botUrl,
               outcome: botOutcome,
-              personality: botPersonality,
               color: botColor,
               greeting: botGreeting,
               email: userEmail,
@@ -123,9 +111,6 @@ const CreateBot = () => {
         })
         setFormPartsRemaining(formPartsRemaining - 1)
       }
-      if (formPartsRemaining === 0) {
-        // we're done
-      }
     }
     let inputProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
@@ -133,17 +118,23 @@ const CreateBot = () => {
       errorClassName: "error",
       as: TextField,
     }
+    let textAreaProps = {
+      bgColor: useColorModeValue('gray.50', 'gray.800'),
+      color: useColorModeValue('gray.800', 'gray.200'),
+      errorClassName: "error",
+      height: "100px",
+      as: TextAreaField,
+    }
     let selectProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
       color: useColorModeValue('gray.800', 'gray.200'),
       errorClassName: "error",
       as: SelectField,
     }
-
-    let QuestionButton = () => {
+    let QuestionButton = (props) => {
       return <Box
         p={4}
-        bg={"lightCream"}
+        //bg={"lightCream"}
         rounded={"lg"}
       // allign the button center
 
@@ -155,7 +146,7 @@ const CreateBot = () => {
           color={useColorModeValue('blue.800', 'blue.200')}
           border="1px solid"
           width={"100%"}
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+
           rounded="lg"
           _hover={{
             bg: useColorModeValue('gray.100', 'gray.900'),
@@ -168,7 +159,8 @@ const CreateBot = () => {
             boxShadow:
               '0 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.15)',
           }}
-        >Next</Button>
+          {...props}
+        >{props.buttontext || "Next"}</Button>
       </Box>
     }
     let Question = () => {
@@ -208,23 +200,12 @@ const CreateBot = () => {
               <FieldError name="outcome" className="error" />
             </Box>
           </Box>
-          <QuestionButton />
+          <QuestionButton colorScheme={"green"} />
         </Box>
       }
-      if (botUrl && (!botPersonality || !botColor || !botGreeting)) {
+      if (botUrl && (!botColor || !botGreeting)) {
         return <Box>
           <Box>
-            <Box as={SimpleGrid}>
-              <Label name="personality" errorClassName="error">Personality</Label>
-              <Input
-                name="personality"
-                validation={{ required: true }}
-                placeholder="friendly"
-                defaultValue={botPersonality || "friendly"}
-                {...inputProps}
-              />
-              <FieldError name="personality" className="error" />
-            </Box>
             <Box as={SimpleGrid}>
               <Label name="color" errorClassName="error">Color</Label>
               <Input
@@ -242,7 +223,7 @@ const CreateBot = () => {
                 placeholder="Hi! I'm a bot."
                 defaultValue={botGreeting || "Hi! I'm a bot."}
                 validation={{ required: true }}
-                {...inputProps}
+                {...textAreaProps}
               />
               <FieldError name="greeting" className="error" />
             </Box>
@@ -250,7 +231,7 @@ const CreateBot = () => {
           <QuestionButton />
         </Box>
       }
-      if (botUrl && botPersonality && botColor && botGreeting && !userEmail) {
+      if (botUrl && botColor && botGreeting && !userEmail) {
         return <Box>
           <Box as={SimpleGrid}>
             <Label name="email" errorClassName="error">Email</Label>
@@ -267,26 +248,15 @@ const CreateBot = () => {
             />
             <FieldError name="email" className="error" />
           </Box>
-          <QuestionButton />
-        </Box>
-      }
-      if (botUrl && botPersonality && botColor && botGreeting && userEmail) {
-        return <Box><Box as={SimpleGrid}>
-          <Box>We're building your bot with these details:</Box>
-          <Box>Url: {botUrl}</Box>
-          <Box>Outcome: {botOutcome}</Box>
-          <Box>Personality: {botPersonality}</Box>
-          <Box>Color: {botColor}</Box>
-          <Box>Greeting: {botGreeting}</Box>
-          <Box>Email: {userEmail}</Box>
-          <Input
-            type="hidden"
-            name="confirmed"
-            value="true"
-            {...inputProps}
+          <QuestionButton
+            bgColor={"green.800"}
+            color={"green.50"}
+            buttontext={"Create Bot"}
+            _hover={{
+              // was green.100
+              bg: useColorModeValue('green.600', 'green.800'),
+            }}
           />
-        </Box>
-          <QuestionButton />
         </Box>
       }
     }
@@ -295,9 +265,27 @@ const CreateBot = () => {
         <Form onSubmit={onSubmit}>
           {/**we're going to show a progress bar based on FormPartsRemaining */}
           <Box>
-            {formPartsRemaining} steps remaining
+            <Progress
+              isAnimated
+              hasStripe
+              mb="5%" mx="5%"
+              value={(()=>{
+                if(formPartsRemaining === 4) return 15
+                if(formPartsRemaining === 3) return 25
+                if(formPartsRemaining === 2) return 50
+                if(formPartsRemaining === 1) return 75
+                if(formPartsRemaining === 0) return 100
+              })()}
+              max={100} />
           </Box>
-          <Flex direction="column" gap={4}>
+          <Flex
+            direction="column"
+            gap={4}
+            //w = small screen 1/2 using vw
+            //w = medium screen 1/3
+            //w = large screen 1/3
+            w={{ base: "90vw", sm: "80vw", md: "60vw", lg: "40vw" }}
+            mx="auto">
             <Question />
           </Flex>
         </Form>
