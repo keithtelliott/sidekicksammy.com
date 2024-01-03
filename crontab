@@ -1,7 +1,5 @@
 # every 30th minute of every hour of every day, run the following command
-30 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/refreshFixieCorpuses
+*/30 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/refreshFixieCorpuses
 
 # every 20 minutes run the following command
-0 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/hubspot/token-refresh
-20 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/hubspot/token-refresh
-40 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/hubspot/token-refresh
+*/20 * * * * curl -s https://sidekicksammy.fly.dev/.redwood/functions/hubspot/token-refresh
