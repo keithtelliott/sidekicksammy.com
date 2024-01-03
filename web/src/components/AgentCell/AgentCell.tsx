@@ -11,7 +11,7 @@ import {
 import { useFixie } from 'fixie/web'
 import { FaArrowUp } from 'react-icons/fa'
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
-
+import { useLocation } from '@redwoodjs/router'
 import {
   type CellSuccessProps,
   type CellFailureProps,
@@ -68,9 +68,18 @@ export const Failure = ({
 )
 
 export const Success = ({
-  botBySlug,
+  botBySlug
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
-  console.log({ botBySlug })
+  const { pathname, search, hash } = useLocation()
+  // url path may contain disableScroll=true
+  // if so, disable scrolling
+  let disableScroll = false
+  let initialMessage = ''
+  if (search) {
+    const params = new URLSearchParams(search)
+    disableScroll = params.get('disableScroll') === 'true'
+    initialMessage = params.get('initialMessage') || ''
+  }
   if (!botBySlug.title) return <Empty />
   if (!botBySlug.greeting) botBySlug.greeting = 'How can I help?'
   const { updateTenantData } = useTenant()
@@ -89,6 +98,7 @@ export const Success = ({
   const endOfMessagesRef = useRef(null)
 
   const scrollToBottom = () => {
+    if (disableScroll) return
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -96,7 +106,7 @@ export const Success = ({
     scrollToBottom()
   }, [conversation])
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(initialMessage || '')
 
   const handleSubmit = (event) => {
     event.preventDefault()

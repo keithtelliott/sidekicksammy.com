@@ -14,6 +14,8 @@ import {
 
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
+import AgentCell from 'src/components/AgentCell'
+import CreateBot from 'src/components/CreateBot/CreateBot'
 
 import CreateContact from 'src/components/CreateContact/CreateContact'
 
@@ -112,14 +114,13 @@ const HomePage = () => {
         />
 
         <Flex gap="12" align="center">
-          <Image
-            boxSize="60%"
+          <Box as={'iframe'}
             display={{ base: 'none', md: 'flex' }}
-            objectFit="contain"
-            src="./images/body/SS1.png"
-            alt="Let's Get Started"
-          />
-
+            height={'400px'}
+            src="/checklist-pro?disableScroll=true&initialMessage=What's Checklist Pro?"
+            width="100%"
+          >
+          </Box>
           <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
             <ListItem>
               Answer technical questions about your products and documentation,
@@ -194,12 +195,11 @@ const HomePage = () => {
             </ListItem>
           </UnorderedList>
 
-          <Image
-            boxSize="60%"
+          <Box as={'iframe'}
             display={{ base: 'none', md: 'flex' }}
-            objectFit="contain"
-            src="./images/body/SS2.png"
-            alt="Let's Get Started"
+            height={'400px'}
+            src="/makar-eyecare?disableScroll=true&initialMessage=What's Services do you offer?"
+            width="100%"
           />
         </Flex>
       </Flex>
@@ -257,7 +257,7 @@ const HomePage = () => {
         paddingY="5rem"
         id="getStarted"
       >
-        <CreateContact />
+        <CreateBot />
       </Flex>
     </>
   )

@@ -365,6 +365,17 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   if (!HUBSPOT_CLIENT_SCOPES) {
     throw new Error('Hubspot Function - NO SCOPES')
   }
+  // determine if this is the token refresh call
+  let isTokenRefresh = event.path === '/hubspot/token-refresh'
+  if (isTokenRefresh) {
+    // lets loop over all the bots where the access token is set
+    // and then refresh the token
+    let bots = await db.bot.findMany({ where: { hsAccessToken: { not: null } } })
+    bots.forEach(async (bot) => {
+      // lets refresh the token
+      await updateAccessToken(bot.id)
+    })
+  }
   // determine if this is the oauth callback or install
   let isOauthCallback = event.path === '/hubspot/oauth-callback'
   if (isOauthCallback) {
@@ -462,16 +473,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         }
       }
       let accessToken = bot.hsAccessToken;
-      // okay we have the bot
-      // now lets refresh the token using updateAccessToken
-      // lets see if we need to update the access token
-      let now = new Date()
-      let expiresAt = new Date(bot.hsAccessTokenExpiresAt)
-      let needsNewToken = now > expiresAt
-      if (needsNewToken) {
-        // lets update the access token
-        accessToken = await updateAccessToken(bot.id)
-      }
       let headers = {
         'Authorization': `Bearer ${accessToken}`
       }
@@ -628,15 +629,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         }
       })
       if (!bot.hsActive) return
-      // is the bot's access token expired
-      let now = new Date()
-      let expiresAt = new Date(bot.hsAccessTokenExpiresAt)
-      let needsNewToken = now > expiresAt
-      if (needsNewToken) {
-        // lets update the access token
-        bot.hsAccessToken = await updateAccessToken(bot.id)
-      }
-
       // 6. define if this is a new conversation or a new message
       let isNewConversation = messageObj.subscriptionType === 'conversation.creation'
       let isNewMessage = messageObj.subscriptionType === 'conversation.newMessage'
