@@ -148,40 +148,44 @@ let handleOauthCallback = async ({ code, sessionId }) => {
   return tokens.access_token
 }
 let updateAccessToken = async (botId: number) => {
+  try {
     let bot = await db.bot.findFirst({ where: { id: botId } })
-  const refreshTokenProof = {
-    grant_type: 'refresh_token',
-    client_id: HUBSPOT_CLIENT_ID,
-    client_secret: HUBSPOT_CLIENT_SECRET,
-    redirect_uri: OAUTH_CALLBACK_URL,
-    refresh_token: bot.hsRefreshToken
+    const refreshTokenProof = {
+      grant_type: 'refresh_token',
+      client_id: HUBSPOT_CLIENT_ID,
+      client_secret: HUBSPOT_CLIENT_SECRET,
+      redirect_uri: OAUTH_CALLBACK_URL,
+      refresh_token: bot.hsRefreshToken
+    }
+    let botData = {}
+    //send a form encoded request
+    await fetch('https://api.hubapi.com/oauth/v1/token', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+      },
+      body: Object.keys(refreshTokenProof).map(key => `${key}=${refreshTokenProof[key]}`).join('&'),
+      method: 'POST',
+      // then get the json
+    }).then(async (response) => {
+      // if status code !== 200
+      // then we need to refresh the token
+      let expiresDate = new Date()
+      const data = await response.json();
+      expiresDate.setSeconds(expiresDate.getSeconds() + data.expires_in)
+      botData['hsAccessToken'] = data.access_token
+      botData['hsAccessTokenExpiresAt'] = expiresDate
+      // lets update the bot
+      //console.log({ status: 'updateAccessToken', botId, botData })
+      bot = await db.bot.update({
+        where: { id: botId },
+        data: botData
+      })
+      console.log({ status: 'updateAccessToken', botId})
+    });
+    return "success"
+  } catch (e) {
+    return e
   }
-  let botData = {}
-  //send a form encoded request
-  await fetch('https://api.hubapi.com/oauth/v1/token', {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-    },
-    body: Object.keys(refreshTokenProof).map(key => `${key}=${refreshTokenProof[key]}`).join('&'),
-    method: 'POST',
-    // then get the json
-  }).then(async (response) => {
-    // if status code !== 200
-    // then we need to refresh the token
-    let expiresDate = new Date()
-    const data = await response.json();
-    expiresDate.setSeconds(expiresDate.getSeconds() + data.expires_in)
-    botData['hsAccessToken'] = data.access_token
-    botData['hsAccessTokenExpiresAt'] = expiresDate
-    // lets update the bot
-    //console.log({ status: 'updateAccessToken', botId, botData })
-    bot = await db.bot.update({
-      where: { id: botId },
-      data: botData
-    })
-    //console.log({ status: 'updateAccessToken', botId, bot })
-    return/// bot.hsAccessToken
-  });
 }
 let refreshAccessToken = async (sessionId: string) => {
   const refreshTokenProof = {
@@ -291,7 +295,7 @@ let sendMessageToHubspot = async ({ bot, message, threadId, channelId, channelAc
   return messageData
 }
 let openAIRequest = async ({ message, prompt }) => {
-    let openAIUrl = 'https://api.openai.com/v1/chat/completions'
+  let openAIUrl = 'https://api.openai.com/v1/chat/completions'
   let openAIOptions = {
     method: 'POST',
     headers: {
@@ -372,16 +376,18 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     // lets loop over all the bots where the access token is set
     // and then refresh the token
     let bots = await db.bot.findMany({ where: { hsAccessToken: { not: null } } })
-    for(let i = 0; i < bots.length; i++) {
+    for (let i = 0; i < bots.length; i++) {
       let bot = bots[i]
-    //bots.forEach(async (bot) => {
+      //bots.forEach(async (bot) => {
       // lets refresh the token
-      try{
-      await updateAccessToken(bot.id)
-      } catch(e) {
-        console.log({e})
+      try {
+        console.log({ message: 'refreshing token', botId: bot.id })
+        let status = await updateAccessToken(bot.id)
+        console.log({ message: 'refreshed token', botId: bot.id, status })
+      } catch (e) {
+        console.log({ e })
       }
-    //})
+      //})
     }
   }
   // determine if this is the oauth callback or install
@@ -425,7 +431,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         params[key] = parsedBody[key]
       }
     }
-        let isUpdate = params.actionType === 'DROPDOWN_UPDATE'
+    let isUpdate = params.actionType === 'DROPDOWN_UPDATE'
     if (isUpdate) {
       // update the bot's hsUserId
       let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
@@ -455,7 +461,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       }
     }
     let isFetch = params.actionType === 'DROPDOWN_FETCH'
-        if (isFetch) {
+    if (isFetch) {
       let options = []
       let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
       if (!bot) {
@@ -621,7 +627,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     let messageArr = JSON.parse(event.body)
     // sometimes the messageArr is an array of messages
     // and sometimes it is a single message
-  if(messageArr.length === undefined) messageArr = [messageArr]
+    if (messageArr.length === undefined) messageArr = [messageArr]
     messageArr.forEach(async (messageObj) => {
       // so lets comment this out how it will work
       // 1. visitor will send a message
@@ -697,7 +703,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
               return chunk.score >= .75
             })
             // if we have no chunks, then let's respond with a message
-            if(chunks.length === 0) { /**send message */}
+            if (chunks.length === 0) { /**send message */ }
             let chunkString = chunks.map((chunk) => {
               return chunk.chunkContent
             }).join(' ')
