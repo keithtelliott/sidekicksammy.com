@@ -20,6 +20,27 @@ import { DOMParser } from '@xmldom/xmldom'
  * @param { Context } context - contains information about the invocation,
  * function, and execution environment.
  */
+
+let sortLinks = (links: string[]) => {
+  // sort the links from shortest to longest
+  links = links.sort((a, b) => {
+    return a.length - b.length
+  })
+  return links
+}
+let trimLinks = (links: string[]) => {
+  // some pages sometimes have preceding \r\n or \n and spaces followed by \r\n or \n
+  // so lets remove those
+  links = links.map((page) => {
+    return page.trim()
+  })
+  return links
+}
+let sortAndTrimLinks = (links: string[]) => {
+  links = sortLinks(links)
+  links = trimLinks(links)
+  return links
+}
 let getIndexPageAndLinks = async (url: string) => {
   // the output of this should a list of links
   let links = [url];
@@ -63,10 +84,36 @@ let getIndexPageAndLinks = async (url: string) => {
     }
     // it seems like the element
     links = [...new Set(links)]
+    links = sortAndTrimLinks(links)
     return links
   }
   return []
 
+}
+let returnAllowedPages = async (url: string, pages: string[]) => {
+  let allowedPages = []
+  await fetch(url + '/robots.txt', {
+    method: 'GET',
+  })
+    .then(async (res) => {
+      if (res.status === 200) {
+        let robotContent = await res.text()
+        let robots = await robotsParser(url + '/robots.txt', robotContent)
+        for (let i = 0; i < pages.length; i++) {
+          let page = pages[i]
+          let allowed = robots.isAllowed(page)
+          if (allowed) {
+            allowedPages.push(page)
+          }
+        }
+        return allowedPages
+      }
+      return []
+    })
+    .catch((err) => {
+      return []
+    })
+  return allowedPages
 }
 let getSiteMapFromRobotsTxt = async (url: string) => {
   let robotContent = await fetch(url + '/robots.txt', {
@@ -75,7 +122,7 @@ let getSiteMapFromRobotsTxt = async (url: string) => {
     .then(async (res) => {
       if (res.status === 200) {
         let robotContent = await res.text()
-        //console.log('robotContent', robotContent)
+        console.log('robotContent', robotContent)
         let robots = await robotsParser(url + '/robots.txt', robotContent)
         let sitemap = robots.getSitemaps()
         if (sitemap) {
@@ -101,7 +148,17 @@ let getPagesFromSitemap = async (url: string) => {
     }
     )
   })
-  return pages
+  pages = sortAndTrimLinks(pages)
+  // now lets remove any pages disallowed from robots.txt
+  console.log({url})
+  // url is not root, so lets get the root url
+  let urlObject = new URL(url);
+  let rootUrl = urlObject.protocol + '//' + urlObject.hostname
+  if (urlObject.port) {
+    rootUrl += ':' + urlObject.port
+  }
+  let allowedPages = await returnAllowedPages(rootUrl, pages)
+  return allowedPages
 }
 let gettingSitemap = async (url: string) => {
   let pages = []
@@ -112,6 +169,7 @@ let gettingSitemap = async (url: string) => {
       pages.push(site)
     })
   })
+  pages = sortAndTrimLinks(pages)
   return pages
 }
 let success = (data: any) => {
@@ -156,16 +214,14 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     for (let i = 0; i < robotSitemap.length; i++) {
       let sitemap = robotSitemap[i]
       let pages = await getPagesFromSitemap(sitemap)
-      if (pages.length > 0 && pages.length < 100) {
+      if (pages.length > 0) {
         return success({
           url: sitemap,
+          type: 'robots',
           pagesCount: pages.length,
           first10Pages: pages.slice(0, 10),
+          pages,
         })
-      }
-      if (pages.length > 300) {
-        let prettyPageLength = pages.length.toLocaleString()
-        return error(`Many pages(${prettyPageLength}) found`);
       }
     }
   }
@@ -174,8 +230,10 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   if (firstSitemap.length > 0) {
     return success({
       url: sitemapUrl,
+      type: 'sitemap',
       pagesCount: firstSitemap.length,
       first10Pages: firstSitemap.slice(0, 10),
+      pages: firstSitemap,
     })
   }
   // if no sitemap, lets just make a manual one.
@@ -183,8 +241,10 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   if (links.length > 0) {
     return success({
       url,
+      type: 'manual',
       pagesCount: links.length,
       first10Pages: links.slice(0, 10),
+      pages: links,
     })
   }
   if(links.length === 0) {

@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react'
 import AgentCell from 'src/components/AgentCell'
 
 const AgentPage = ({ title }) => {
@@ -6,9 +7,7 @@ const AgentPage = ({ title }) => {
   }
 
   return (
-    <>
-      <AgentCell title={title} />{' '}
-    </>
+      <AgentCell title={title}  />
   )
 }
 
