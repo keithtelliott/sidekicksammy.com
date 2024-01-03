@@ -223,6 +223,7 @@ let getThreadMessages = async ({ bot, threadId }) => {
     }
   })
   // filter out system messages
+  console.log({ mappedData })
   mappedData = mappedData.filter((message) => {
     return message.actorId.indexOf('S-') === -1
   })
