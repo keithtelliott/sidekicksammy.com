@@ -49,4 +49,3 @@ fly deploy
 ```bash
 fly machine destroy
 ```
-...

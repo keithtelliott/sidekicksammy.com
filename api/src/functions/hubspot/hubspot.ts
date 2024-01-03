@@ -243,11 +243,11 @@ let getThreadDetails = async ({ bot, threadId }) => {
   return threadData
 }
 let getFixieChunks = async ({ query, fixieCorpusId }) => {
-  console.log({ status: 'getFixieChunks', query, fixieCorpusId })
+  //console.log({ status: 'getFixieChunks', query, fixieCorpusId })
   if (!fixieCorpusId) return []  // throw new Error('Missing Fixie Corpus Id')
   if (!query) return []  // throw new Error('Missing Query')
   if (!process.env.FIXIE_API_KEY) return []  // throw new Error('Missing Fixie API Key')
-  console.log({ status: 'getFixieChunks', query, fixieCorpusId, FIXIE_API_KEY: process.env.FIXIE_API_KEY })
+  //console.log({ status: 'getFixieChunks', query, fixieCorpusId, FIXIE_API_KEY: process.env.FIXIE_API_KEY })
   let fixieUrl = `https://api.fixie.ai/api/v1/corpora/${fixieCorpusId}/query`;
   let fixieOptions = {
     method: 'POST',
@@ -286,7 +286,7 @@ let sendMessageToHubspot = async ({ bot, message, threadId, channelId, channelAc
   }
   let messageResponse = await fetch(messageUrl, messageOptions)
   let messageData = await messageResponse.json()
-  console.log({ messageData })
+  //console.log({ messageData })
   return messageData
 }
 let openAIRequest = async ({ message, prompt }) => {
@@ -611,6 +611,9 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     console.log({ path: event.path, body: JSON.parse(event.body) })
     // loop over each message
     let messageArr = JSON.parse(event.body)
+    // sometimes the messageArr is an array of messages
+    // and sometimes it is a single message
+  if(messageArr.length === undefined) messageArr = [messageArr]
     messageArr.forEach(async (messageObj) => {
       // so lets comment this out how it will work
       // 1. visitor will send a message
@@ -642,7 +645,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           getThreadMessages({ bot, threadId: messageObj.objectId })
         ]).then(async (values) => {
           let [threadDetails, lastThreeMessages] = values
-          console.log({ threadDetails, lastThreeMessages })
+          //console.log({ threadDetails, lastThreeMessages })
           // 8. define messages, and lastMessage
           // 8. define the assignedTo, assignedToNoOne(bool), assignedToAI(bool), and assignedToSomeoneElse(bool)
           // 8. define the from actor (https://developers.hubspot.com/docs/api/conversations/conversations#endpoint?spec=GET-/conversations/v3/conversations/actors/{actorId})
@@ -671,7 +674,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           if (assignedToNoOne || assignedToAI) {
             // lets get the relevant content from fixie
             let chunks = await getFixieChunks({ query: lastThreeMessages[0].text, fixieCorpusId: bot.fixieCorpusId })
-            console.log({
+            /*console.log({
               chunks: chunks.map((chunk) => {
                 return {
                   score: chunk.score,
@@ -680,7 +683,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
                   citationTitle: chunk.citation.title,
                 }
               })
-            })
+            })*/
             // lets only use chunks where the score is >= .75
             chunks = chunks.filter((chunk) => {
               return chunk.score >= .75
@@ -710,7 +713,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
               channelId: lastThreeMessages[0].channelId,
               channelAccountId: lastThreeMessages[0].channelAccountId
             }
-            console.log({ sendData })
+            //console.log({ sendData })
             await sendMessageToHubspot(sendData)
           }
 
