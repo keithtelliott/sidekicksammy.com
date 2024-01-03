@@ -174,14 +174,14 @@ let updateAccessToken = async (botId: number) => {
     botData['hsAccessToken'] = data.access_token
     botData['hsAccessTokenExpiresAt'] = expiresDate
     // lets update the bot
-    console.log({ status: 'updateAccessToken', botId, botData })
+    //console.log({ status: 'updateAccessToken', botId, botData })
     bot = await db.bot.update({
       where: { id: botId },
       data: botData
     })
-    return bot.hsAccessToken
+    //console.log({ status: 'updateAccessToken', botId, bot })
+    return/// bot.hsAccessToken
   });
-  throw new Error('Unable to update access token')
 }
 let refreshAccessToken = async (sessionId: string) => {
   const refreshTokenProof = {
@@ -223,7 +223,7 @@ let getThreadMessages = async ({ bot, threadId }) => {
     }
   })
   // filter out system messages
-  console.log({ mappedData })
+  //console.log({ mappedData })
   mappedData = mappedData.filter((message) => {
     return message.actorId.indexOf('S-') === -1
   })
@@ -372,10 +372,17 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     // lets loop over all the bots where the access token is set
     // and then refresh the token
     let bots = await db.bot.findMany({ where: { hsAccessToken: { not: null } } })
-    bots.forEach(async (bot) => {
+    for(let i = 0; i < bots.length; i++) {
+      let bot = bots[i]
+    //bots.forEach(async (bot) => {
       // lets refresh the token
+      try{
       await updateAccessToken(bot.id)
-    })
+      } catch(e) {
+        console.log({e})
+      }
+    //})
+    }
   }
   // determine if this is the oauth callback or install
   let isOauthCallback = event.path === '/hubspot/oauth-callback'
