@@ -6,18 +6,11 @@ import {
   Image,
   ListItem,
   UnorderedList,
-  AspectRatio,
-  VStack,
-  LinkOverlay,
-  Link as ChakraLink,
+  createIcon,
 } from '@chakra-ui/react'
 
-import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-import AgentCell from 'src/components/AgentCell'
 import CreateBot from 'src/components/CreateBot/CreateBot'
-
-import CreateContact from 'src/components/CreateContact/CreateContact'
 
 const HomePage = () => {
   return (
@@ -28,57 +21,29 @@ const HomePage = () => {
         ogUrl="https://sidekicksammy.fly.dev/"
         ogContentUrl="./images/body/dog1.png"
       />
-
-      <Flex
-        direction="column"
-        align="center"
-        bg="lightCream"
-        padding={{ base: '2rem', md: '2rem' }}
-        textAlign="center"
-      >
-        <Heading
-          as="h1"
-          mb={{ base: '8', md: '12' }}
-          fontFamily="Libre Caslon Condensed"
-          size={{ base: '3xl', sm: '2xl', md: '4xl' }}
-        >
-          <Text>Boost Your Website's Superpowers</Text>
-          <Text>with Sidekick Sammy</Text>
-        </Heading>
-        <Heading
-          as="h2"
-          size={{ base: 'xl', md: '2xl' }}
-          fontFamily="Libre Caslon Condensed"
-        >
-          Add an interactive, topic specific bot to your website.
-        </Heading>
-        <ChakraLink href="#getStarted">
-          <Image
-            boxSize={{ base: '300px', md: '400px' }}
-            objectFit="contain"
-            src="./images/body/letsGetStarted.png"
-            alt="Let's Get Started"
-          />
-        </ChakraLink>
-      </Flex>
       <Flex
         bg="darkBlue"
-        mx="auto"
-        justifyContent="center"
-        alignItems="center"
         padding="5rem"
+        direction={"column"}
+        gap="12"
+        align="center"
       >
-        <AspectRatio
-          maxW={{ base: '70%', sm: '60%', md: '60%', lg: '55%' }}
-          ratio={16 / 9}
-          width="full"
-        >
-          <iframe
-            src="https://www.youtube.com/embed/qhKEJ_PCbsA?si=JGiQwuxr9GVrvKP4"
-            title="YouTube video player"
-            allowFullScreen
-          ></iframe>
-        </AspectRatio>
+          <Heading
+            as="h2"
+            size={{ base: 'xl', md: '2xl' }}
+            fontFamily="Libre Caslon Condensed"
+            color="lightCream"
+            alignContent={'center'}
+            maxW={{ base: '90vw', sm: '80vw', md: '60vw', lg: '40vw' }}
+          >
+            {/*Add an interactive, topic specific bot to your website.*/}
+            The simplest way to host & share your bot.
+          </Heading>
+
+          <CreateBot
+          backgroundColor="lightCream"
+          />
+
       </Flex>
 
       <Flex direction="column" bg="lightCream" padding="5rem">
@@ -248,16 +213,6 @@ const HomePage = () => {
           {/* <ListItem>Support getting your bot ready with your content</ListItem> */}
           {/* <ListItem>60 day moneyback guarantee</ListItem> // KTE, 12/14/2023 - let's move this to an FAQ*/}
         </UnorderedList>
-      </Flex>
-
-      <Flex
-        direction="column"
-        bg="darkBlue"
-        align="center"
-        paddingY="5rem"
-        id="getStarted"
-      >
-        <CreateBot />
       </Flex>
     </>
   )

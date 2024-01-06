@@ -4,22 +4,8 @@ import Sitemapper from 'sitemapper'
 import robotsParser from 'robots-parser'
 import { logger } from 'src/lib/logger'
 import { DOMParser } from '@xmldom/xmldom'
-/**
- * The handler function is your code that processes http request events.
- * You can use return and throw to send a response or error, respectively.
- *
- * Important: When deployed, a custom serverless function is an open API endpoint and
- * is your responsibility to secure appropriately.
- *
- * @see {@link https://redwoodjs.com/docs/serverless-functions#security-considerations|Serverless Function Considerations}
- * in the RedwoodJS documentation for more information.
- *
- * @typedef { import('aws-lambda').APIGatewayEvent } APIGatewayEvent
- * @typedef { import('aws-lambda').Context } Context
- * @param { APIGatewayEvent } event - an object which contains information from the invoker.
- * @param { Context } context - contains information about the invocation,
- * function, and execution environment.
- */
+import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
+const nhm = new NodeHtmlMarkdown({}, undefined, undefined)
 
 let sortLinks = (links: string[]) => {
   // sort the links from shortest to longest
@@ -208,6 +194,56 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   let hostname = urlObject.hostname
   let hostnameParts = hostname.split('.')
   if (hostnameParts.length < 2) return error('Invalid url')
+ /* let openAIRequest = async (text: string) => {
+    let openAIUrl = 'https://api.openai.com/v1/chat/completions'
+  let openAIOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY
+    },
+    body: JSON.stringify({
+      model: 'gpt-3.5-turbo-16k',
+      messages: [
+        { role: 'system', content: `I am an experienced prompt designer specializing in creating effective prompts for topic-specific bots. With a deep understanding of various subjects and expert knowledge in bot design, I can provide concise and accurate information based on the given context. I strive to generate system prompts that effectively address user inquiries in the most efficient manner possible.`},
+        { role: 'user', content: `As an expert prompt designer for topic specific bots, I need your assistance. Can you generate a system prompt for me?` },
+        { role: 'system', content: `Certainly! I'm here to help you. Please provide me with the greeting and the home page information in markdown format.` },
+        { role: 'user', content: `Greeting: """${greeting}""" Home Page: """${homePage}"""` },
+      ],
+      temperature: 0.9,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    })
+  }
+  }*/
+  let getSiteSummary = async (page: string) => {
+    let html = ''
+    await fetch(page, {
+      method: 'GET',
+      // lets follow redirects
+      redirect: 'follow',
+    })
+      .then(async (res) => {
+        if (res.status === 200) {
+          html = await res.text()
+        }
+        return ''
+      })
+      .catch((err) => {
+        return ''
+      })
+    if (html?.length > 0) {
+      // use node-html-markdown to get the text
+      let markdown = nhm.translate(html)
+      // now lets get the word count
+      let wordCount = markdown.split(' ').length
+      // now lets get the character count
+      let characterCount = markdown.length
+      console.log({ wordCount, characterCount })
+    }
+  }
 
   let robotSitemap = await getSiteMapFromRobotsTxt(url)
   if (robotSitemap.length > 0) {
@@ -220,7 +256,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           type: 'robots',
           pagesCount: pages.length,
           first10Pages: pages.slice(0, 10),
-          pages,
         })
       }
     }
@@ -233,7 +268,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       type: 'sitemap',
       pagesCount: firstSitemap.length,
       first10Pages: firstSitemap.slice(0, 10),
-      pages: firstSitemap,
     })
   }
   // if no sitemap, lets just make a manual one.
@@ -244,7 +278,6 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       type: 'manual',
       pagesCount: links.length,
       first10Pages: links.slice(0, 10),
-      pages: links,
     })
   }
   if(links.length === 0) {

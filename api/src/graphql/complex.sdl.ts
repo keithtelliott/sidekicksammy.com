@@ -2,10 +2,11 @@
 export const schema = gql`
 
 input CreateBotAndUserInput {
+  slug: String!
   url: String!
-  outcome: String!
   color: String!
   greeting: String!
+  outcome: String!
   email: String!
 }
 

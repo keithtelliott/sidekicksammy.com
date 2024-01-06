@@ -1,23 +1,30 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Box, Button, Flex, Input,
-  Progress,
-  Select,
   SimpleGrid,
   useColorModeValue,
+  InputGroup,
+  InputLeftAddon,
+  Alert,
+  Text,
+  Table,
+  Tr,
+  Td,
+  Thead,
+  Tbody,
+
 } from "@chakra-ui/react"
 import { useMutation } from "@redwoodjs/web"
 import {
   Form,
   Label,
   TextField,
-  Submit,
   FieldError,
-  set,
   TextAreaField,
-  SelectField
 } from '@redwoodjs/forms'
 import { navigate, routes } from "@redwoodjs/router"
+import CreateBotQuestionButton from "../CreateBotQuestionButton/CreateBotQuestionButton"
+import CreateBotGreetingButtons from "../CreateBotGreetingButton/CreateBotGreetingButton"
 const CREATE_BOT_MUTATION = gql`
   mutation CreateBotAndUserMutation($input: CreateBotAndUserInput!) {
     createBotAndUser(input: $input) {
@@ -26,7 +33,7 @@ const CREATE_BOT_MUTATION = gql`
     }
   }
 `
-const CreateBot = () => {
+const CreateBot = (props) => {
   // this is will be a multi-step form
   // the steps the user will see are:
   // 1. enter the website url for the bot to use data from
@@ -55,23 +62,47 @@ const CreateBot = () => {
   ]
   let outcomes = [
     // a llist of 1-line strings that are the outcomes of the bot
-    "24/7 Customer Support",
-    "Cost-Efficient Customer Service",
-    "Lead Generation and Qualification",
-    "Efficient Information Retrieval",
+    "Customer Support",
+    "Lead Generation",
+    "Information Retrieval",
     "Appointment Scheduling",
     "E-commerce Assistance",
     "Feedback Collection",
     "Interactive Marketing and Promotions",
   ]
+  let [botSlug, setBotSlug] = useState("")
   let [botUrl, setBotUrl] = useState("")
-  let [botOutcome, setBotOutcome] = useState("")
+  let [botPages, setBotPages] = useState(0)
   let [botColor, setBotColor] = useState("")
-  let [botGreeting, setBotGreeting] = useState("Hi! I'm a bot.")
-  let [formPartsRemaining, setFormPartsRemaining] = useState(3)
+  let [botTemporaryGreeting, setBotTemporaryGreeting] = useState("")
+  let [botGreeting, setBotGreeting] = useState(null)
+  let [botOutcome, setBotOutcome] = useState(null)
   let [userEmail, setUserEmail] = useState("")
+  let [formSectionToLoad, setFormSectionToLoad] = useState(1)
   // other steps: confirm-bot, get-email, post-email
+  const getPages = async (url) => {
+    try {
+      const path = "/.redwood/functions/getPages?website=" + url
+      const response = await fetch(path, {
+        signal: AbortSignal.timeout(30000)
+      })
+      const data = await response.json()
+      return data
+    } catch (err) {
+      console.log("error fetching pages", err)
+      return { data: { pagesCount: -1 } }
+    }
+  }
   const CreateBotForm = () => {
+
+    useEffect(() => {
+      // if the bot's url is set, then
+      // we will load the second form section
+      if (botUrl && botSlug) setFormSectionToLoad(2)
+      if (botColor && botGreeting) setFormSectionToLoad(3)
+      //if (userEmail) setFormSectionToLoad(4)
+    }, [botSlug, botUrl, botColor, botGreeting, userEmail])
+
 
     const [create] = useMutation(CREATE_BOT_MUTATION, {
       onCompleted: (data) => {
@@ -82,212 +113,254 @@ const CreateBot = () => {
         navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
       }
     })
-    const onSubmit = (input) => {
+    const onSubmit = async (input) => {
       //create({ variables: { input } })
       // we will append the input to the formData
       // get the next step
-      if (input.url && input.outcome) {
+      if (input.slug) setBotSlug(input.slug)
+      if (input.url) {
         setBotUrl(input.url)
-        setBotOutcome(input.outcome)
-        setFormPartsRemaining(formPartsRemaining - 1)
+        let pages = await getPages(input.url)
+        setBotPages(pages.data.pagesCount)
+        console.log({ botUrl  })
+        setBotUrl(pages.data.first10Pages[0])
+        console.log({ botUrl  })
       }
-      if (input.color && input.greeting) {
-        setBotColor(input.color)
-        setBotGreeting(input.greeting)
-        setFormPartsRemaining(formPartsRemaining - 1)
-      }
-      if (input.email) {
-        setUserEmail(input.email)
+      if (input.color) setBotColor(input.color)
+      if (input.greeting) setBotGreeting(input.greeting)
+      if (input.email) setUserEmail(input.email)
+
+      // depending on what states are set, we will
+      // set the next form section to load
+      // if the bot's url and slug are not set, then
+      // we will load the first form section
+
+
+      if (botSlug && botUrl && botColor && botGreeting && userEmail) {
+
         create({
           variables: {
             input: {
+              slug: botSlug,
               url: botUrl,
-              outcome: botOutcome,
               color: botColor,
               greeting: botGreeting,
+              outcome: botOutcome,
               email: userEmail,
             }
           }
         })
-        setFormPartsRemaining(formPartsRemaining - 1)
       }
     }
     let inputProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
       color: useColorModeValue('gray.800', 'gray.200'),
-      errorClassName: "error",
+      //errorClassName: "error",
       as: TextField,
     }
     let textAreaProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
       color: useColorModeValue('gray.800', 'gray.200'),
-      errorClassName: "error",
+      //errorClassName: "error",
       height: "100px",
       as: TextAreaField,
     }
-    let selectProps = {
-      bgColor: useColorModeValue('gray.50', 'gray.800'),
-      color: useColorModeValue('gray.800', 'gray.200'),
-      errorClassName: "error",
-      as: SelectField,
-    }
-    let QuestionButton = (props) => {
-      return <Box
-        p={4}
-        //bg={"lightCream"}
-        rounded={"lg"}
-      // allign the button center
-
-      >
-
-        <Button
-          type="submit"
-          bgColor={useColorModeValue('blue.50', 'blue.800')}
-          color={useColorModeValue('blue.800', 'blue.200')}
-          border="1px solid"
-          width={"100%"}
-
-          rounded="lg"
-          _hover={{
-            bg: useColorModeValue('gray.100', 'gray.900'),
-          }}
-          _active={{
-            bg: useColorModeValue('gray.100', 'gray.900'),
-            transform: 'scale(0.95)',
-          }}
-          _focus={{
-            boxShadow:
-              '0 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.15)',
-          }}
-          {...props}
-        >{props.buttontext || "Next"}</Button>
-      </Box>
-    }
-    let Question = () => {
-      if (!botUrl) {
-        return <Box>
+    let FormSectionOne = () => {
+      return <Box>
+        <SimpleGrid>
           <Box as={SimpleGrid}>
-            <Box as={SimpleGrid}>
-              <Label name="url" errorClassName="error">URL</Label>
-              <Input
-                name="url"
-                validation={{
-                  required: true,
-                  pattern: {
-                    value: /([a-z0-9]+\.)*[a-z0-9]+\.[a-z]+/,
-                  },
-                }}
-
-                placeholder="example.com"
-                {...inputProps}
-              />
-              <FieldError name="url" className="error" />
-            </Box>
-            <Box as={SimpleGrid}>
-              <Label name="outcome" errorClassName="error">Outcome</Label>
-              <Select
-                placeholder='Outcome....'
-                name="outcome"
-                validation={{ required: true }}
-                {...selectProps}
-              >
-                {outcomes.map((outcome) => (
-                  <option key={outcome} value={outcome}>
-                    {outcome}
-                  </option>
-                ))}
-              </Select>
-              <FieldError name="outcome" className="error" />
-            </Box>
-          </Box>
-          <QuestionButton colorScheme={"green"} />
-        </Box>
-      }
-      if (botUrl && (!botColor || !botGreeting)) {
-        return <Box>
-          <Box>
-            <Box as={SimpleGrid}>
-              <Label name="color" errorClassName="error">Color</Label>
-              <Input
-                name="color"
-                validation={{ required: true }}
-                placeholder="blue or #0000ff"
-                {...inputProps}
-              />
-              <FieldError name="color" className="error" />
-            </Box>
-            <Box as={SimpleGrid}>
-              <Label name="greeting" errorClassName="error">Greeting</Label>
-              <Input
-                name="greeting"
-                placeholder="Hi! I'm a bot."
-                defaultValue={botGreeting || "Hi! I'm a bot."}
-                validation={{ required: true }}
-                {...textAreaProps}
-              />
-              <FieldError name="greeting" className="error" />
-            </Box>
-          </Box>
-          <QuestionButton />
-        </Box>
-      }
-      if (botUrl && botColor && botGreeting && !userEmail) {
-        return <Box>
-          <Box as={SimpleGrid}>
-            <Label name="email" errorClassName="error">Email</Label>
+            <Label name="url" errorClassName="error">URL</Label>
             <Input
-              name="email"
-              placeholder="sammy@example.com"
+              name="url"
               validation={{
                 required: true,
                 pattern: {
-                  value: /[^@]+@[^\.]+\..+/,
+                  value: /([a-z0-9]+\.)*[a-z0-9]+\.[a-z]+/,
+                  message: "Please enter a valid url.",
                 },
               }}
+
+              placeholder="example.com"
               {...inputProps}
             />
-            <FieldError name="email" className="error" />
+            <Alert as={FieldError} status='error' name="url" className="error" />
           </Box>
-          <QuestionButton
-            bgColor={"green.800"}
-            color={"green.50"}
-            buttontext={"Create Bot"}
-            _hover={{
-              // was green.100
-              bg: useColorModeValue('green.600', 'green.800'),
-            }}
-          />
+        </SimpleGrid>
+        <CreateBotQuestionButton colorScheme={"green"} />
+      </Box>
+    }
+    let FormSectionTwo = () => {
+      return <Box>
+        <Box>
+          {/**Color picker */}
+
+          <Box as={SimpleGrid}>
+            <Label name="color" errorClassName="error">Color</Label>
+            <Input
+              name="color"
+              type={"color"}
+              value={botColor || "#0000ff"}
+              validation={{ required: true }}
+              placeholder="blue or #0000ff"
+              onChange={(e) => setBotColor(e.target.value)}
+              {...inputProps}
+            />
+            <Alert as={FieldError} status='error' name="color" className="error" />
+          </Box>
+          <Box>
+            <CreateBotGreetingButtons
+              set={setBotTemporaryGreeting}
+              setOutcome={setBotOutcome}
+            />
+            <Label name="greeting" errorClassName="error">Greeting</Label>
+            <Input
+              name="greeting"
+              placeholder="Type your own"
+              defaultValue={botTemporaryGreeting}
+              validation={{ required: {
+                value: true,
+                message: "Please enter a greeting.",
+              } }}
+              {...textAreaProps}
+            />
+            <Alert as={FieldError} status='error' name="greeting" className="error" />
+          </Box>
+
         </Box>
-      }
+        <CreateBotQuestionButton />
+      </Box>
+    }
+    let FormSectionThree = () => {
+      return <Box>
+        <Box as={SimpleGrid}>
+          <Label name="email" errorClassName="error">Email</Label>
+          <Input
+            name="email"
+            placeholder="john@example.com"
+            defaultValue={userEmail}
+            validation={{
+              required: true,
+              pattern: {
+                value: /[^@]+@[^\.]+\..+/,
+              },
+            }}
+            {...inputProps}
+          />
+          <Alert as={FieldError} status='error' name="email" className="error" />
+        </Box>
+        <CreateBotQuestionButton
+          bgColor={"green.800"}
+          color={"green.50"}
+          buttontext={"Create Bot"}
+          _hover={{
+            // was green.100
+            bg: useColorModeValue('green.600', 'green.800'),
+          }}
+        />
+      </Box>
+    }
+
+
+    let MockBrowser = ({ children }) => {
+      // this will return a box with an address bar
+      return (
+        <Box border="2px" borderColor="gray.200" borderRadius="md" p={3} >
+          <Box borderBottom="1px" borderColor="gray.200" p={3}>
+            <InputGroup>
+              <InputLeftAddon>https://sidekicksammy.com/</InputLeftAddon>
+              <Input
+                name="slug"
+                defaultValue={botSlug}
+                validation={{
+                  required: {
+                    value: true,
+                    message: "Please enter a slug.",
+                  },
+                  pattern: {
+                    // a-zA-Z0-9-_
+                    value: /^[a-zA-Z0-9-_]+$/,
+                    message: "Please enter a valid slug.",
+                  },
+                }}
+
+                placeholder="your-bot"
+                {...inputProps}
+              />
+            </InputGroup>
+            <Alert as={FieldError} status='error' name="slug" className="error" />
+          </Box>
+          <Box
+            mt={3}
+            p={3}
+            bg={"white"}
+            rounded={"lg"}
+          >
+            {children}
+          </Box>
+        </Box>
+
+      )
+    }
+    let Chat = () => {
+      // this will return a chat window
+      // with the bot's greeting
+      // and a prompt
+      return <Box></Box>
     }
     return (
-      <Box>
+      <Box
+        borderRadius="lg"
+        {...props}
+      >
+
         <Form onSubmit={onSubmit}>
-          {/**we're going to show a progress bar based on FormPartsRemaining */}
-          <Box>
-            <Progress
-              isAnimated
-              hasStripe
-              mb="5%" mx="5%"
-              value={(()=>{
-                if(formPartsRemaining === 4) return 15
-                if(formPartsRemaining === 3) return 25
-                if(formPartsRemaining === 2) return 50
-                if(formPartsRemaining === 1) return 75
-                if(formPartsRemaining === 0) return 100
-              })()}
-              max={100} />
-          </Box>
           <Flex
             direction="column"
             gap={4}
-            //w = small screen 1/2 using vw
-            //w = medium screen 1/3
-            //w = large screen 1/3
             w={{ base: "90vw", sm: "80vw", md: "60vw", lg: "40vw" }}
             mx="auto">
-            <Question />
+            {/*<Box
+              p={4}
+              bg={"blue.50"}
+              rounded={"lg"}
+            >
+              <Table>
+              <Thead>
+                <Tr>
+                  <Td>Field</Td>
+                  <Td>Value</Td>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {[
+                  ["Location", botSlug],
+                  ["URL", botUrl],
+                  ["Pages", botPages],
+                  ["Color", botColor],
+                  ["Greeting", botGreeting],
+                  ["Outcome", botOutcome],
+                  ["Email", userEmail],
+                  ["Form Section", formSectionToLoad],
+                ]
+                  .map((row) => (
+                    <Tr key={'debug-' + row[0]}>
+                      <Td>{row[0]}</Td>
+                      <Td>{row[1]}</Td>
+                    </Tr>
+                  ))}
+              </Tbody>
+
+                  </Table>
+            </Box>*/}
+            <MockBrowser >
+              {formSectionToLoad === 1 && <FormSectionOne />}
+              {formSectionToLoad === 2 && <FormSectionTwo />}
+              {formSectionToLoad === 3 && <FormSectionThree />}
+              {formSectionToLoad === 5 && <Box>Thank you for creating a bot!</Box>}
+            </MockBrowser>
+            <Chat />
           </Flex>
+
         </Form>
       </Box>
     )
@@ -298,6 +371,10 @@ const CreateBot = () => {
       bg={"lightCream"}
       rounded={"lg"}
     >
+      {botPages > 50 && <Box>
+        <Text fontSize={"xl"}>This website has {botPages} pages.  This may take a few minutes.</Text>
+      </Box>
+      }
       <CreateBotForm />
     </Box>
   )
