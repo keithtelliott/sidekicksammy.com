@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "files.trimTrailingWhitespace": true,
-  "editor.formatOnSave": false,
+  // "editor.formatOnSave": false, // KTE, 1/6/2024:  I commented-out this setting, b/c it should just be a user preference, not a workspace setting
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
