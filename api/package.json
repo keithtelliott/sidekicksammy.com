@@ -8,6 +8,7 @@
     "@redwoodjs/auth-dbauth-api": "6.4.0",
     "@redwoodjs/graphql-server": "6.4.0",
     "@xmldom/xmldom": "^0.8.10",
+    "node-html-markdown": "^1.3.0",
     "robots-parser": "^3.0.1",
     "sitemapper": "^3.2.8"
   }
