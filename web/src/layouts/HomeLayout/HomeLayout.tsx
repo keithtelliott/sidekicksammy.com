@@ -1,6 +1,7 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import Header from 'src/components/Marketing/Header/Header'
+
 import Footer from 'src/components/Marketing/Footer/Footer'
+import Header from 'src/components/Marketing/Header/Header'
 
 type HomeLayoutProps = {
   children?: React.ReactNode
@@ -15,7 +16,8 @@ const HomeLayout = ({ children }: HomeLayoutProps) => {
       }}
       gridTemplateRows={{
         base: 'auto 1fr 1fr',
-        md: '245px 1fr 1fr',
+        md: 'auto 1fr 1fr',
+        // md: '145px 1fr 1fr', // KTE, 1/8/2024:  Refining layout...
       }}
       gridTemplateColumns={{ base: '1fr', md: '1fr' }}
       h="100vh"

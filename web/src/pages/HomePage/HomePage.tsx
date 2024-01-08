@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 
 import { MetaTags } from '@redwoodjs/web'
+
 import CreateBot from 'src/components/CreateBot/CreateBot'
 
 const HomePage = () => {
@@ -24,26 +25,23 @@ const HomePage = () => {
       <Flex
         bg="darkBlue"
         padding="5rem"
-        direction={"column"}
+        direction={'column'}
         gap="12"
         align="center"
       >
-          <Heading
-            as="h2"
-            size={{ base: 'xl', md: '2xl' }}
-            fontFamily="Libre Caslon Condensed"
-            color="lightCream"
-            alignContent={'center'}
-            maxW={{ base: '90vw', sm: '80vw', md: '60vw', lg: '40vw' }}
-          >
-            {/*Add an interactive, topic specific bot to your website.*/}
-            The simplest way to host & share your bot.
-          </Heading>
+        <Heading
+          as="h2"
+          size={{ base: 'xl', md: '2xl' }}
+          fontFamily="Libre Caslon Condensed"
+          color="lightCream"
+          alignContent={'center'}
+          maxW={{ base: '90vw', sm: '80vw', md: '60vw', lg: '40vw' }}
+        >
+          {/*Add an interactive, topic specific bot to your website.*/}
+          The simplest way to host & share your bot.
+        </Heading>
 
-          <CreateBot
-          backgroundColor="lightCream"
-          />
-
+        <CreateBot backgroundColor="lightCream" />
       </Flex>
 
       <Flex direction="column" bg="lightCream" padding="5rem">
@@ -79,13 +77,13 @@ const HomePage = () => {
         />
 
         <Flex gap="12" align="center">
-          <Box as={'iframe'}
+          <Box
+            as={'iframe'}
             display={{ base: 'none', md: 'flex' }}
             height={'400px'}
             src="/checklist-pro?disableScroll=true&initialMessage=What's Checklist Pro?"
             width="100%"
-          >
-          </Box>
+          ></Box>
           <UnorderedList fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}>
             <ListItem>
               Answer technical questions about your products and documentation,
@@ -160,7 +158,8 @@ const HomePage = () => {
             </ListItem>
           </UnorderedList>
 
-          <Box as={'iframe'}
+          <Box
+            as={'iframe'}
             display={{ base: 'none', md: 'flex' }}
             height={'400px'}
             src="/makar-eyecare?disableScroll=true&initialMessage=What's Services do you offer?"

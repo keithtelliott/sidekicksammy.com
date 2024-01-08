@@ -1,32 +1,29 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  Heading,
-  Spacer,
-  Image,
-  LinkOverlay,
-  Link,
-} from '@chakra-ui/react'
+import { Flex, Spacer, Image, Link } from '@chakra-ui/react'
 
 const Header = () => {
   return (
     <>
       <Flex
         align={{ base: 'center', md: 'center' }}
-        justify={{ base: 'center', md: 'space-between' }}
-        padding={{ base: '1rem', md: '5rem' }}
-        gap="2em"
+        // justify={{ base: 'center', md: 'space-between' }}
+        justify={{ base: 'space-between', md: 'space-between' }}
+        padding={{ base: '1rem', md: '1rem' }}
       >
         <Image
-          boxSize={{ base: '75%', md: '35%', lg: '22%' }}
+          boxSize={{ base: '22%', md: '22%', lg: '22%' }}
+          // boxSize={{ base: '35%', md: '35%', lg: '22%' }}
           objectFit="contain"
           src="./images/header/logo.png"
           alt="Sidekick Sammy Logo"
         />
 
-        <Spacer display={{ base: 'none', md: 'block' }} />
+        {/* <Spacer display={{ base: 'none', md: 'block' }} />
+
+        // KTE, 1/8/2024:  I think we should remove the Get Started and Pricing buttons until those sections of
+        // the landing page are ready.
+
+
+        <Spacer display={{ base: 'none', md: 'none' }} />
 
         <Link
           display={{ base: 'none', md: 'flex' }}
@@ -50,6 +47,7 @@ const Header = () => {
             alt="Get Started"
           />
         </Link>
+  */}
       </Flex>
     </>
   )
