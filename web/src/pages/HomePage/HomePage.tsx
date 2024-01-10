@@ -24,7 +24,8 @@ const HomePage = () => {
       />
       <Flex
         bg="darkBlue"
-        padding="5rem"
+        paddingY="3rem"
+        // paddingX="1rem"
         direction={'column'}
         gap="12"
         align="center"
