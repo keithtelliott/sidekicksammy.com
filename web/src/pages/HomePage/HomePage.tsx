@@ -32,14 +32,18 @@ const HomePage = () => {
       >
         <Heading
           as="h2"
-          size={{ base: 'xl', md: '2xl' }}
+          // size={{ base: 'xl', md: '2xl' }}
+          size={{ base: 'lg', md: 'xl' }}
           fontFamily="Libre Caslon Condensed"
           color="lightCream"
           alignContent={'center'}
-          maxW={{ base: '90vw', sm: '80vw', md: '60vw', lg: '40vw' }}
+          textAlign={'center'}
+          maxW={{ base: '90vw', sm: '80vw', md: '60vw', lg: '60vw' }}
         >
           {/*Add an interactive, topic specific bot to your website.*/}
-          The simplest way to host & share your bot.
+          {/* The simplest way to host & share your bot. */}
+          The simplest way to create & share an interactive, topic-specific AI
+          chatbot
         </Heading>
 
         <CreateBot backgroundColor="lightCream" />
