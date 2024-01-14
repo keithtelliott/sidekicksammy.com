@@ -10,7 +10,7 @@ const Header = () => {
         padding={{ base: '1rem', md: '1rem' }}
       >
         <Image
-          boxSize={{ base: '22%', md: '22%', lg: '22%' }}
+          boxSize={{ base: '35%', md: '22%', lg: '22%' }}
           // boxSize={{ base: '35%', md: '35%', lg: '22%' }}
           objectFit="contain"
           src="./images/header/logo.png"
