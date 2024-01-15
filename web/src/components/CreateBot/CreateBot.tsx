@@ -26,6 +26,7 @@ import {
   TextField,
   FieldError,
   TextAreaField,
+  set,
 } from '@redwoodjs/forms'
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
@@ -79,6 +80,9 @@ const CreateBot = (props) => {
   const [botGreeting, setBotGreeting] = useState(null)
   const [botOutcome, setBotOutcome] = useState(null)
   const [userEmail, setUserEmail] = useState('')
+  const [error, setError] = useState(null)
+  const [submitted, setSubmitted] = useState(false)
+  const [finalButtonText, setFinalButtonText] = useState('Create Bot')
   const [formSectionToLoad, setFormSectionToLoad] = useState(1)
   // other steps: confirm-bot, get-email, post-email
   const getPages = async (url) => {
@@ -98,43 +102,24 @@ const CreateBot = (props) => {
     useEffect(() => {
       // if the bot's url is set, then
       // we will load the second form section
-      if (botUrl && botSlug) setFormSectionToLoad(2)
-      if (botColor && botGreeting) setFormSectionToLoad(3)
-      //if (userEmail) setFormSectionToLoad(4)
-    }, [botSlug, botUrl, botColor, botGreeting, userEmail])
-
-    const [create] = useMutation(CREATE_BOT_MUTATION, {
-      onCompleted: (data) => {
-        //toast.success('Bot created')
-        //navigate(routes.bots())
-        console.log('bot created', data)
-        // redirect to demo
-        navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
-      },
-    })
-    const onSubmit = async (input) => {
-      //create({ variables: { input } })
-      // we will append the input to the formData
-      // get the next step
-      if (input.slug) setBotSlug(input.slug)
-      if (input.url) {
-        setBotUrl(input.url)
-        const pages = await getPages(input.url)
-        setBotPages(pages.data.pagesCount)
-        console.log({ botUrl })
-        setBotUrl(pages.data.first10Pages[0])
-        console.log({ botUrl })
+      if (error == null) {
+        if (botUrl && botSlug) setFormSectionToLoad(2)
+        if (botColor && botGreeting) setFormSectionToLoad(3)
       }
-      if (input.color) setBotColor(input.color)
-      if (input.greeting) setBotGreeting(input.greeting)
-      if (input.email) setUserEmail(input.email)
-
-      // depending on what states are set, we will
-      // set the next form section to load
-      // if the bot's url and slug are not set, then
-      // we will load the first form section
-
+      /*
+      console.log({
+        where: 'useEffect',
+        botSlug,
+        botUrl,
+        botColor,
+        botGreeting,
+        userEmail,
+        error
+      })
+      */
       if (botSlug && botUrl && botColor && botGreeting && userEmail) {
+        setSubmitted(true)
+        //console.log({ where: 'useEffect', metCondition: true })
         create({
           variables: {
             input: {
@@ -147,7 +132,49 @@ const CreateBot = (props) => {
             },
           },
         })
+      } else {
+        //console.log({ where: 'useEffect', metCondition: false })
       }
+      //if (userEmail) setFormSectionToLoad(4)
+    }, [botSlug, botUrl, botColor, botGreeting, userEmail])
+
+    const [create] = useMutation(CREATE_BOT_MUTATION, {
+      onCompleted: (data) => {
+        //toast.success('Bot created')
+        //navigate(routes.bots())
+        //console.log('bot created', data)
+        // redirect to demo
+        if (data.createBotAndUser.urlSlug.indexOf('error') > -1) {
+          //console.log('error creating bot', data.createBotAndUser.urlSlug)
+          setError(data.createBotAndUser.urlSlug.split('#')[1])
+          setFormSectionToLoad(1)
+        } else {
+          navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
+        }
+      },
+      onError: (data, error) => {
+        //console.log('error creating bot', error, data)
+        //toast.error('Error creating bot')
+      }
+    })
+    const onSubmit = async (input) => {
+      //create({ variables: { input } })
+      // we will append the input to the formData
+      // get the next step
+      setError(null)
+      //console.log({ input })
+      if (input.slug) setBotSlug(input.slug)
+      if (input.url) {
+        setBotUrl(input.url)
+        const pages = await getPages(input.url)
+        setBotPages(pages.data.pagesCount)
+        //console.log({ botUrl })
+        setBotUrl(pages.data.first10Pages[0])
+        //console.log({ botUrl })
+      }
+      if (input.color) setBotColor(input.color)
+      if (input.greeting) setBotGreeting(input.greeting)
+      if (input.email) setUserEmail(input.email)
     }
     const inputProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
@@ -190,6 +217,7 @@ const CreateBot = (props) => {
                 },
               }}
               placeholder="your-website.com"
+              defaultValue={botUrl}
               {...inputProps}
             />
             <Alert
@@ -221,6 +249,7 @@ const CreateBot = (props) => {
                 },
               }}
               placeholder="your-chatbot"
+              defaultValue={botSlug}
               {...inputProps}
             />
             <Alert
@@ -287,7 +316,7 @@ const CreateBot = (props) => {
               <Input
                 name="greeting"
                 placeholder="Type your own"
-                defaultValue={botTemporaryGreeting}
+                defaultValue={botTemporaryGreeting || botGreeting}
                 validation={{
                   required: {
                     value: true,
@@ -330,6 +359,7 @@ const CreateBot = (props) => {
               defaultValue={userEmail}
               validation={{
                 required: true,
+                message: 'Please enter your email address.',
                 pattern: {
                   value: /[^@]+@[^\.]+\..+/,
                 },
@@ -346,7 +376,14 @@ const CreateBot = (props) => {
           <CreateBotQuestionButton
             bgColor={'green.800'}
             color={'green.50'}
-            buttontext={'Create Bot'}
+            buttontext={finalButtonText}
+            isLoading={submitted}
+            loadingText={'Creating Bot...'}
+            // on click i want to disable the button, and show a spinner
+            onSubmit={() => {
+              setFinalButtonText('Creating Bot...')
+              setSubmitted(true)
+            }}
             _hover={{
               // was green.100
               bg: useColorModeValue('green.600', 'green.800'),
@@ -354,52 +391,6 @@ const CreateBot = (props) => {
           />
         </Box>
       )
-    }
-    // }
-
-    const MockBrowser = ({ children }) => {
-      // this will return a box with an address bar
-      return (
-        <Box border="2px" borderColor="gray.200" borderRadius="md" p={3}>
-          {/* <Box borderBottom="1px" borderColor="gray.200" p={3}>
-            <InputGroup>
-              <InputLeftAddon>https://sidekicksammy.com/</InputLeftAddon>
-              <Input
-                name="slug"
-                defaultValue={botSlug}
-                validation={{
-                  required: {
-                    value: true,
-                    message: 'Please enter a slug.',
-                  },
-                  pattern: {
-                    // a-zA-Z0-9-_
-                    value: /^[a-zA-Z0-9-_]+$/,
-                    message: 'Please enter a valid slug.',
-                  },
-                }}
-                placeholder="your-bot"
-                {...inputProps}
-              />
-            </InputGroup>
-            <Alert
-              as={FieldError}
-              status="error"
-              name="slug"
-              className="error"
-            />
-          </Box> */}
-          <Box mt={3} p={3} bg={'white'} rounded={'lg'}>
-            {children}
-          </Box>
-        </Box>
-      )
-    }
-    const Chat = () => {
-      // this will return a chat window
-      // with the bot's greeting
-      // and a prompt
-      return <Box></Box>
     }
     return (
       <Box borderRadius="lg" {...props}>
@@ -443,15 +434,23 @@ const CreateBot = (props) => {
 
                   </Table>
             </Box>*/}
-            <MockBrowser>
-              {formSectionToLoad === 1 && <FormSectionOne />}
-              {formSectionToLoad === 2 && <FormSectionTwo />}
-              {formSectionToLoad === 3 && <FormSectionThree />}
-              {formSectionToLoad === 5 && (
-                <Box>Thank you for creating a bot!</Box>
-              )}
-            </MockBrowser>
-            <Chat />
+            <Box border="2px" borderColor="gray.200" borderRadius="md" p={3}>
+              <Box mt={3} p={3} bg={'white'} rounded={'lg'}>
+                {error && (
+                  <Box>
+                    <Text color="red.500" fontWeight="bold">
+                      {error}
+                    </Text>
+                  </Box>
+                )}
+                {formSectionToLoad === 1 && <FormSectionOne />}
+                {formSectionToLoad === 2 && <FormSectionTwo />}
+                {formSectionToLoad === 3 && <FormSectionThree /**this has the submit button.. */ />}
+                {formSectionToLoad === 4 && (
+                  <Box>Thank you for creating a bot!</Box>
+                )}
+              </Box>
+            </Box>
           </Flex>
         </Form>
       </Box>
