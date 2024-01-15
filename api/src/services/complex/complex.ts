@@ -331,7 +331,8 @@ let generatePrompt = async (url, greeting, outcome) => {
     { role: 'system', content: "I am Sammy, an AI-powered chatbot that is focused on Customer Support for sidekicksammy.com.  I can help you find help.  Makar Eye Care is open Mon-Sat 8a-6p.  They are located at 341 W. Tudor Rd., Suite 101 Anchorage, AK 99503.  You can reach us by phone at (907) 770-6652.  You can Fax them at (907) 770-3668.  You can also reach them online at https://www.makareyecare.com/contact-us.html" },
   ]
   let leadGenerationExample = [
-    { role: 'user', content: `Outcome: """Lead Generation"""
+    {
+      role: 'user', content: `Outcome: """Lead Generation"""
     Greeting: """Hi, I'm Lenny! I want to help you with your questions, but I'm still learning. Can I have your email in case I can't answer your question?"""
     Home Page: """Sidekick Sammy Logo
     [Pricing](/pricing)
@@ -626,7 +627,7 @@ let generatePrompt = async (url, greeting, outcome) => {
    Another epic event by: ReedPop
    Wizards Of The Coast logo
    """` },
-   { role: 'system', content: "I am Penny, an AI-powered chatbot that is focused on Promotions for https://mcchicago.mtgfestivals.com/.  I can help you find all the promotions.  Magiccon 2024 in the Windy city is going to be a blast be sure to check out out sessions, cosplay content, art wall and other amazing promotions." },
+    { role: 'system', content: "I am Penny, an AI-powered chatbot that is focused on Promotions for https://mcchicago.mtgfestivals.com/.  I can help you find all the promotions.  Magiccon 2024 in the Windy city is going to be a blast be sure to check out out sessions, cosplay content, art wall and other amazing promotions." },
   ]
 
 
@@ -667,19 +668,30 @@ let generatePrompt = async (url, greeting, outcome) => {
   return prompt
 
 }
+let mockError = (message) => {
+  return {
+    id: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    urlSlug: 'error#' + message
+  }
+}
 export const createBotAndUser = async ({ input }) => {
+  //if (process.env.NODE_ENV === 'development') {
+  //  return mockError('You are in development mode.  You cannot create a bot.')
+  //}
   let slugUnique = await isSlugUnique(input.slug)
-  if (!slugUnique) throw new Error(`Sorry, https://sidekicksammy.com/${input.slug} is already taken`)
+  if (slugUnique === false) return mockError(`Sorry, chatbot name "${input.slug}" is already taken`)
   let user = await createUserOrFindExisting(input)
-  if (!user) throw new Error('Could not create user')
+  if (!user) return mockError('Could not create user')
   let corpus = await createCorpus(input)
-  if (!corpus) throw new Error('Could not create corpus')
+  if (!corpus) return mockError('Could not create corpus')
   let prompt = await generatePrompt(input.url, input.greeting, input.outcome)
-  if (!prompt) throw new Error('Could not generate prompt')
+  if (!prompt) return mockError('Could not create prompt')
   //let source = await createFixieSource({
-//    ...input,
-//    depth: "0",
-//    corpusId: corpus.corpus.corpusId,
+  //    ...input,
+  //    depth: "0",
+  //    corpusId: corpus.corpus.corpusId,
   //})
   let source = await createFixieSource({
     ...input,

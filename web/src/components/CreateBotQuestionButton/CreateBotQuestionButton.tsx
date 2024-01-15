@@ -1,5 +1,5 @@
 import {
-  Box, Button, useColorModeValue,
+  Box, Button, Spinner, useColorModeValue,
 } from "@chakra-ui/react"
 const CreateBotQuestionButton = (props) => {
   return (<Box
@@ -16,7 +16,6 @@ const CreateBotQuestionButton = (props) => {
       color={useColorModeValue('blue.800', 'blue.200')}
       border="1px solid"
       width={"100%"}
-
       rounded="lg"
       _hover={{
         bg: useColorModeValue('gray.100', 'gray.900'),
@@ -30,7 +29,7 @@ const CreateBotQuestionButton = (props) => {
           '0 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.15)',
       }}
       {...props}
-    >{props.buttontext || "Next"}</Button>
+    >{props.buttontext || "Next"}{props.isLoading && <Spinner />}</Button>
   </Box>)
 }
 
