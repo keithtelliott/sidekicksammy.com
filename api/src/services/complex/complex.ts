@@ -1,15 +1,15 @@
-import type {
-  QueryResolvers,
-  MutationResolvers,
-} from 'types/graphql'
 import fetch from 'cross-fetch'
-import { db } from 'src/lib/db'
-import { hashPassword } from '@redwoodjs/auth-dbauth-api'
-import { slugify } from 'src/lib/text'
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
+import type { QueryResolvers, MutationResolvers } from 'types/graphql'
+
+import { hashPassword } from '@redwoodjs/auth-dbauth-api'
+
+import { db } from 'src/lib/db'
+import { slugify } from 'src/lib/text'
+
 const nhm = new NodeHtmlMarkdown({}, undefined, undefined)
 
-let parsedUrl = (url) => {
+const parsedUrl = (url) => {
   // if url does not start with https://
   // add it
   if (!url.startsWith('https://')) {
@@ -18,9 +18,9 @@ let parsedUrl = (url) => {
   return new URL(url)
 }
 const createCorpus = async (input) => {
-  let url = 'https://api.fixie.ai/api/v1/corpora'
-  let token = 'Bearer ' + process.env.FIXIE_API_KEY
-  let data = {
+  const url = 'https://api.fixie.ai/api/v1/corpora'
+  const token = 'Bearer ' + process.env.FIXIE_API_KEY
+  const data = {
     corpus: {
       displayName: input.url,
       description: input.url,
@@ -43,41 +43,41 @@ const createCorpus = async (input) => {
       //      ]
     },
   }
-  let options = {
+  const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': token,
+      Accept: 'application/json',
+      Authorization: token,
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   }
-  let response = await fetch(url, options)
-  let json = await response.json()
+  const response = await fetch(url, options)
+  const json = await response.json()
   return json
 }
-let fixieHeaders = () => {
+const fixieHeaders = () => {
   return {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': 'Bearer ' + process.env.FIXIE_API_KEY,
+    Accept: 'application/json',
+    Authorization: 'Bearer ' + process.env.FIXIE_API_KEY,
   }
 }
 
 const randomString = (length: number) => {
   let result = ''
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let charactersLength = characters.length
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
   for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() *
-      charactersLength))
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
   }
   return result
 }
-let createFixieSource = async (input) => {
-  let url = `https://api.fixie.ai/api/v1/corpora/${input.corpusId}/sources`
-  let token = 'Bearer ' + process.env.FIXIE_API_KEY
-  let data = {
+const createFixieSource = async (input) => {
+  const url = `https://api.fixie.ai/api/v1/corpora/${input.corpusId}/sources`
+  const token = 'Bearer ' + process.env.FIXIE_API_KEY
+  const data = {
     corpusId: input.corpusId,
     source: {
       corpus_id: input.corpusId,
@@ -85,56 +85,56 @@ let createFixieSource = async (input) => {
       description: input.url,
       load_spec: {
         web: {
-          start_urls: [
-            parsedUrl(input.url)
-          ],
-          maxDepth: input?.depth || "0",
-          include_glob_patterns: [
-            `${parsedUrl(input.url)}/**`
-          ],
-        }
-      }
-    }
+          start_urls: [parsedUrl(input.url)],
+          maxDepth: input?.depth || '0',
+          include_glob_patterns: [`${parsedUrl(input.url)}/**`],
+        },
+      },
+    },
   }
-  let options = {
+  const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': token,
+      Accept: 'application/json',
+      Authorization: token,
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   }
   console.log({ options })
-  let response = await fetch(url, options)
-  let json = await response.json()
+  const response = await fetch(url, options)
+  const json = await response.json()
   return json
 }
-let createFixieAgent = async (input) => {
-  let url = `https://console.fixie.ai/graphql`
-  let operationName = "CreateDefaultRuntimeAgent"
-  let variables = {
+const createFixieAgent = async (input) => {
+  const url = `https://console.fixie.ai/graphql`
+  const operationName = 'CreateDefaultRuntimeAgent'
+  const variables = {
     displayName: input.url,
     description: input.url,
-    defaultRuntimeParameters: JSON.stringify({ "corpusId": input.corpusId, "systemPrompt": input.prompt }),
+    defaultRuntimeParameters: JSON.stringify({
+      corpusId: input.corpusId,
+      systemPrompt: input.prompt,
+    }),
     handle: slugify(input.url) + '-' + randomString(5),
   }
-  let query = "mutation CreateDefaultRuntimeAgent($handle: String!, $displayName: String!, $defaultRuntimeParameters: JSONString!, $description: String!, $teamId: String) {\n  createAgent(\n    agentData: {handle: $handle, teamId: $teamId, name: $displayName, revision: {defaultRuntimeParameters: $defaultRuntimeParameters}, description: $description, published: true}\n  ) {\n    agent {\n      uuid\n      __typename\n    }\n    __typename\n  }\n}"
-  let options = {
+  const query =
+    'mutation CreateDefaultRuntimeAgent($handle: String!, $displayName: String!, $defaultRuntimeParameters: JSONString!, $description: String!, $teamId: String) {\n  createAgent(\n    agentData: {handle: $handle, teamId: $teamId, name: $displayName, revision: {defaultRuntimeParameters: $defaultRuntimeParameters}, description: $description, published: true}\n  ) {\n    agent {\n      uuid\n      __typename\n    }\n    __typename\n  }\n}'
+  const options = {
     method: 'POST',
     headers: fixieHeaders(),
     body: JSON.stringify({
       operationName: operationName,
       variables: variables,
-      query: query
-    })
+      query: query,
+    }),
   }
   console.log({ options })
-  let response = await fetch(url, options)
-  let json = await response.json()
+  const response = await fetch(url, options)
+  const json = await response.json()
   return json
 }
-let createUserOrFindExisting = async (input) => {
+const createUserOrFindExisting = async (input) => {
   const [hashedPassword, salt] = hashPassword(randomString(10))
   // create the user
   console.log({ input })
@@ -156,8 +156,8 @@ let createUserOrFindExisting = async (input) => {
   if (!user) throw new Error('Could not create user')
   return user
 }
-let isSlugUnique = async (slug) => {
-  let lookupBot = await db.bot.findFirst({
+const isSlugUnique = async (slug) => {
+  const lookupBot = await db.bot.findFirst({
     where: {
       urlSlug: slug,
     },
@@ -167,18 +167,19 @@ let isSlugUnique = async (slug) => {
   }
   return true
 }
-let generatePrompt = async (url, greeting, outcome) => {
+const generatePrompt = async (url, greeting, outcome) => {
   // download the page html
-  let response = await fetch(url)
-  let html = await response.text()
+  const response = await fetch(url)
+  const html = await response.text()
   // convert to markdown
-  let markdown = nhm.translate(html)
+  const markdown = nhm.translate(html)
   // now lets ask openai to generate a prompt for us
   // first the messages array
 
-  let customerSupportExample = [
+  const customerSupportExample = [
     {
-      role: 'user', content: `Outcome: """Customer Support"""
+      role: 'user',
+      content: `Outcome: """Customer Support"""
     Greeting: """Hi, I'm Sammy! I'm here to help you with your questions."""
     Home Page: """
 
@@ -326,13 +327,18 @@ let generatePrompt = async (url, greeting, outcome) => {
     Saturday 8:00am - 6:00pm
     Sunday Closed
     © 2023 Makar Eyecare. All Rights Reserved.
-    Accessibility Statement - Privacy Policy - Sitemap`
+    Accessibility Statement - Privacy Policy - Sitemap`,
     },
-    { role: 'system', content: "I am Sammy, an AI-powered chatbot that is focused on Customer Support for sidekicksammy.com.  I can help you find help.  Makar Eye Care is open Mon-Sat 8a-6p.  They are located at 341 W. Tudor Rd., Suite 101 Anchorage, AK 99503.  You can reach us by phone at (907) 770-6652.  You can Fax them at (907) 770-3668.  You can also reach them online at https://www.makareyecare.com/contact-us.html" },
-  ]
-  let leadGenerationExample = [
     {
-      role: 'user', content: `Outcome: """Lead Generation"""
+      role: 'system',
+      content:
+        'I am Sammy, an AI-powered chatbot that is focused on Customer Support for sidekicksammy.com.  I can help you find help.  Makar Eye Care is open Mon-Sat 8a-6p.  They are located at 341 W. Tudor Rd., Suite 101 Anchorage, AK 99503.  You can reach us by phone at (907) 770-6652.  You can Fax them at (907) 770-3668.  You can also reach them online at https://www.makareyecare.com/contact-us.html',
+    },
+  ]
+  const leadGenerationExample = [
+    {
+      role: 'user',
+      content: `Outcome: """Lead Generation"""
     Greeting: """Hi, I'm Lenny! I want to help you with your questions, but I'm still learning. Can I have your email in case I can't answer your question?"""
     Home Page: """Sidekick Sammy Logo
     [Pricing](/pricing)
@@ -371,12 +377,18 @@ let generatePrompt = async (url, greeting, outcome) => {
     Let's crawl: We'll read your site content
     Let's chat: Your customized chatbot will be ready to serve
     Let's collaborate: We'll help integrate & refine your new tool
-    Copyright © 2024. Sidekick Sammy`},
-    { role: 'system', content: "I am Lenny, an AI-powered chatbot that is focused on Lead Generation for sidekicksammy.com.  I can help you find help.  SideKickSammy provides interactive, topic specific bots to help with your website.  They feature product and service bots.  My goal is to get you to try their product." },
-  ]
-  let informationRetrivalExample = [
+    Copyright © 2024. Sidekick Sammy`,
+    },
     {
-      role: 'user', content: `Outcome: """Information Retrieval"""
+      role: 'system',
+      content:
+        'I am Lenny, an AI-powered chatbot that is focused on Lead Generation for sidekicksammy.com.  I can help you find help.  SideKickSammy provides interactive, topic specific bots to help with your website.  They feature product and service bots.  My goal is to get you to try their product.',
+    },
+  ]
+  const informationRetrivalExample = [
+    {
+      role: 'user',
+      content: `Outcome: """Information Retrieval"""
     Greeting: """Hi, I'm Izzy! I'm here to help you find information.  What information are you looking for?"""
     Home Page: """[jace.pro](/)
     * [JaceNow](/news)
@@ -388,12 +400,18 @@ let generatePrompt = async (url, greeting, outcome) => {
 
     [JaceNow→Weekly news on YouTube](/news)[News Aggregator→All the ServiceNow news](https://news.jace.pro)[Discord→The ServiceNow Discord](https://discord.com/invite/y43VtUX)[My Blog→Here's where my 200+ posts are](/blog)
 
-    Copyright © jace.pro 2022 Made with ❤ by [Jace Benson](https://jace.pro) • [View on Github](https://github.com/jacebenson/jace-pro-neat) • [RSS](/index.xml)"""` },
-    { role: 'system', content: "I am Izzy, an AI-powered chatbot that is focused on Information Retrieval for jace.pro.  A ServiceNow Blog featuring JaceNow a weekly youtube show, a news aggregator, ServiceNow's Discord and his blog." },
-  ]
-  let appointmentSchedulingExample = [
+    Copyright © jace.pro 2022 Made with ❤ by [Jace Benson](https://jace.pro) • [View on Github](https://github.com/jacebenson/jace-pro-neat) • [RSS](/index.xml)"""`,
+    },
     {
-      role: 'user', content: `Outcome: """Appointment Scheduling"""
+      role: 'system',
+      content:
+        "I am Izzy, an AI-powered chatbot that is focused on Information Retrieval for jace.pro.  A ServiceNow Blog featuring JaceNow a weekly youtube show, a news aggregator, ServiceNow's Discord and his blog.",
+    },
+  ]
+  const appointmentSchedulingExample = [
+    {
+      role: 'user',
+      content: `Outcome: """Appointment Scheduling"""
     Greeting: """Hi, I'm Addy! I'm here to help schedule an appointment.  Who would you like to schedule an appointment with?"""
     Home Page: """Skip to content
     logocf_w
@@ -442,13 +460,18 @@ let generatePrompt = async (url, greeting, outcome) => {
     Privacy Policy
     Powered by CitrusFlows
     HubSpot sprocket logo
-    Built on HubSpot"""`
+    Built on HubSpot"""`,
     },
-    { role: 'system', content: "I am Addy, an AI-powered chatbot that is focused on Appointment Scheduling for citrusflows.com.  I can help you find help.  CitrusFlows provides Strategic Services, Workflow Services and Staff Augmentation.  You can meet with them using the link https://calendly.com/citrusflows/30min" },
-  ]
-  let shoppingAssistanceExample = [
     {
-      role: 'user', content: `Outcome: """Shopping Assistance"""
+      role: 'system',
+      content:
+        'I am Addy, an AI-powered chatbot that is focused on Appointment Scheduling for citrusflows.com.  I can help you find help.  CitrusFlows provides Strategic Services, Workflow Services and Staff Augmentation.  You can meet with them using the link https://calendly.com/citrusflows/30min',
+    },
+  ]
+  const shoppingAssistanceExample = [
+    {
+      role: 'user',
+      content: `Outcome: """Shopping Assistance"""
     Greeting: """Hi, I'm Sally! I'm here to help you find products.  What are you looking for?"""
     Home Page: """Skip to main content
 
@@ -556,14 +579,18 @@ let generatePrompt = async (url, greeting, outcome) => {
     This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.
     Image
     Designed by Winter Marketing & PR in Alaska
-    """` },
+    """`,
+    },
     {
-      role: 'system', content: "I am Sally, an AI-powered chatbot that is focused on Shopping Assistance for shop.skinnyraven.com.  I can help you find help.  Skinny Raven Sports is Alaska's premier running specialty store, established in 1994. Their mission is simple: to better the community by helping our customers and staff better their lives. We fit all feet for a comfortable lifestyle.  I can help you find products.  What are you looking for?"
+      role: 'system',
+      content:
+        "I am Sally, an AI-powered chatbot that is focused on Shopping Assistance for shop.skinnyraven.com.  I can help you find help.  Skinny Raven Sports is Alaska's premier running specialty store, established in 1994. Their mission is simple: to better the community by helping our customers and staff better their lives. We fit all feet for a comfortable lifestyle.  I can help you find products.  What are you looking for?",
     },
   ]
-  let interactiveMarketingExample = [
+  const interactiveMarketingExample = [
     {
-      role: 'user', content: `Outcome: """Interactive Marketing"""
+      role: 'user',
+      content: `Outcome: """Interactive Marketing"""
     Greeting: """Hi, I'm Penny! I'm here to help you find products.  Do you want to see our latest promotions?"""
     Home Page: """mtgfestivals.com
     MagicCon: Chicago
@@ -626,31 +653,51 @@ let generatePrompt = async (url, greeting, outcome) => {
    Instagram
    Another epic event by: ReedPop
    Wizards Of The Coast logo
-   """` },
-    { role: 'system', content: "I am Penny, an AI-powered chatbot that is focused on Promotions for https://mcchicago.mtgfestivals.com/.  I can help you find all the promotions.  Magiccon 2024 in the Windy city is going to be a blast be sure to check out out sessions, cosplay content, art wall and other amazing promotions." },
+   """`,
+    },
+    {
+      role: 'system',
+      content:
+        'I am Penny, an AI-powered chatbot that is focused on Promotions for https://mcchicago.mtgfestivals.com/.  I can help you find all the promotions.  Magiccon 2024 in the Windy city is going to be a blast be sure to check out out sessions, cosplay content, art wall and other amazing promotions.',
+    },
   ]
 
-
-  let messages = [
-    { role: 'system', content: `I am an experienced prompt designer specializing in creating effective prompts for topic-specific bots. With a deep understanding of various subjects and expert knowledge in bot design, I can provide concise and accurate information based on the given context. I strive to generate system prompts that effectively address user inquiries in the most efficient manner possible.` },
-    { role: 'user', content: `As an expert prompt designer for topic specific bots, I need your assistance. Can you generate a system prompt for me?` },
-    { role: 'system', content: `Certainly! I'm here to help you. Please provide me with the desired outcome, greeting and the home page information in markdown format.` },
+  const messages = [
+    {
+      role: 'system',
+      content: `I am an experienced prompt designer specializing in creating effective prompts for topic-specific bots. With a deep understanding of various subjects and expert knowledge in bot design, I can provide concise and accurate information based on the given context. I strive to generate system prompts that effectively address user inquiries in the most efficient manner possible.`,
+    },
+    {
+      role: 'user',
+      content: `As an expert prompt designer for topic specific bots, I need your assistance. Can you generate a system prompt for me?`,
+    },
+    {
+      role: 'system',
+      content: `Certainly! I'm here to help you. Please provide me with the desired outcome, greeting and the home page information in markdown format.`,
+    },
   ]
   if (outcome === 'Customer Support') messages.concat(customerSupportExample)
   if (outcome === 'Lead Generation') messages.concat(leadGenerationExample)
-  if (outcome === 'Information Retrieval') messages.concat(informationRetrivalExample)
-  if (outcome === 'Appointment Scheduling') messages.concat(appointmentSchedulingExample)
-  if (outcome === 'Shopping Assistance') messages.concat(shoppingAssistanceExample)
-  if (outcome === 'Interactive Marketing') messages.concat(interactiveMarketingExample)
+  if (outcome === 'Information Retrieval')
+    messages.concat(informationRetrivalExample)
+  if (outcome === 'Appointment Scheduling')
+    messages.concat(appointmentSchedulingExample)
+  if (outcome === 'Shopping Assistance')
+    messages.concat(shoppingAssistanceExample)
+  if (outcome === 'Interactive Marketing')
+    messages.concat(interactiveMarketingExample)
 
-  messages.push({ role: 'user', content: `Outcome: """${outcome}"""\n\nGreeting: """${greeting}"""\n\nHome Page: """${markdown}"""` },)
+  messages.push({
+    role: 'user',
+    content: `Outcome: """${outcome}"""\n\nGreeting: """${greeting}"""\n\nHome Page: """${markdown}"""`,
+  })
   console.log({ messages })
-  let openAIUrl = 'https://api.openai.com/v1/chat/completions'
-  let openAIOptions = {
+  const openAIUrl = 'https://api.openai.com/v1/chat/completions'
+  const openAIOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY
+      Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo-16k',
@@ -660,66 +707,76 @@ let generatePrompt = async (url, greeting, outcome) => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
-    })
+    }),
   }
-  let openAIResponse = await fetch(openAIUrl, openAIOptions)
-  let openAIJson = await openAIResponse.json()
-  let prompt = openAIJson.choices[0].message.content
+  const openAIResponse = await fetch(openAIUrl, openAIOptions)
+  const openAIJson = await openAIResponse.json()
+  const prompt = openAIJson.choices[0].message.content
   return prompt
-
 }
-let mockError = (message) => {
+const mockError = (message) => {
   return {
     id: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
-    urlSlug: 'error#' + message
+    urlSlug: 'error#' + message,
   }
 }
 export const createBotAndUser = async ({ input }) => {
   //if (process.env.NODE_ENV === 'development') {
   //  return mockError('You are in development mode.  You cannot create a bot.')
   //}
-  let slugUnique = await isSlugUnique(input.slug)
-  if (slugUnique === false) return mockError(`Sorry, chatbot name "${input.slug}" is already taken`)
-  let user = await createUserOrFindExisting(input)
+  const slugUnique = await isSlugUnique(input.slug)
+  if (slugUnique === false)
+    return mockError(`Sorry, chatbot name "${input.slug}" is already taken`)
+  const user = await createUserOrFindExisting(input)
   if (!user) return mockError('Could not create user')
-  let corpus = await createCorpus(input)
+  const corpus = await createCorpus(input)
   if (!corpus) return mockError('Could not create corpus')
-  let prompt = await generatePrompt(input.url, input.greeting, input.outcome)
+  const prompt = await generatePrompt(input.url, input.greeting, input.outcome)
   if (!prompt) return mockError('Could not create prompt')
   //let source = await createFixieSource({
   //    ...input,
   //    depth: "0",
   //    corpusId: corpus.corpus.corpusId,
   //})
-  let source = await createFixieSource({
+  const source = await createFixieSource({
     ...input,
     depth: 3,
     corpusId: corpus.corpus.corpusId,
   })
   if (!source) throw new Error('Could not create source')
   // create the bot
-  let agent = await createFixieAgent({
+  const agent = await createFixieAgent({
     ...input,
     corpusId: corpus.corpus.corpusId,
     // lets build a prompt using the outcome
     prompt: prompt,
-    handle: input.url.split('.')[0]
+    handle: input.url.split('.')[0],
   })
   if (!agent) throw new Error('Could not create agent')
 
-  let bot = await db.bot.create({
+  const bot = await db.bot.create({
     data: {
       title: input.slug,
       urlSlug: input.slug,
       fixieCorpusId: corpus.corpus.corpusId,
       fixieAgentId: agent.data.createAgent.agent.uuid,
       backgroundColor: input.color,
-      textColor: "white",
+      textColor: 'white',
       greeting: input.greeting,
       hsActive: false,
-      hsPrompt: JSON.stringify([{ "role": "system", "content": "You are an AI-powered chatbot" }, { "role": "user", "content": "Who are you?" }, { "role": "assistant", "content": "Hello, I'm AI Bot. I'm here to help you with any questions you may have. How can I help you?" }, { "role": "user", "content": "What can you do?" }, { "role": "assistant", "content": "I can help find blog posts" }]),
+      hsPrompt: JSON.stringify([
+        { role: 'system', content: 'You are an AI-powered chatbot' },
+        { role: 'user', content: 'Who are you?' },
+        {
+          role: 'assistant',
+          content:
+            "Hello, I'm AI Bot. I'm here to help you with any questions you may have. How can I help you?",
+        },
+        { role: 'user', content: 'What can you do?' },
+        { role: 'assistant', content: 'I can help find blog posts' },
+      ]),
       User: {
         connect: {
           id: user.id,
