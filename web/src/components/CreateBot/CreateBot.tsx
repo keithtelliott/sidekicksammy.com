@@ -2,22 +2,12 @@ import { useState, useEffect } from 'react'
 
 import {
   Box,
-  Button,
   Flex,
   Input,
   SimpleGrid,
   useColorModeValue,
-  InputGroup,
-  InputLeftAddon,
   Alert,
   Text,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
-  FormHelperText,
-  Heading,
 } from '@chakra-ui/react'
 
 import {
@@ -26,7 +16,6 @@ import {
   TextField,
   FieldError,
   TextAreaField,
-  set,
 } from '@redwoodjs/forms'
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
@@ -155,7 +144,7 @@ const CreateBot = (props) => {
       onError: (data, error) => {
         //console.log('error creating bot', error, data)
         //toast.error('Error creating bot')
-      }
+      },
     })
     const onSubmit = async (input) => {
       //create({ variables: { input } })
@@ -445,7 +434,9 @@ const CreateBot = (props) => {
                 )}
                 {formSectionToLoad === 1 && <FormSectionOne />}
                 {formSectionToLoad === 2 && <FormSectionTwo />}
-                {formSectionToLoad === 3 && <FormSectionThree /**this has the submit button.. */ />}
+                {formSectionToLoad === 3 && (
+                  <FormSectionThree /**this has the submit button.. */ />
+                )}
                 {formSectionToLoad === 4 && (
                   <Box>Thank you for creating a bot!</Box>
                 )}
