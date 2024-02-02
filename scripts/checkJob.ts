@@ -1,7 +1,20 @@
-// To access your database
-// Append api/* to import from api and web/* to import from web
 import { checkLastJobStatus } from 'api/src/lib/fixie'
 
+/**
+ * Jace and Keith created this script to manually test the checkLastJobStatus function.
+ *
+ * The corpus_id and source_id are hard-coded.  These are associated with the FIXIE_API_KEY
+ * that is defined in the .env file.
+ *
+ * Go-Do:  Gracefully handle invalid corpus_id and source_id.  At the moment, the script will
+ * throw a non-helpful error message.
+ *
+ * Go-Do:  Incorporate this status check into the CreateBot.tsx form.  The goal is to give the
+ * user instant feedback on the status of the bot, immediately after submitting the chat setup
+ * form.
+ *
+ * KTE, Feb. 2, 2024
+ */
 export default async ({ args }) => {
   // Your script here...
   console.log(':: Executing script with args ::')
@@ -12,7 +25,7 @@ export default async ({ args }) => {
     fixieCorpusId: corpus_id,
     sourceId: source_id,
   })
-  //console.log({ job_status })
+  console.log({ job_status })
   // state, loadResult
   console.log({
     state: job_status.jobs[0].state,
