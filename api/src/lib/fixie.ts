@@ -93,8 +93,10 @@ export const checkLastJobStatus = async ({ fixieCorpusId, sourceId }) => {
     },
   }
   const fixieUrl = `https://api.fixie.ai/api/v1/corpora/${fixieCorpusId}/sources/${sourceId}/jobs`
-  const response = await fetch(fixieUrl, fixieOptions)
-  const data = await response.json()
-  //console.log({ lastJob: data.jobs[0] })
-  return data
+  try {
+    const response = await fetch(fixieUrl, fixieOptions)
+    return await response.json()
+  } catch (e) {
+    return { error: e }
+  }
 }
