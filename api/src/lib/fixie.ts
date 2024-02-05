@@ -4,6 +4,29 @@ import {
   getContactBySidekickTitle,
   mapHubspotContactToContact,
 } from './hubspot'
+
+type JobObject = {
+  corpusId: string
+  sourceId: string
+  state: 'JOB_STATE_COMPLETED' | string
+  loadResult: {
+    maxDocuments: number
+  }
+}
+
+type JobStatusObject = {
+  jobs: JobObject[]
+  pageInfo: {
+    requestedPageSize: number
+    totalResultCount: number
+    requestedOffset: number
+  }
+}
+
+type ErrorObject = {
+  error: string
+}
+
 export const getFixieChunks = async ({ message, sideKickTitle }) => {
   // the way this works, is we need the fixie, corpus id;
   // this data is stored in the hubspot contact
@@ -84,7 +107,12 @@ export const refreshSource = async ({ fixieCorpusId, sourceId }) => {
   return data
 }
 
-export const checkLastJobStatus = async ({ fixieCorpusId, sourceId }) => {
+export const checkLastJobStatus = async ({
+  fixieCorpusId,
+  sourceId,
+}): Promise<
+  JobStatusObject | ErrorObject | { detail: string } | ['Invalid corpus ID.']
+> => {
   const fixieOptions = {
     method: 'GET',
     headers: {
