@@ -43,11 +43,9 @@ export default async ({ args }) => {
       job_status,
     }
   )
-  // console.log(
-  //   'In checkJob test script, line 39, the job_status state and load result follow:  ',
-  //   {
-  //     state: job_status?.jobs[0]?.state,
-  //     loadResult: job_status?.jobs[0]?.loadResult,
-  //   }
-  // )
+  if ('jobs' in job_status) {
+    console.log(job_status.jobs)
+    console.log('state:  ', job_status.jobs[0].state)
+    console.log('loadResult:  ', job_status.jobs[0].loadResult)
+  }
 }
