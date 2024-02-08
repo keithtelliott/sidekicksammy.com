@@ -6,13 +6,6 @@ import { checkLastJobStatus } from 'api/src/lib/fixie'
  * The corpus_id and source_id are hard-coded.  These are associated with the FIXIE_API_KEY
  * that is defined in the .env file.
  *
- * Go-Do:  Gracefully handle invalid corpus_id and source_id.  At the moment, the script will
- * throw a non-helpful error message.
- *     KTE, 2/3/2024 Update:  This Go-Do is in progress.  I catch an error in the fetch and
- *     return an error object, which prevent error bubbling chaos.  But, I'd like to add
- *     some TypeScript to clarify what the objects look like that are returned... so that's
- *     my next chunk of the Go-Do that I'll tackle next...
- *
  * Go-Do:  Incorporate this status check into the CreateBot.tsx form.  The goal is to give the
  * user instant feedback on the status of the bot, immediately after submitting the chat setup
  * form.

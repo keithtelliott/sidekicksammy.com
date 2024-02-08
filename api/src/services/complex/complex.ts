@@ -1,6 +1,10 @@
 import fetch from 'cross-fetch'
 import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
-import type { QueryResolvers, MutationResolvers } from 'types/graphql'
+import type {
+  QueryResolvers,
+  MutationResolvers,
+  CreateBotAndUserInput,
+} from 'types/graphql'
 
 import { hashPassword } from '@redwoodjs/auth-dbauth-api'
 
@@ -722,7 +726,7 @@ const mockError = (message) => {
     urlSlug: 'error#' + message,
   }
 }
-export const createBotAndUser = async ({ input }) => {
+export const createBotAndUser = async (input: CreateBotAndUserInput) => {
   //if (process.env.NODE_ENV === 'development') {
   //  return mockError('You are in development mode.  You cannot create a bot.')
   //}
