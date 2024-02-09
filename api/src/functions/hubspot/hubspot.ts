@@ -8,44 +8,60 @@
 // TODO: 4. Add way to manage the data
 // TODO: 5. Add endpoints fro the conected app
 
-import { db } from 'src/lib/db'
-import type { APIGatewayEvent, Context } from 'aws-lambda'
-import { logger } from 'src/lib/logger'
 import crypto from 'crypto'
+
+import type { APIGatewayEvent, Context } from 'aws-lambda'
 import fetch from 'cross-fetch'
 
-const {
-  HUBSPOT_CLIENT_ID,
-  HUBSPOT_CLIENT_SECRET,
-  URL,
-  NODE_ENV,
-  SECRET_KEY,
-} = process.env
-const HUBSPOT_CLIENT_SCOPES = 'conversations.read,conversations.write,settings.users.read'
-const convertCommaSeparatedToSpaceDelimited = (commaSeparatedString: string) => {
+import { db } from 'src/lib/db'
+import { logger } from 'src/lib/logger'
+
+const { HUBSPOT_CLIENT_ID, HUBSPOT_CLIENT_SECRET, URL, NODE_ENV, SECRET_KEY } =
+  process.env
+const HUBSPOT_CLIENT_SCOPES =
+  'conversations.read,conversations.write,settings.users.read'
+const convertCommaSeparatedToSpaceDelimited = (
+  commaSeparatedString: string
+) => {
   let scopes = commaSeparatedString.split(',')
-  scopes = scopes.map(scope => scope.trim());
+  scopes = scopes.map((scope) => scope.trim())
   const SCOEPSTRING = scopes.join(' ')
   return SCOEPSTRING
 }
-const PROPER_SECRET_KEY = crypto.createHash('sha256').update(String(SECRET_KEY)).digest('base64').substr(0, 32);
-const IV = crypto.createHash('sha256').update(String(process.env.IV)).digest('base64').substr(0, 16);
-let encrypt = (text: string | object): string => {
-  const input = typeof text === 'object' ? JSON.stringify(text) : text;
-  const cipher = crypto.createCipheriv('aes-256-cbc', PROPER_SECRET_KEY, IV);
-  const encrypted = Buffer.concat([cipher.update(input, 'utf8'), cipher.final()]);
-  return encrypted.toString('hex');
+const PROPER_SECRET_KEY = crypto
+  .createHash('sha256')
+  .update(String(SECRET_KEY))
+  .digest('base64')
+  .substr(0, 32)
+const IV = crypto
+  .createHash('sha256')
+  .update(String(process.env.IV))
+  .digest('base64')
+  .substr(0, 16)
+const encrypt = (text: string | object): string => {
+  const input = typeof text === 'object' ? JSON.stringify(text) : text
+  const cipher = crypto.createCipheriv('aes-256-cbc', PROPER_SECRET_KEY, IV)
+  const encrypted = Buffer.concat([
+    cipher.update(input, 'utf8'),
+    cipher.final(),
+  ])
+  return encrypted.toString('hex')
 }
-let decrypt = (encryptedText: string): string => {
-  const decipher = crypto.createDecipheriv('aes-256-cbc', PROPER_SECRET_KEY, IV);
-  const decrypted = Buffer.concat([decipher.update(Buffer.from(encryptedText, 'hex')), decipher.final()]);
-  return decrypted.toString('utf8');
+const decrypt = (encryptedText: string): string => {
+  const decipher = crypto.createDecipheriv('aes-256-cbc', PROPER_SECRET_KEY, IV)
+  const decrypted = Buffer.concat([
+    decipher.update(Buffer.from(encryptedText, 'hex')),
+    decipher.final(),
+  ])
+  return decrypted.toString('utf8')
 }
 
 let SCOEPSTRING = ''
 if (!HUBSPOT_CLIENT_SCOPES) throw new Error('NO HUBSPOT_CLIENT_SCOPES')
-if (HUBSPOT_CLIENT_SCOPES.indexOf(',') === -1) throw new Error('HUBSPOT_CLIENT_SCOPES NEEDS TO BE COMMA DELIMITED')
-if (HUBSPOT_CLIENT_SCOPES) SCOEPSTRING = convertCommaSeparatedToSpaceDelimited(HUBSPOT_CLIENT_SCOPES)
+if (HUBSPOT_CLIENT_SCOPES.indexOf(',') === -1)
+  throw new Error('HUBSPOT_CLIENT_SCOPES NEEDS TO BE COMMA DELIMITED')
+if (HUBSPOT_CLIENT_SCOPES)
+  SCOEPSTRING = convertCommaSeparatedToSpaceDelimited(HUBSPOT_CLIENT_SCOPES)
 // next we need to define the oauthcallback url
 const OAUTH_CALLBACK_URL = (() => {
   // if we are in dev mode we need to use localhost
@@ -53,7 +69,6 @@ const OAUTH_CALLBACK_URL = (() => {
     return `https://${process.env.URL}/.redwood/functions/hubspot/oauth-callback`
   }
   return `http://localhost:8910/.redwood/functions/hubspot/oauth-callback`
-
 })()
 // next wee need to build the redirect url
 const generateAuthUrl = (state) => {
@@ -64,34 +79,34 @@ const generateAuthUrl = (state) => {
   // we need to to sha the state and store it in the db
   // poor mans sha for now
   // we'll pass in a cuid + random string
-  let encryptedState = encrypt(state)
+  const encryptedState = encrypt(state)
   url += `&state=${encryptedState}`
   return url
 }
-const refreshTokenStore = {};
+const refreshTokenStore = {}
 const exchangeForTokens = async (sessionId: string, proof: any) => {
-  let authTokenUrl = 'https://api.hubapi.com/oauth/v1/token'
+  const authTokenUrl = 'https://api.hubapi.com/oauth/v1/token'
   let formData = ''
-  for (let key in proof) {
+  for (const key in proof) {
     formData += `${key}=${proof[key]}&`
   }
   formData = formData.substring(0, formData.length - 1)
   const response = await fetch(authTokenUrl + '?' + formData, {
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
     },
     method: 'POST',
-  });
-  const tokens = await response.json();
-  refreshTokenStore[sessionId] = tokens.refresh_token;
-  let decodedState = decrypt(sessionId)
-  let parsedState = JSON.parse(decodedState)
-  let userId = parseInt(parsedState.state, 10)
+  })
+  const tokens = await response.json()
+  refreshTokenStore[sessionId] = tokens.refresh_token
+  const decodedState = decrypt(sessionId)
+  const parsedState = JSON.parse(decodedState)
+  const userId = parseInt(parsedState.state, 10)
   if (!userId) throw new Error('Missing Proper State')
   // lets store the refresh token in the database
-  let expiresAt = new Date()
+  const expiresAt = new Date()
   expiresAt.setSeconds(expiresAt.getSeconds() + tokens.expires_in)
-  let botData = {
+  const botData = {
     hsRefreshToken: tokens.refresh_token,
     hsAccessTokenExpiresAt: expiresAt,
     hsAccessToken: tokens.access_token,
@@ -100,19 +115,22 @@ const exchangeForTokens = async (sessionId: string, proof: any) => {
   // we need to get the ... bot details
   // to do that we need to call
   // https://api.hubspot.com/oauth/v1/access-tokens/{{ACCESS_TOKEN}}
-  await fetch('https://api.hubspot.com/oauth/v1/access-tokens/' + tokens.access_token, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'GET',
-    // then get the json
-  }).then(async (response) => {
-    const data = await response.json();
+  await fetch(
+    'https://api.hubspot.com/oauth/v1/access-tokens/' + tokens.access_token,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      // then get the json
+    }
+  ).then(async (response) => {
+    const data = await response.json()
     botData['hsPortalId'] = data.hub_id
     botData['hsAppId'] = data.app_id
     botData['hsUserId'] = data.user_id
     botData['urlSlug'] = data.hub_domain
-  });
+  })
 
   let bot = await db.bot.findFirst({ where: { userId } })
   if (!bot) {
@@ -121,33 +139,60 @@ const exchangeForTokens = async (sessionId: string, proof: any) => {
         ...botData,
         User: {
           connect: {
-            id: userId
-          }
-        }
-      }
+            id: userId,
+          },
+        },
+      },
     })
   }
   if (bot) {
     bot = await db.bot.update({
       where: { id: bot.id },
-      data: botData
+      data: botData,
     })
   }
 
-  return tokens.access_token;
+  return tokens.access_token
 }
-let handleOauthCallback = async ({ code, sessionId }) => {
+const handleOauthCallback = async ({ code, sessionId }) => {
   const authCodeProof = {
     grant_type: 'authorization_code',
     client_id: HUBSPOT_CLIENT_ID,
     client_secret: HUBSPOT_CLIENT_SECRET,
     redirect_uri: OAUTH_CALLBACK_URL,
-    code
+    code,
   }
   const tokens = await exchangeForTokens(sessionId, authCodeProof)
   return tokens.access_token
 }
-let updateAccessToken = async (botId: number) => {
+const getAccessToken = async (refreshToken: string) => {
+  // this is like updateAccessToken, but we'll just retrun data.access_token
+  try {
+    const refreshTokenProof = {
+      grant_type: 'refresh_token',
+      client_id: HUBSPOT_CLIENT_ID,
+      client_secret: HUBSPOT_CLIENT_SECRET,
+      redirect_uri: OAUTH_CALLBACK_URL,
+      refresh_token: refreshToken,
+    }
+    const response = await fetch('https://api.hubapi.com/oauth/v1/token', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+      body: Object.keys(refreshTokenProof)
+        .map((key) => `${key}=${refreshTokenProof[key]}`)
+        .join('&'),
+      method: 'POST',
+      // then get the json
+    })
+    const data = await response.json()
+    return data.access_token
+  } catch (e) {
+    // if we get an error, then we need throw the error
+    throw new Error(e)
+  }
+}
+const updateAccessToken = async (botId: number) => {
   try {
     let bot = await db.bot.findFirst({ where: { id: botId } })
     const refreshTokenProof = {
@@ -155,22 +200,24 @@ let updateAccessToken = async (botId: number) => {
       client_id: HUBSPOT_CLIENT_ID,
       client_secret: HUBSPOT_CLIENT_SECRET,
       redirect_uri: OAUTH_CALLBACK_URL,
-      refresh_token: bot.hsRefreshToken
+      refresh_token: bot.hsRefreshToken,
     }
-    let botData = {}
+    const botData = {}
     //send a form encoded request
     await fetch('https://api.hubapi.com/oauth/v1/token', {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
-      body: Object.keys(refreshTokenProof).map(key => `${key}=${refreshTokenProof[key]}`).join('&'),
+      body: Object.keys(refreshTokenProof)
+        .map((key) => `${key}=${refreshTokenProof[key]}`)
+        .join('&'),
       method: 'POST',
       // then get the json
     }).then(async (response) => {
       // if status code !== 200
       // then we need to refresh the token
-      let expiresDate = new Date()
-      const data = await response.json();
+      const expiresDate = new Date()
+      const data = await response.json()
       expiresDate.setSeconds(expiresDate.getSeconds() + data.expires_in)
       botData['hsAccessToken'] = data.access_token
       botData['hsAccessTokenExpiresAt'] = expiresDate
@@ -178,44 +225,47 @@ let updateAccessToken = async (botId: number) => {
       //console.log({ status: 'updateAccessToken', botId, botData })
       bot = await db.bot.update({
         where: { id: botId },
-        data: botData
+        data: botData,
       })
-      console.log({ status: 'updateAccessToken', botId})
-    });
-    return "success"
+      console.log({ status: 'updateAccessToken', botId })
+    })
+    return 'success'
   } catch (e) {
     return e
   }
 }
-let refreshAccessToken = async (sessionId: string) => {
+
+const refreshAccessToken = async (sessionId: string) => {
   const refreshTokenProof = {
     grant_type: 'refresh_token',
     client_id: HUBSPOT_CLIENT_ID,
     client_secret: HUBSPOT_CLIENT_SECRET,
     redirect_uri: OAUTH_CALLBACK_URL,
-    refresh_token: refreshTokenStore[sessionId]
+    refresh_token: refreshTokenStore[sessionId],
   }
   const tokens = await exchangeForTokens(sessionId, refreshTokenProof)
   return tokens.access_token
 }
 
-let isNewConversation = ({ messageObj }) => {
+const isNewConversation = ({ messageObj }) => {
   return messageObj.subscriptionType === 'conversation.creation'
 }
-let isNewMessage = ({ messageObj }) => {
+const isNewMessage = ({ messageObj }) => {
   return messageObj.subscriptionType === 'conversation.newMessage'
 }
-let getThreadMessages = async ({ bot, threadId }) => {
-  let threadsUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}/messages`
-  let threadsOptions = {
+const getThreadMessages = async ({ bot, threadId }) => {
+  // get new access token
+  const accessToken = await getAccessToken(bot.hsRefreshToken)
+  const threadsUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}/messages`
+  const threadsOptions = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bot.hsAccessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    },
   }
-  let threadsResponse = await fetch(threadsUrl, threadsOptions)
-  let threadsData = await threadsResponse.json()
+  const threadsResponse = await fetch(threadsUrl, threadsOptions)
+  const threadsData = await threadsResponse.json()
   //console.log({ threadsData })
   let mappedData = threadsData.results.map((message) => {
     return {
@@ -231,54 +281,63 @@ let getThreadMessages = async ({ bot, threadId }) => {
   mappedData = mappedData.filter((message) => {
     return message.actorId.indexOf('S-') === -1
   })
-  let lastThreeMessages = mappedData.slice(0, 3)
+  const lastThreeMessages = mappedData.slice(0, 3)
   return lastThreeMessages
 }
-let getThreadDetails = async ({ bot, threadId }) => {
-  let threadUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}`;
-  let threadOptions = {
+const getThreadDetails = async ({ bot, threadId }) => {
+  const accessToken = await getAccessToken(bot.hsRefreshToken)
+  const threadUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}`
+  const threadOptions = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bot.hsAccessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    },
   }
-  let threadResponse = await fetch(threadUrl, threadOptions)
-  let threadData = await threadResponse.json()
+  const threadResponse = await fetch(threadUrl, threadOptions)
+  const threadData = await threadResponse.json()
   return threadData
 }
-let getFixieChunks = async ({ query, fixieCorpusId }) => {
+const getFixieChunks = async ({ query, fixieCorpusId }) => {
   //console.log({ status: 'getFixieChunks', query, fixieCorpusId })
-  if (!fixieCorpusId) return []  // throw new Error('Missing Fixie Corpus Id')
-  if (!query) return []  // throw new Error('Missing Query')
-  if (!process.env.FIXIE_API_KEY) return []  // throw new Error('Missing Fixie API Key')
+  if (!fixieCorpusId) return [] // throw new Error('Missing Fixie Corpus Id')
+  if (!query) return [] // throw new Error('Missing Query')
+  if (!process.env.FIXIE_API_KEY) return [] // throw new Error('Missing Fixie API Key')
   //console.log({ status: 'getFixieChunks', query, fixieCorpusId, FIXIE_API_KEY: process.env.FIXIE_API_KEY })
-  let fixieUrl = `https://api.fixie.ai/api/v1/corpora/${fixieCorpusId}/query`;
-  let fixieOptions = {
+  const fixieUrl = `https://api.fixie.ai/api/v1/corpora/${fixieCorpusId}/query`
+  const fixieOptions = {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.FIXIE_API_KEY}`
+      Authorization: `Bearer ${process.env.FIXIE_API_KEY}`,
     },
     body: JSON.stringify({
       corpusId: fixieCorpusId,
       query,
       maxChunks: 3,
-      rerankResults: 'RERANK_RESULTS_UNSPECIFIED'
-    })
+      rerankResults: 'RERANK_RESULTS_UNSPECIFIED',
+    }),
   }
-  let fixieResponse = await fetch(fixieUrl, fixieOptions)
-  let fixieData = await fixieResponse.json()
+  const fixieResponse = await fetch(fixieUrl, fixieOptions)
+  const fixieData = await fixieResponse.json()
   return fixieData.results
 }
-let sendMessageToHubspot = async ({ bot, message, threadId, channelId, channelAccountId }) => {
-  let messageUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}/messages`
-  let messageOptions = {
+const sendMessageToHubspot = async ({
+  bot,
+  message,
+  threadId,
+  channelId,
+  channelAccountId,
+}) => {
+  console.log({ message })
+  const accessToken = await getAccessToken(bot.hsRefreshToken)
+  const messageUrl = `https://api.hubspot.com/conversations/v3/conversations/threads/${threadId}/messages`
+  const messageOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bot.hsAccessToken}`
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       type: 'MESSAGE',
@@ -286,21 +345,21 @@ let sendMessageToHubspot = async ({ bot, message, threadId, channelId, channelAc
       senderActorId: 'A-' + bot.hsUserId,
       channelId,
       channelAccountId,
-      subject: 'Follow up'
-    })
+      subject: 'Follow up',
+    }),
   }
-  let messageResponse = await fetch(messageUrl, messageOptions)
-  let messageData = await messageResponse.json()
+  const messageResponse = await fetch(messageUrl, messageOptions)
+  const messageData = await messageResponse.json()
   //console.log({ messageData })
   return messageData
 }
-let openAIRequest = async ({ message, prompt }) => {
-  let openAIUrl = 'https://api.openai.com/v1/chat/completions'
-  let openAIOptions = {
+const openAIRequest = async ({ message, prompt }) => {
+  const openAIUrl = 'https://api.openai.com/v1/chat/completions'
+  const openAIOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY
+      Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo-16k',
@@ -310,14 +369,14 @@ let openAIRequest = async ({ message, prompt }) => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
-    })
+    }),
   }
-  let openAIResponse = await fetch(openAIUrl, openAIOptions)
-  let openAIData = await openAIResponse.json()
+  const openAIResponse = await fetch(openAIUrl, openAIOptions)
+  const openAIData = await openAIResponse.json()
   return openAIData.choices[0].message.content
 }
-let returnHtml = (content: string) => {
-  let html = `
+const returnHtml = (content: string) => {
+  const html = `
     <html>
       <head>
         <title>Hubspot App</title>
@@ -350,9 +409,9 @@ let returnHtml = (content: string) => {
   return {
     statusCode: 200,
     headers: {
-      'Content-Type': 'text/html'
+      'Content-Type': 'text/html',
     },
-    body: html
+    body: html,
   }
 }
 
@@ -371,18 +430,20 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     throw new Error('Hubspot Function - NO SCOPES')
   }
   // determine if this is the token refresh call
-  let isTokenRefresh = event.path === '/hubspot/token-refresh'
+  const isTokenRefresh = event.path === '/hubspot/token-refresh'
   if (isTokenRefresh) {
     // lets loop over all the bots where the access token is set
     // and then refresh the token
-    let bots = await db.bot.findMany({ where: { hsAccessToken: { not: null } } })
+    const bots = await db.bot.findMany({
+      where: { hsAccessToken: { not: null } },
+    })
     for (let i = 0; i < bots.length; i++) {
-      let bot = bots[i]
+      const bot = bots[i]
       //bots.forEach(async (bot) => {
       // lets refresh the token
       try {
         console.log({ message: 'refreshing token', botId: bot.id })
-        let status = await updateAccessToken(bot.id)
+        const status = await updateAccessToken(bot.id)
         console.log({ message: 'refreshed token', botId: bot.id, status })
       } catch (e) {
         console.log({ e })
@@ -391,7 +452,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
     }
   }
   // determine if this is the oauth callback or install
-  let isOauthCallback = event.path === '/hubspot/oauth-callback'
+  const isOauthCallback = event.path === '/hubspot/oauth-callback'
   if (isOauthCallback) {
     try {
       const { code, state } = event.queryStringParameters
@@ -414,15 +475,15 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
   // we're going to add endpoints for getting values
   // if endpoint is /hubspot/bot/:slug
   // return json of all users
-  let isUserSelect = event.path.indexOf('/hubspot/getUsers') > -1
+  const isUserSelect = event.path.indexOf('/hubspot/getUsers') > -1
   if (isUserSelect) {
     // lets read teh post body;
     // they pass a number of url params
     /**Enter a valid URL without reserved query parameters (actionType, portalId, userId, userEmail, accountId, and appId). */
-    let body = (event.body)
-    let parsedBody = JSON.parse(body)
-    let params = {}
-    for (let key in parsedBody) {
+    const body = event.body
+    const parsedBody = JSON.parse(body)
+    const params = {}
+    for (const key in parsedBody) {
       // od a typeof number check
       if (!isNaN(parsedBody[key])) {
         params[key] = parseInt(parsedBody[key], 10)
@@ -431,44 +492,48 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         params[key] = parsedBody[key]
       }
     }
-    let isUpdate = params.actionType === 'DROPDOWN_UPDATE'
+    const isUpdate = params.actionType === 'DROPDOWN_UPDATE'
     if (isUpdate) {
       // update the bot's hsUserId
-      let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
+      let bot = await db.bot.findFirst({
+        where: { hsPortalId: params.portalId },
+      })
       if (bot) {
         if (params.selectedOption === '') params.selectedOption = null
         bot = await db.bot.update({
           where: { id: bot.id },
           data: {
-            hsUserId: params.selectedOption
-          }
+            hsUserId: params.selectedOption,
+          },
         })
       }
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           actionType: 'DROPDOWN_UPDATE',
           response: {
             options: [],
             selectedOption: params.userId,
-            placeholder: 'Pick a user'
+            placeholder: 'Pick a user',
           },
-          message: null
-        })
+          message: null,
+        }),
       }
     }
-    let isFetch = params.actionType === 'DROPDOWN_FETCH'
+    const isFetch = params.actionType === 'DROPDOWN_FETCH'
     if (isFetch) {
       let options = []
-      let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
+      const bot = await db.bot.findFirst({
+        where: { hsPortalId: params.portalId },
+      })
       if (!bot) {
         return {
           statusCode: 200,
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             actionType: 'DROPDOWN_FETCH',
@@ -476,19 +541,19 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
               options: [
                 {
                   text: 'No Bot Found',
-                  value: ''
-                }
+                  value: '',
+                },
               ],
               selectedOption: '',
-              placeholder: 'Bot Not Found'
+              placeholder: 'Bot Not Found',
             },
-            message: null
-          })
+            message: null,
+          }),
         }
       }
-      let accessToken = bot.hsAccessToken;
-      let headers = {
-        'Authorization': `Bearer ${accessToken}`
+      const accessToken = bot.hsAccessToken
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
       }
       let responseBody = {}
       await fetch('https://api.hubspot.com/settings/v3/users/', {
@@ -497,52 +562,51 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
         // then get the json
       }).then(async (response) => {
         // lets return the results where value = id, and text = email
-        const data = await response.json();
+        const data = await response.json()
         options = data.results.map((user) => {
           return {
             text: user.email,
-            value: user.id
+            value: user.id,
           }
         })
         options.unshift({
           text: 'No One',
-          value: ''
+          value: '',
         })
         responseBody = {
           actionType: 'DROPDOWN_FETCH',
           response: {
             options,
             selectedOption: bot.hsUserId,
-            placeholder: 'Pick a user'
+            placeholder: 'Pick a user',
           },
-          message: null
+          message: null,
         }
       })
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(responseBody)
+        body: JSON.stringify(responseBody),
       }
     }
-
   }
 
-  let isBotActive = event.path.indexOf('/hubspot/getActive') > -1
+  const isBotActive = event.path.indexOf('/hubspot/getActive') > -1
   if (isBotActive) {
-    let responseBody = {
-      actionType: "TOGGLE_FETCH",
+    const responseBody = {
+      actionType: 'TOGGLE_FETCH',
       response: {
-        enabled: null
+        enabled: null,
       },
-      message: null
+      message: null,
     }
 
-    let body = event.body
-    let parsedBody = JSON.parse(body)// this isn't working
-    let params = {}
-    for (let key in parsedBody) {
+    const body = event.body
+    const parsedBody = JSON.parse(body) // this isn't working
+    const params = {}
+    for (const key in parsedBody) {
       // od a typeof number check
       if (!isNaN(parsedBody[key])) {
         params[key] = parseInt(parsedBody[key], 10)
@@ -555,55 +619,57 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       if (params[key] === 'false') params[key] = false
     }
     console.log({ params })
-    let isActiveFetch = params.actionType === 'TOGGLE_FETCH'
-    let isActiveUpdate = params.actionType === 'TOGGLE_UPDATE'
+    const isActiveFetch = params.actionType === 'TOGGLE_FETCH'
+    const isActiveUpdate = params.actionType === 'TOGGLE_UPDATE'
     console.log({
       status: 'isBotActive',
       actionType: params.actionType,
       isActiveFetch,
-      isActiveUpdate
+      isActiveUpdate,
     })
     if (isActiveFetch) {
-      let bot = await db.bot.findFirst({
+      const bot = await db.bot.findFirst({
         where: { hsPortalId: params.portalId },
         select: {
           hsActive: true,
-          title: true
-        }
+          title: true,
+        },
       })
       responseBody.response.enabled = bot?.hsActive
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(responseBody)
+        body: JSON.stringify(responseBody),
       }
     }
     if (isActiveUpdate) {
-      let bot = await db.bot.findFirst({ where: { hsPortalId: params.portalId } })
+      let bot = await db.bot.findFirst({
+        where: { hsPortalId: params.portalId },
+      })
       if (bot) {
-        let data = {
-          hsActive: params.enabled
+        const data = {
+          hsActive: params.enabled,
         }
         console.log({ data })
         bot = await db.bot.update({
           where: { id: bot.id },
-          data
+          data,
         })
       }
       responseBody.response.enabled = params.enabled
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(responseBody)
+        body: JSON.stringify(responseBody),
       }
     }
   }
 
-  let isBot = event.path.indexOf('/hubspot/bot/') > -1
+  const isBot = event.path.indexOf('/hubspot/bot/') > -1
   if (isBot) {
     // okay the path is /hubspot/bot/
     // from here we have the following body;
@@ -635,39 +701,43 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       // 3. hubspot will send a webhook to our app
       // 4. we will get the webhook
       // 5. we will lookup the bot by the hubspot account id, if not found return error
-      let bot = await db.bot.findFirst({ where: { hsPortalId: messageObj.portalId } })
-
+      const bot = await db.bot.findFirst({
+        where: { hsPortalId: messageObj.portalId },
+      })
+      //console.log({ bot })
       // is the bot active
       console.log({
         bot: {
           hsActive: bot.hsActive,
           hsUserId: bot.hsUserId,
           fixieCorpusId: bot.fixieCorpusId,
-        }
+        },
       })
       if (!bot.hsActive) return
       // 6. define if this is a new conversation or a new message
-      let isNewConversation = messageObj.subscriptionType === 'conversation.creation'
-      let isNewMessage = messageObj.subscriptionType === 'conversation.newMessage'
+      const isNewConversation =
+        messageObj.subscriptionType === 'conversation.creation'
+      const isNewMessage =
+        messageObj.subscriptionType === 'conversation.newMessage'
       // okay handle new message handleNewMessage({messageObj})
       // 7. if new message, look up the thread by the threadId, if not found return error
       if (isNewMessage) {
-        console.log("NEW MESSAGE")
+        console.log('NEW MESSAGE')
         // we can do both these calls at the same time
         Promise.all([
           getThreadDetails({ bot, threadId: messageObj.objectId }),
-          getThreadMessages({ bot, threadId: messageObj.objectId })
+          getThreadMessages({ bot, threadId: messageObj.objectId }),
         ]).then(async (values) => {
-          let [threadDetails, lastThreeMessages] = values
+          const [threadDetails, lastThreeMessages] = values
           //console.log({ threadDetails, lastThreeMessages })
           // 8. define messages, and lastMessage
           // 8. define the assignedTo, assignedToNoOne(bool), assignedToAI(bool), and assignedToSomeoneElse(bool)
           // 8. define the from actor (https://developers.hubspot.com/docs/api/conversations/conversations#endpoint?spec=GET-/conversations/v3/conversations/actors/{actorId})
-          let assignedTo = threadDetails.assignedTo
-          let assignedToNoOne = typeof assignedTo === 'undefined'
-          let assignedToAI = assignedTo === 'A-' + bot.hsUserId
-          let lastMessageFrom = lastThreeMessages[0].actorId
-          let lastMessageFromBot = lastMessageFrom === 'A-' + bot.hsUserId
+          const assignedTo = threadDetails.assignedTo
+          const assignedToNoOne = typeof assignedTo === 'undefined'
+          const assignedToAI = assignedTo === 'A-' + bot.hsUserId
+          const lastMessageFrom = lastThreeMessages[0].actorId
+          const lastMessageFromBot = lastMessageFrom === 'A-' + bot.hsUserId
           if (lastMessageFromBot) return
           //let assignedToSomeoneElse = assignedTo !== bot.hsUserId
           console.log({
@@ -687,7 +757,10 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           // 10. if assigned to no one or assigned to ai then get the appropriate context from fixie
           if (assignedToNoOne || assignedToAI) {
             // lets get the relevant content from fixie
-            let chunks = await getFixieChunks({ query: lastThreeMessages[0].text, fixieCorpusId: bot.fixieCorpusId })
+            let chunks = await getFixieChunks({
+              query: lastThreeMessages[0].text,
+              fixieCorpusId: bot.fixieCorpusId,
+            })
             /*console.log({
               chunks: chunks.map((chunk) => {
                 return {
@@ -700,32 +773,42 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
             })*/
             // lets only use chunks where the score is >= .75
             chunks = chunks.filter((chunk) => {
-              return chunk.score >= .75
+              return chunk.score >= 0.75
             })
             // if we have no chunks, then let's respond with a message
-            if (chunks.length === 0) { /**send message */ }
-            let chunkString = chunks.map((chunk) => {
-              return chunk.chunkContent
-            }).join(' ')
+            if (chunks.length === 0) {
+              /**send message */
+            }
+            const chunkString = chunks
+              .map((chunk) => {
+                return chunk.chunkContent
+              })
+              .join(' ')
             // lets get the hsPrompt
             let hsPrompt = JSON.parse(bot.hsPrompt)
             // hsPrompt is an array of objects { role: "system | assistant | user", content: "string" }
             // we need to replace the system's message's handlebars {{context}} with the chunk's content
             hsPrompt = hsPrompt.map((prompt) => {
               if (prompt.role === 'system') {
-                prompt.content = prompt.content.replace('{{context}}', chunkString)
+                prompt.content = prompt.content.replace(
+                  '{{context}}',
+                  chunkString
+                )
               }
               return prompt
             })
             // lets call openAI
-            let openAIResponse = await openAIRequest({ message: lastThreeMessages[0].text, prompt: hsPrompt })
+            const openAIResponse = await openAIRequest({
+              message: lastThreeMessages[0].text,
+              prompt: hsPrompt,
+            })
 
-            let sendData = {
+            const sendData = {
               bot,
               message: openAIResponse,
               threadId: messageObj.objectId,
               channelId: lastThreeMessages[0].channelId,
-              channelAccountId: lastThreeMessages[0].channelAccountId
+              channelAccountId: lastThreeMessages[0].channelAccountId,
             }
             //console.log({ sendData })
             await sendMessageToHubspot(sendData)
@@ -734,9 +817,7 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
           // 11. then send a message to openai to build a short response
           // 12. append the sources
         })
-
       }
-
     })
 
     //
@@ -758,8 +839,8 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
 
     */
   }
-  let STATE_FROM_URL = (() => {
-    let state = event.queryStringParameters.state
+  const STATE_FROM_URL = (() => {
+    const state = event.queryStringParameters.state
     if (!state) {
       return null
     }
