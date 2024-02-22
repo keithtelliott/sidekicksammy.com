@@ -23,7 +23,9 @@ export const handler = async (
     // address in a toast message so the user will know it worked and where
     // to look for the email.
     handler: (user) => {
-      console.log(`http://localhost:8910/reset-password?resetToken=${user.resetToken}`)
+      console.log(
+        `http://localhost:8910/reset-password?resetToken=${user.resetToken}`
+      )
       return user
     },
 
@@ -111,7 +113,7 @@ export const handler = async (
     // `signUp()` function in the form of: `{ message: 'String here' }`.
     handler: ({ username, hashedPassword, salt, userAttributes }) => {
       // lets see if the any users exist
-      let userExists = db.user.count().then((count) => count > 0)
+      const userExists = db.user.count().then((count) => count > 0)
       if (!userExists) {
         // if no users exist, lets create an admin user
         return db.user.create({
@@ -153,6 +155,7 @@ export const handler = async (
   const authHandler = new DbAuthHandler(event, context, {
     // Provide prisma db client
     db: db,
+    allowedUserFields: ['id', 'email'],
 
     // The name of the property you'd call on `db` to access your user table.
     // i.e. if your Prisma model is named `User` this value would be `user`, as in `db.user`
