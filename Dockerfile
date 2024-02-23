@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:16.13.0-alpine
+ARG BASE_IMAGE=node:20-alpine
 FROM ${BASE_IMAGE} as base
 
 RUN mkdir /app
