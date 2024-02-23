@@ -17,7 +17,7 @@ primary_region = "sea"
   # now pointing to rw
   #DATABASE_URL = "file://data/sqlite-1.db"
   MIGRATE_ON_BOOT = "true"
-  PORT = "8910"
+  #PORT = "8910"
   REDWOOD_DISABLE_TELEMETRY = "1"
 
 #[[mounts]]
