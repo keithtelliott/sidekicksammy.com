@@ -7,8 +7,6 @@ app = "sidekicksammy"
 primary_region = "sea"
 
 [build]
-  [build.args]
-    NODE_VERSION = "20"
 
 [deploy]
   release_command = ".fly/release.sh"
