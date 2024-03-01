@@ -8,6 +8,7 @@ import {
   useColorModeValue,
   Alert,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 
 import {
@@ -22,6 +23,7 @@ import { useMutation } from '@redwoodjs/web'
 
 import CreateBotGreetingButtons from '../CreateBotGreetingButton/CreateBotGreetingButton'
 import CreateBotQuestionButton from '../CreateBotQuestionButton/CreateBotQuestionButton'
+import CreatingSidekickModal from '../CreatingSidekickModal/CreatingSidekickModal'
 const CREATE_BOT_MUTATION = gql`
   mutation CreateBotAndUserMutation($input: CreateBotAndUserInput!) {
     createBotAndUser(input: $input) {
@@ -88,6 +90,8 @@ const CreateBot = (props) => {
     }
   }
   const CreateBotForm = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     useEffect(() => {
       // if the bot's url is set, then
       // we will load the second form section
@@ -121,31 +125,35 @@ const CreateBot = (props) => {
             },
           },
         })
+        onOpen()
       } else {
         //console.log({ where: 'useEffect', metCondition: false })
       }
       //if (userEmail) setFormSectionToLoad(4)
     }, [botSlug, botUrl, botColor, botGreeting, userEmail])
 
-    const [create] = useMutation(CREATE_BOT_MUTATION, {
-      onCompleted: (data) => {
-        //toast.success('Bot created')
-        //navigate(routes.bots())
-        //console.log('bot created', data)
-        // redirect to demo
-        if (data.createBotAndUser.urlSlug.indexOf('error') > -1) {
-          //console.log('error creating bot', data.createBotAndUser.urlSlug)
-          setError(data.createBotAndUser.urlSlug.split('#')[1])
-          setFormSectionToLoad(1)
-        } else {
-          navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
-        }
-      },
-      onError: (data, error) => {
-        //console.log('error creating bot', error, data)
-        //toast.error('Error creating bot')
-      },
-    })
+    const [create, { isLoadingMutation, errorFromMutation }] = useMutation(
+      CREATE_BOT_MUTATION,
+      {
+        onCompleted: (data) => {
+          //toast.success('Bot created')
+          //navigate(routes.bots())
+          //console.log('bot created', data)
+          // redirect to demo
+          if (data.createBotAndUser.urlSlug.indexOf('error') > -1) {
+            //console.log('error creating bot', data.createBotAndUser.urlSlug)
+            setError(data.createBotAndUser.urlSlug.split('#')[1])
+            setFormSectionToLoad(1)
+          } else {
+            navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
+          }
+        },
+        onError: (data, error) => {
+          //console.log('error creating bot', error, data)
+          //toast.error('Error creating bot')
+        },
+      }
+    )
     const onSubmit = async (input) => {
       //create({ variables: { input } })
       // we will append the input to the formData
@@ -165,6 +173,19 @@ const CreateBot = (props) => {
       if (input.greeting) setBotGreeting(input.greeting)
       if (input.email) setUserEmail(input.email)
     }
+
+    const handleModalCloseSuccess = () => {
+      navigate(routes.demo({ title: botSlug }))
+    }
+
+    const handleModalCloseError = () => {
+      setError(
+        'Oops!  There was an error creating your sidekick. Please try again.'
+      )
+      setFormSectionToLoad(1)
+      // Go-Do, KTE, 3/1/2024:  Tighten-up the error handling!  Think through it, test it, refine, etc.
+    }
+
     const inputProps = {
       bgColor: useColorModeValue('gray.50', 'gray.800'),
       color: useColorModeValue('gray.800', 'gray.200'),
@@ -383,6 +404,13 @@ const CreateBot = (props) => {
     }
     return (
       <Box borderRadius="lg" {...props}>
+        <CreatingSidekickModal
+          isOpen={isOpen}
+          isLoading={isLoadingMutation}
+          error={errorFromMutation}
+          handleModalCloseSuccess={handleModalCloseSuccess}
+          handleModalCloseError={handleModalCloseError}
+        />
         <Form onSubmit={onSubmit}>
           <Flex
             direction="column"
