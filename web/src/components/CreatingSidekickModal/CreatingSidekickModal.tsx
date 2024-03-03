@@ -6,6 +6,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ModalOverlay,
   Text,
 } from '@chakra-ui/react'
 import { FunctionComponent } from 'react'
@@ -29,14 +30,17 @@ const CreatingSidekickModal: FunctionComponent<CreatingSidekickModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={error ? handleModalCloseError : handleModalCloseSuccess}
+      closeOnOverlayClick={false}
     >
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader>Creating your Sidekick!</ModalHeader>
-        <ModalCloseButton />
+        {/* <ModalCloseButton /> */}
         <ModalBody>
           <Text>
             Add commentary that describes what is being performed and created...
           </Text>
+          {isLoading ? <Text>Loading...</Text> : <Text>Success!! </Text>}
         </ModalBody>
 
         <ModalFooter>

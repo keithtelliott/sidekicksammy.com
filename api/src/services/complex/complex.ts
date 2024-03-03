@@ -709,14 +709,16 @@ const generatePrompt = async (url, greeting, outcome) => {
       presence_penalty: 0,
     }),
   }
+  // console.log('in generatePrompt, here is openAIOptions:  ', openAIOptions)
+
   const openAIResponse = await fetch(openAIUrl, openAIOptions)
-  console.log('in generatePrompt, here is openAIResponse:  ', openAIResponse)
+  // console.log('in generatePrompt, here is openAIResponse:  ', openAIResponse)
 
   const openAIJson = await openAIResponse.json()
-  console.log('in generatePrompt, here is openAIJson:  ', openAIJson)
+  // console.log('in generatePrompt, here is openAIJson:  ', openAIJson)
 
   const prompt = openAIJson?.choices[0]?.message?.content
-  console.log('in generatePrompt, here is prompt:  ', prompt)
+  // console.log('in generatePrompt, here is prompt:  ', prompt)
 
   return prompt
 }

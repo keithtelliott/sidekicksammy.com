@@ -132,9 +132,9 @@ const CreateBot = (props) => {
       //if (userEmail) setFormSectionToLoad(4)
     }, [botSlug, botUrl, botColor, botGreeting, userEmail])
 
-    const [create, { isLoadingMutation, errorFromMutation }] = useMutation(
-      CREATE_BOT_MUTATION,
-      {
+    // const [create, { isLoadingMutation, errorFromMutation }] = useMutation(
+    const [create, { loading: isLoadingMutation, error: errorFromMutation }] =
+      useMutation(CREATE_BOT_MUTATION, {
         onCompleted: (data) => {
           //toast.success('Bot created')
           //navigate(routes.bots())
@@ -145,15 +145,15 @@ const CreateBot = (props) => {
             setError(data.createBotAndUser.urlSlug.split('#')[1])
             setFormSectionToLoad(1)
           } else {
-            navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
+            // navigate(routes.demo({ title: data.createBotAndUser.urlSlug }))
+            // KTE, 3/2/2024:  No action needed.  The modal will handle the redirect.
           }
         },
         onError: (data, error) => {
           //console.log('error creating bot', error, data)
           //toast.error('Error creating bot')
         },
-      }
-    )
+      })
     const onSubmit = async (input) => {
       //create({ variables: { input } })
       // we will append the input to the formData
@@ -411,6 +411,7 @@ const CreateBot = (props) => {
           handleModalCloseSuccess={handleModalCloseSuccess}
           handleModalCloseError={handleModalCloseError}
         />
+
         <Form onSubmit={onSubmit}>
           <Flex
             direction="column"
