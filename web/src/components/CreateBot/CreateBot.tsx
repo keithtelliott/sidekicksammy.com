@@ -410,8 +410,14 @@ const CreateBot = (props) => {
           error={errorFromMutation}
           handleModalCloseSuccess={handleModalCloseSuccess}
           handleModalCloseError={handleModalCloseError}
+          contentArray={[
+            'Visiting your website, ' + botUrl,
+            'Reading your content',
+            'Creating your chatbot',
+            'Preparing www.sidekicksammy.com/' + botSlug,
+          ]}
+          submitButtonText={'Visit your chatbot!'}
         />
-
         <Form onSubmit={onSubmit}>
           <Flex
             direction="column"

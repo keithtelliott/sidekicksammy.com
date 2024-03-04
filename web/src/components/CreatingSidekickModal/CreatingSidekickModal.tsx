@@ -1,5 +1,9 @@
 import {
+  Box,
   Button,
+  List,
+  ListIcon,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -7,9 +11,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Text,
 } from '@chakra-ui/react'
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { MdCheckCircle } from 'react-icons/md'
 
 type CreatingSidekickModalProps = {
   isOpen: boolean
@@ -17,6 +23,8 @@ type CreatingSidekickModalProps = {
   error: any // Replace 'any' with the actual type of error
   handleModalCloseSuccess: () => void
   handleModalCloseError: () => void
+  contentArray: string[]
+  submitButtonText: string
 }
 
 const CreatingSidekickModal: FunctionComponent<CreatingSidekickModalProps> = ({
@@ -25,7 +33,25 @@ const CreatingSidekickModal: FunctionComponent<CreatingSidekickModalProps> = ({
   error,
   handleModalCloseSuccess,
   handleModalCloseError,
+  contentArray,
+  submitButtonText,
 }) => {
+  const [contentToDisplay, setContentToDisplay] = useState([])
+
+  useEffect(() => {
+    setContentToDisplay([])
+    let timeoutIds = []
+    contentArray.forEach((item, index) => {
+      let timeoutId = setTimeout(() => {
+        setContentToDisplay((prevContent) => [...prevContent, item])
+      }, (index + 1) * 2000) // 2 second delay for each item
+      timeoutIds.push(timeoutId)
+    })
+
+    // Cleanup function to clear timeouts if component unmounts
+    return () => timeoutIds.forEach((id) => clearTimeout(id))
+  }, [])
+
   return (
     <Modal
       isOpen={isOpen}
@@ -36,11 +62,16 @@ const CreatingSidekickModal: FunctionComponent<CreatingSidekickModalProps> = ({
       <ModalContent>
         <ModalHeader>Creating your Sidekick!</ModalHeader>
         {/* <ModalCloseButton /> */}
+
         <ModalBody>
-          <Text>
-            Add commentary that describes what is being performed and created...
-          </Text>
-          {isLoading ? <Text>Loading...</Text> : <Text>Success!! </Text>}
+          <List spacing={3}>
+            {contentToDisplay.map((contentListItem, index) => (
+              <ListItem key={index}>
+                <ListIcon as={MdCheckCircle} color="green.500" />
+                {contentListItem}
+              </ListItem>
+            ))}
+          </List>
         </ModalBody>
 
         <ModalFooter>
@@ -48,10 +79,11 @@ const CreatingSidekickModal: FunctionComponent<CreatingSidekickModalProps> = ({
             colorScheme="blue"
             mr={3}
             onClick={error ? handleModalCloseError : handleModalCloseSuccess}
+            isLoading={isLoading}
+            loadingText="Creating"
           >
-            Close
+            {submitButtonText}
           </Button>
-          {/* <Button variant="ghost">Secondary Action</Button> */}
         </ModalFooter>
       </ModalContent>
     </Modal>
