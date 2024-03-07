@@ -17,7 +17,7 @@ import {
 import { FunctionComponent, useEffect, useState } from 'react'
 import { MdCheckCircle } from 'react-icons/md'
 
-type CreatingSidekickModalProps = {
+export type CreatingSidekickModalProps = {
   isOpen: boolean
   isLoading: boolean
   error: any // Replace 'any' with the actual type of error

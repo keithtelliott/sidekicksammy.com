@@ -14,6 +14,8 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import CreatingSidekickModal from './CreatingSidekickModal'
 
+import type { CreatingSidekickModalProps } from './CreatingSidekickModal'
+
 const meta: Meta<typeof CreatingSidekickModal> = {
   component: CreatingSidekickModal,
   tags: ['autodocs'],
@@ -21,7 +23,7 @@ const meta: Meta<typeof CreatingSidekickModal> = {
 
 export default meta
 
-type Story = StoryObj<typeof CreatingSidekickModal>
+type Story = StoryObj<CreatingSidekickModalProps>
 
 export const Primary: Story = {
   args: {
@@ -30,5 +32,11 @@ export const Primary: Story = {
     error: null,
     handleModalCloseSuccess: () => {},
     handleModalCloseError: () => {},
+    contentArray: [
+      'Creating Sidekick...',
+      'Sidekick created!',
+      'Adding Sidekick to your team...',
+    ],
+    submitButtonText: 'Create Sidekick',
   },
 }
