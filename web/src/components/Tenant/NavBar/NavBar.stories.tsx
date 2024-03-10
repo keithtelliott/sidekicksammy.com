@@ -22,4 +22,11 @@ export default meta
 
 type Story = StoryObj<typeof NavBar>
 
-export const Primary: Story = {}
+export const Primary: Story = {
+  args: {
+    logoUrl: 'https://placekitten.com/50/50',
+    companyName: 'Company Name',
+    primaryColor: { light: 'blue.700', dark: 'blue.800' },
+    secondaryColor: { light: 'blue.400', dark: 'blue.500' },
+  },
+}
