@@ -12,18 +12,15 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 
-import MessageBox from './MessageBox'
+import ChatWindow from './ChatWindow'
 
-const meta: Meta<typeof MessageBox> = {
-  component: MessageBox,
+const meta: Meta<typeof ChatWindow> = {
+  component: ChatWindow,
+  tags: ['autodocs'],
 }
 
 export default meta
 
-type Story = StoryObj<typeof MessageBox>
+type Story = StoryObj<typeof ChatWindow>
 
-export const Primary: Story = {
-  args: {
-    output: 'This is a message box',
-  },
-}
+export const Primary: Story = {}

@@ -47,7 +47,9 @@ export const QUERY = gql`
 const INPUT_FORM_HEIGHT = '75px'
 export const beforeQuery = (props) => {
   let returnObj = {}
-  if(props?.title && !props?.urlSlug) { props.urlSlug = props.title }
+  if (props?.title && !props?.urlSlug) {
+    props.urlSlug = props.title
+  }
   if (props?.urlSlug) {
     returnObj = {
       variables: {
@@ -68,7 +70,7 @@ export const Failure = ({
 )
 
 export const Success = ({
-  botBySlug
+  botBySlug,
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
   const { pathname, search, hash } = useLocation()
   // url path may contain disableScroll=true
@@ -113,79 +115,77 @@ export const Success = ({
     sendMessage(input)
     setInput('')
   }
-  // lets rename user and assistant to ...
-  const role = (name) => {
-    if (name === 'user') {
-      return 'You'
-    } else {
-      return 'AI Assistant'
-    }
-  }
-  const AgentMessage = ({ text }) => {
-    return (
-      <Box
-        p={2}
-        m={2}
-        borderRadius={'10px'}
-        bg={useColorModeValue('blue.100', 'blue.800')}
-        color={useColorModeValue('blue.800', 'blue.100')}
-      >
-        <Text fontSize={'xs'} colorScheme={'grey'}>
-          {role('assistant')}
-        </Text>
-        <Box
-          w="0"
-          h="0"
-          bg={useColorModeValue('blue.100', 'blue.800')}
-          border={'10px solid transparent'}
-          transform=" translateX(-15px) rotate(45deg)"
-          float={'left'}
-        />
-        <Box ml={2}>
-          <MessageBox output={text} />
-        </Box>
-      </Box>
-    )
-  }
-  const UserMessage = ({ text }) => {
-    // the name and text should
-    return (
-      <Box
-        p={2}
-        m={2}
-        borderRadius={'10px'}
-        bg={useColorModeValue('green.100', 'green.800')}
-        color={useColorModeValue('green.800', 'green.100')}
-        alignContent={'right'}
-        textAlign={'right'}
-        mr={2}
-      >
-        <Text fontSize={'xs'} colorScheme={'grey'}>
-          {role('user')}
-        </Text>
-        <Box
-          w="0"
-          h="0"
-          bg={useColorModeValue('green.100', 'green.800')}
-          border={'10px solid transparent'}
-          transform=" translateX(+15px) rotate(45deg)"
-          float={'right'}
-        />
-        <Box ml={2}>
-          <MessageBox output={text} />
-        </Box>
-      </Box>
-    )
-  }
+
+  // const AgentMessage = ({ text }) => {
+  //   return (
+  //     <Box
+  //       p={2}
+  //       m={2}
+  //       borderRadius={'10px'}
+  //       bg={useColorModeValue('blue.100', 'blue.800')}
+  //       color={useColorModeValue('blue.800', 'blue.100')}
+  //     >
+  //       <Text fontSize={'xs'} colorScheme={'grey'}>
+  //         {role('assistant')}
+  //       </Text>
+  //       <Box
+  //         w="0"
+  //         h="0"
+  //         bg={useColorModeValue('blue.100', 'blue.800')}
+  //         border={'10px solid transparent'}
+  //         transform=" translateX(-15px) rotate(45deg)"
+  //         float={'left'}
+  //       />
+  //       <Box ml={2}>
+  //         <MessageBox output={text} />
+  //       </Box>
+  //     </Box>
+  //   )
+  // }
+  // const UserMessage = ({ text }) => {
+  //   // the name and text should
+  //   return (
+  //     <Box
+  //       p={2}
+  //       m={2}
+  //       borderRadius={'10px'}
+  //       bg={useColorModeValue('green.100', 'green.800')}
+  //       color={useColorModeValue('green.800', 'green.100')}
+  //       alignContent={'right'}
+  //       textAlign={'right'}
+  //       mr={2}
+  //     >
+  //       <Text fontSize={'xs'} colorScheme={'grey'}>
+  //         {role('user')}
+  //       </Text>
+  //       <Box
+  //         w="0"
+  //         h="0"
+  //         bg={useColorModeValue('green.100', 'green.800')}
+  //         border={'10px solid transparent'}
+  //         transform=" translateX(+15px) rotate(45deg)"
+  //         float={'right'}
+  //       />
+  //       <Box ml={2}>
+  //         <MessageBox output={text} />
+  //       </Box>
+  //     </Box>
+  //   )
+  // }
   return (
     <>
       <MetaTags title="Agent" description="Agent page" />
       <NavBar
         logoUrl={botBySlug.logoUrl}
         companyName={botBySlug.title}
-        primaryColor={{ light: botBySlug.backgroundColor, dark: botBySlug.textColor }}
-        secondaryColor={{ light: botBySlug.textColor, dark: botBySlug.backgroundColor }}
-
+        primaryColor={{
+          light: botBySlug.backgroundColor,
+          dark: botBySlug.textColor,
+        }}
+        secondaryColor={{
+          light: botBySlug.textColor,
+          dark: botBySlug.backgroundColor,
+        }}
       />
       <Box
         marginTop={NAV_BAR_HEIGHT}
