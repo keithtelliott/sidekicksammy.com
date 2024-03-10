@@ -22,6 +22,7 @@ import MessageBox from 'src/components/MessageBox/MessageBox'
 import { useTenant } from 'src/helpers/TenantContext'
 
 import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
+import ChatWindow from '../ChatWindow/ChatWindow'
 export const QUERY = gql`
   query getBot($urlSlug: String!) {
     botBySlug(urlSlug: $urlSlug) {
@@ -44,7 +45,6 @@ export const QUERY = gql`
     }
   }
 `
-const INPUT_FORM_HEIGHT = '75px'
 export const beforeQuery = (props) => {
   let returnObj = {}
   if (props?.title && !props?.urlSlug) {
@@ -97,21 +97,22 @@ export const Success = ({
     agentId: botBySlug.fixieAgentId,
   })
 
-  const endOfMessagesRef = useRef(null)
+  // const endOfMessagesRef = useRef(null)
 
-  const scrollToBottom = () => {
-    if (disableScroll) return
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  // const scrollToBottom = () => {
+  //   if (disableScroll) return
+  //   endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
+  // }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [conversation])
+  // useEffect(() => {
+  //   scrollToBottom()
+  // }, [conversation])
 
   const [input, setInput] = useState(initialMessage || '')
+  const handleSetInput = (event) => setInput(event.target.value)
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // event.preventDefault()  // not needed for MouseEventHandler (but it is part of form handling)
     sendMessage(input)
     setInput('')
   }
@@ -187,67 +188,78 @@ export const Success = ({
           dark: botBySlug.backgroundColor,
         }}
       />
-      <Box
-        marginTop={NAV_BAR_HEIGHT}
-        marginBottom={INPUT_FORM_HEIGHT}
-        paddingTop={1}
-        paddingBottom={1}
-      >
-        <AgentMessage text={botBySlug.greeting} />
-
-        {conversation &&
-          conversation.turns.map((turn, turnIndex) => (
-            <Box key={`turn-${turnIndex}`} className="turn">
-              {turn.messages.map(
-                (message, messageIndex) =>
-                  message.kind === 'text' && (
-                    <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
-                      {turn.role !== 'user' && (
-                        <AgentMessage text={message.content} />
-                      )}
-                      {turn.role === 'user' && (
-                        <UserMessage text={message.content} />
-                      )}
-                    </Box>
-                  )
-              )}
-            </Box>
-          ))}
-        <div ref={endOfMessagesRef} />
-
-        <Box
-          position={'fixed'}
-          bottom={0}
-          height={INPUT_FORM_HEIGHT}
-          p={3}
-          bg="white"
-          // bg={useColorModeValue('white', 'gray.800')}
-          boxShadow={'md'}
-          rounded={'lg'}
-          left="0" // Align the box to the left side of the viewport
-          right="0" // Align the box to the right side of the viewport
-        >
-          <form onSubmit={handleSubmit}>
-            {/* the form tag allows browsers to auto submit when the return key is pressed */}
-            <Flex gap={1}>
-              <Input
-                as={'input'}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-              />
-              <Box>
-                <IconButton
-                  as={'button'}
-                  aria-label="Send Message"
-                  icon={<FaArrowUp />}
-                  colorScheme="green"
-                  onClick={handleSubmit}
-                />
-              </Box>
-            </Flex>
-          </form>
-        </Box>
-      </Box>
+      <ChatWindow
+        agentGreeting={botBySlug.greeting}
+        conversation={conversation}
+        input={input}
+        disableScroll={disableScroll}
+        handleSetInput={handleSetInput}
+        handleSubmit={handleSubmit}
+      />
     </>
   )
 }
+
+//
+//<Box
+//marginTop={NAV_BAR_HEIGHT}
+//marginBottom={INPUT_FORM_HEIGHT}
+//paddingTop={1}
+//paddingBottom={1}
+//>
+//<AgentMessage text={botBySlug.greeting} />
+//
+//{conversation &&
+//  conversation.turns.map((turn, turnIndex) => (
+//    <Box key={`turn-${turnIndex}`} className="turn">
+//      {turn.messages.map(
+//        (message, messageIndex) =>
+//          message.kind === 'text' && (
+//            <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
+//              {turn.role !== 'user' && (
+//                <AgentMessage text={message.content} />
+//              )}
+//              {turn.role === 'user' && (
+//                <UserMessage text={message.content} />
+//              )}
+//            </Box>
+//          )
+//      )}
+//    </Box>
+//  ))}
+//<div ref={endOfMessagesRef} />
+//
+//<Box
+//  position={'fixed'}
+//  bottom={0}
+//  height={INPUT_FORM_HEIGHT}
+//  p={3}
+//  bg="white"
+//  // bg={useColorModeValue('white', 'gray.800')}
+//  boxShadow={'md'}
+//  rounded={'lg'}
+//  left="0" // Align the box to the left side of the viewport
+//  right="0" // Align the box to the right side of the viewport
+//>
+//  <form onSubmit={handleSubmit}>
+//    {/* the form tag allows browsers to auto submit when the return key is pressed */}
+//    <Flex gap={1}>
+//      <Input
+//        as={'input'}
+//        value={input}
+//        onChange={(event) => setInput(event.target.value)}
+//      />
+//      <Box>
+//        <IconButton
+//          as={'button'}
+//          aria-label="Send Message"
+//          icon={<FaArrowUp />}
+//          colorScheme="green"
+//          onClick={handleSubmit}
+//        />
+//      </Box>
+//    </Flex>
+//  </form>
+//</Box>
+//</Box>
+//

@@ -11,6 +11,7 @@ import MessageBox from '../MessageBox/MessageBox'
 import { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
 import { Conversation } from 'fixie'
 import { FaArrowUp } from 'react-icons/fa'
+import { useEffect, useRef } from 'react'
 
 const INPUT_FORM_HEIGHT = '75px'
 
@@ -27,17 +28,30 @@ type ChatWindowProps = {
   agentGreeting: string
   conversation: Conversation
   input: string
+  disableScroll: boolean
   handleSetInput: (input: React.ChangeEvent<HTMLInputElement>) => void
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  handleSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
   agentGreeting,
   conversation,
   input,
+  disableScroll,
   handleSetInput,
   handleSubmit,
 }) => {
+  const endOfMessagesRef = useRef(null)
+
+  const scrollToBottom = () => {
+    if (disableScroll) return
+    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [conversation])
+
   return (
     <Box
       marginTop={NAV_BAR_HEIGHT}
@@ -79,26 +93,30 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         left="0" // Align the box to the left side of the viewport
         right="0" // Align the box to the right side of the viewport
       >
-        <form onSubmit={handleSubmit}>
-          {/* the form tag allows browsers to auto submit when the return key is pressed */}
-          <Flex gap={1}>
-            <Input
-              as={'input'}
-              value={input}
-              // onChange={(event) => setInput(event.target.value)}
-              onChange={handleSetInput}
+        {/* <form onSubmit={handleSubmit}> */}
+        {/* the form tag allows browsers to auto submit when the return key is pressed
+              BUT, I (Keith) don't like the auto submit behavior.  i-phones do not auto-submit
+              while texting.  And, I think ChatGPT does not auto-submit either.  So, I'll
+              leave-out the form.
+          */}
+        <Flex gap={1}>
+          <Input
+            as={'input'}
+            value={input}
+            // onChange={(event) => setInput(event.target.value)}
+            onChange={handleSetInput}
+          />
+          <Box>
+            <IconButton
+              as={'button'}
+              aria-label="Send Message"
+              icon={<FaArrowUp />}
+              colorScheme="green"
+              onClick={handleSubmit}
             />
-            <Box>
-              <IconButton
-                as={'button'}
-                aria-label="Send Message"
-                icon={<FaArrowUp />}
-                colorScheme="green"
-                onClick={handleSubmit}
-              />
-            </Box>
-          </Flex>
-        </form>
+          </Box>
+        </Flex>
+        {/* </form> */}
       </Box>
     </Box>
   )
