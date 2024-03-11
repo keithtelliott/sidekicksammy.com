@@ -30,7 +30,11 @@ type ChatWindowProps = {
   input: string
   disableScroll: boolean
   handleSetInput: (input: React.ChangeEvent<HTMLInputElement>) => void
-  handleSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void
+  handleSubmit: (
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.FormEvent<HTMLButtonElement>
+  ) => void
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -93,30 +97,27 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         left="0" // Align the box to the left side of the viewport
         right="0" // Align the box to the right side of the viewport
       >
-        {/* <form onSubmit={handleSubmit}> */}
-        {/* the form tag allows browsers to auto submit when the return key is pressed
-              BUT, I (Keith) don't like the auto submit behavior.  i-phones do not auto-submit
-              while texting.  And, I think ChatGPT does not auto-submit either.  So, I'll
-              leave-out the form.
-          */}
-        <Flex gap={1}>
-          <Input
-            as={'input'}
-            value={input}
-            // onChange={(event) => setInput(event.target.value)}
-            onChange={handleSetInput}
-          />
-          <Box>
-            <IconButton
-              as={'button'}
-              aria-label="Send Message"
-              icon={<FaArrowUp />}
-              colorScheme="green"
-              onClick={handleSubmit}
+        <form onSubmit={handleSubmit}>
+          {' '}
+          {/* KTE, 3/11/2024:  Red squiggly line!  It's b/c the event passed to the handler is different for form submit and for button click.  It works, so I will leave as-is for now.  */}
+          <Flex gap={1}>
+            <Input
+              as={'input'}
+              value={input}
+              // onChange={(event) => setInput(event.target.value)}
+              onChange={handleSetInput}
             />
-          </Box>
-        </Flex>
-        {/* </form> */}
+            <Box>
+              <IconButton
+                as={'button'}
+                aria-label="Send Message"
+                icon={<FaArrowUp />}
+                colorScheme="green"
+                onClick={handleSubmit}
+              />
+            </Box>
+          </Flex>
+        </form>
       </Box>
     </Box>
   )

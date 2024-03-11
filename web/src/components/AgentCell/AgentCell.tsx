@@ -1,15 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-import {
-  Text,
-  Box,
-  useColorModeValue,
-  Input,
-  Flex,
-  IconButton,
-} from '@chakra-ui/react'
 import { useFixie } from 'fixie/web'
-import { FaArrowUp } from 'react-icons/fa'
 import type { FindAgentQuery, FindAgentQueryVariables } from 'types/graphql'
 import { useLocation } from '@redwoodjs/router'
 import {
@@ -18,11 +9,11 @@ import {
   MetaTags,
 } from '@redwoodjs/web'
 
-import MessageBox from 'src/components/MessageBox/MessageBox'
 import { useTenant } from 'src/helpers/TenantContext'
 
-import NavBar, { NAV_BAR_HEIGHT } from '../Tenant/NavBar/NavBar'
+import NavBar from '../Tenant/NavBar/NavBar'
 import ChatWindow from '../ChatWindow/ChatWindow'
+
 export const QUERY = gql`
   query getBot($urlSlug: String!) {
     botBySlug(urlSlug: $urlSlug) {
@@ -66,13 +57,16 @@ export const Empty = () => <div>Empty</div>
 export const Failure = ({
   error,
 }: CellFailureProps<FindAgentQueryVariables>) => (
-  <div style={{ color: 'red' }}>Error: {error?.message}</div>
+  <div style={{ color: 'red' }}>
+    <p>Oops, please refresh, something went wrong.</p>{' '}
+    <p>Details: {error?.message}</p>
+  </div>
 )
 
 export const Success = ({
   botBySlug,
 }: CellSuccessProps<FindAgentQuery, FindAgentQueryVariables>) => {
-  const { pathname, search, hash } = useLocation()
+  const { search } = useLocation()
   // url path may contain disableScroll=true
   // if so, disable scrolling
   let disableScroll = false
@@ -84,7 +78,8 @@ export const Success = ({
   }
   if (!botBySlug.title) return <Empty />
   if (!botBySlug.greeting) botBySlug.greeting = 'How can I help?'
-  const { updateTenantData } = useTenant()
+  const { updateTenantData } = useTenant() // Go-Do, KTE, 3/10/2024:  Figure out if we actually need useTenant.  I don't think it's necessary...
+
   const data = {
     name: botBySlug.title,
     greeting: botBySlug.greeting,
@@ -97,82 +92,15 @@ export const Success = ({
     agentId: botBySlug.fixieAgentId,
   })
 
-  // const endOfMessagesRef = useRef(null)
-
-  // const scrollToBottom = () => {
-  //   if (disableScroll) return
-  //   endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
-  // }
-
-  // useEffect(() => {
-  //   scrollToBottom()
-  // }, [conversation])
-
   const [input, setInput] = useState(initialMessage || '')
   const handleSetInput = (event) => setInput(event.target.value)
 
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    // event.preventDefault()  // not needed for MouseEventHandler (but it is part of form handling)
+    event.preventDefault() // not needed for MouseEventHandler (but it is part of form handling)
     sendMessage(input)
     setInput('')
   }
 
-  // const AgentMessage = ({ text }) => {
-  //   return (
-  //     <Box
-  //       p={2}
-  //       m={2}
-  //       borderRadius={'10px'}
-  //       bg={useColorModeValue('blue.100', 'blue.800')}
-  //       color={useColorModeValue('blue.800', 'blue.100')}
-  //     >
-  //       <Text fontSize={'xs'} colorScheme={'grey'}>
-  //         {role('assistant')}
-  //       </Text>
-  //       <Box
-  //         w="0"
-  //         h="0"
-  //         bg={useColorModeValue('blue.100', 'blue.800')}
-  //         border={'10px solid transparent'}
-  //         transform=" translateX(-15px) rotate(45deg)"
-  //         float={'left'}
-  //       />
-  //       <Box ml={2}>
-  //         <MessageBox output={text} />
-  //       </Box>
-  //     </Box>
-  //   )
-  // }
-  // const UserMessage = ({ text }) => {
-  //   // the name and text should
-  //   return (
-  //     <Box
-  //       p={2}
-  //       m={2}
-  //       borderRadius={'10px'}
-  //       bg={useColorModeValue('green.100', 'green.800')}
-  //       color={useColorModeValue('green.800', 'green.100')}
-  //       alignContent={'right'}
-  //       textAlign={'right'}
-  //       mr={2}
-  //     >
-  //       <Text fontSize={'xs'} colorScheme={'grey'}>
-  //         {role('user')}
-  //       </Text>
-  //       <Box
-  //         w="0"
-  //         h="0"
-  //         bg={useColorModeValue('green.100', 'green.800')}
-  //         border={'10px solid transparent'}
-  //         transform=" translateX(+15px) rotate(45deg)"
-  //         float={'right'}
-  //       />
-  //       <Box ml={2}>
-  //         <MessageBox output={text} />
-  //       </Box>
-  //     </Box>
-  //   )
-  // }
   return (
     <>
       <MetaTags title="Agent" description="Agent page" />
@@ -199,67 +127,3 @@ export const Success = ({
     </>
   )
 }
-
-//
-//<Box
-//marginTop={NAV_BAR_HEIGHT}
-//marginBottom={INPUT_FORM_HEIGHT}
-//paddingTop={1}
-//paddingBottom={1}
-//>
-//<AgentMessage text={botBySlug.greeting} />
-//
-//{conversation &&
-//  conversation.turns.map((turn, turnIndex) => (
-//    <Box key={`turn-${turnIndex}`} className="turn">
-//      {turn.messages.map(
-//        (message, messageIndex) =>
-//          message.kind === 'text' && (
-//            <Box key={`turn-${turnIndex}-message-${messageIndex}`}>
-//              {turn.role !== 'user' && (
-//                <AgentMessage text={message.content} />
-//              )}
-//              {turn.role === 'user' && (
-//                <UserMessage text={message.content} />
-//              )}
-//            </Box>
-//          )
-//      )}
-//    </Box>
-//  ))}
-//<div ref={endOfMessagesRef} />
-//
-//<Box
-//  position={'fixed'}
-//  bottom={0}
-//  height={INPUT_FORM_HEIGHT}
-//  p={3}
-//  bg="white"
-//  // bg={useColorModeValue('white', 'gray.800')}
-//  boxShadow={'md'}
-//  rounded={'lg'}
-//  left="0" // Align the box to the left side of the viewport
-//  right="0" // Align the box to the right side of the viewport
-//>
-//  <form onSubmit={handleSubmit}>
-//    {/* the form tag allows browsers to auto submit when the return key is pressed */}
-//    <Flex gap={1}>
-//      <Input
-//        as={'input'}
-//        value={input}
-//        onChange={(event) => setInput(event.target.value)}
-//      />
-//      <Box>
-//        <IconButton
-//          as={'button'}
-//          aria-label="Send Message"
-//          icon={<FaArrowUp />}
-//          colorScheme="green"
-//          onClick={handleSubmit}
-//        />
-//      </Box>
-//    </Flex>
-//  </form>
-//</Box>
-//</Box>
-//
