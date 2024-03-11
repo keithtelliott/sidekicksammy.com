@@ -1,6 +1,11 @@
 import { useColorModeValue, Box } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
-export default function MessageBox(props: { output: string }) {
+
+type MessageBoxProps = {
+  output?: string
+}
+
+const MessageBox: React.FC<MessageBoxProps> = (props: { output: string }) => {
   let { output } = props
 
   // TODO: Try mdxjs and see if that renders this better.  FIXIE has some odd things...
@@ -71,3 +76,5 @@ export default function MessageBox(props: { output: string }) {
     </Box>
   )
 }
+
+export default MessageBox
